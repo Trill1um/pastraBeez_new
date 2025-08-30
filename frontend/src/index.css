@@ -1,0 +1,679 @@
+@import "tailwindcss";
+
+/* PastraBeez Design System - Tailwind CSS v4 */
+/* Simplified color system with generic names */
+
+:root {
+  /* Core Colors */
+  --yellow: #ffdd00;     /* Primary brand */
+  --orange: #f7b81a;     /* Secondary brand */
+  --cream: #fee4a2;      /* Light accent */
+  --blue: #141b34;       /* Brand text */
+  --maroon: #5c1802;     /* Dark text */
+  --red: #ec4b1c;        /* Accent/CTA */
+  --black: #111111;      /* Text */
+  --gray-dark: #000000;  /* Borders */
+  --gray: #8d8d8d;       /* Secondary text */
+  --gray-light: #d9d9d9; /* Light borders */
+  --white: #ffffff;      /* Background */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #ffb009, #ffd307);
+  --gradient-hover: linear-gradient(135deg, #ff9800, #ffc107);
+  
+  /* Status Colors */
+  --success: #28a745;
+  --warning: #ffc107;
+  --error: #dc3545;
+  --info: #17a2b8;
+  
+  /* Typography System */
+  --font-brand: 'b Bee Pollen', cursive;
+  --font-title: 'Fredoka', sans-serif;
+  --font-body: 'Quicksand', sans-serif;
+  --font-display: 'Just Me Again Down Here', cursive;
+}
+
+/* ========================================== */
+/* UTILITY CLASSES */
+/* ========================================== */
+.bg-inStock { background-color: var(--success); }
+.bg-noStock { background-color: var(--error); }
+.bg-brand { background-color: var(--yellow); }
+.bg-secondary { background-color: var(--orange); }
+.bg-accent { background-color: var(--red); }
+.bg-gray { background-color: var(--gray); }
+.bg-white { background-color: var(--white); }
+.bg-info { background-color: var(--white); }
+.bg-primary { background-color: var(--maroon); }
+
+.text-primary { color: var(--maroon); }
+.text-secondary { color: var(--gray); }
+.text-brand { color: var(--blue); }
+.text-accent { color: var(--red); }
+.text-active { color: var(--black); }
+
+.border-brand { border-color: var(--orange); }
+.border-dark { border-color: var(--black); }
+.border-focus { border-color: var(--yellow); }
+
+.bee-grad {background: var(--gradient-primary);}
+
+/* Header Components */
+.header {
+  background-color: var(--yellow);
+  box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.1);
+}
+
+.bee-tag {
+  color: var(--white);
+}
+
+.nav-text {
+  color: var(--gray);
+  transition: color 0.3s ease;
+}
+
+.nav-text:hover,
+.nav-text.active {
+  color: var(--black);
+}
+
+.sell-button {
+  background-color: var(--white);
+  color: var(--black);
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.sell-button:hover {
+  background-color: #f5f5f5;
+}
+
+/* Form Components */
+.input {
+  background-color: var(--white);
+  border: 1px solid var(--orange);
+  color: var(--maroon);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px var(--yellow);
+  outline: none;
+}
+
+/* Button Components */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: var(--white);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-h:hover {
+  background: var(--gradient-hover);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.btn-reset {
+  background-color: var(--yellow);
+  color: var(--maroon);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+  background-color: var(--orange);
+}
+
+.btn-add {
+  color: var(--gray);
+  border: 2px dashed var(--gray);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 10px;
+  border-radius: 15px;
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  cursor: pointer;
+  background-color: var(--gray-light);
+  transform: scale(1.05);
+}
+
+/* Card Components */
+.card {
+  background-color: var(--white);
+  box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15);
+  transform: translateY(-8px);
+}
+
+/* Footer Components */
+.footer {
+  background-color: var(--orange);
+}
+
+.social-icon {
+  background-color: var(--maroon);
+  transition: background-color 0.3s ease;
+}
+
+/* ========================================== */
+/* TYPOGRAPHY SYSTEM - Used Classes Only */
+/* ========================================== */
+
+/* Font Family Variables */
+:root {
+  /* Typography Font Families */
+  --font-bee-pollen: 'b Bee Pollen', cursive;
+  --font-quicksand: 'Quicksand', sans-serif;
+  --font-fredoka: 'Fredoka', sans-serif;
+  --font-just-me-again: 'Just Me Again Down Here', cursive;
+  --font-poppins: 'Poppins', sans-serif;
+  
+  /* Typography Scale Variables */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 25px;
+  --text-3xl: 32px;
+  --text-4xl: 43px;
+  --text-5xl: 49px;
+  --text-6xl: 64px;
+  
+  /* Line Height Variables */
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+  
+  /* Letter Spacing Variables */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+}
+
+/* ========================================== */
+/* USED TYPOGRAPHY CLASSES */
+/* ========================================== */
+
+/* Logo Typography - Used */
+.bee-logo-desktop {
+  font-family: var(--font-bee-pollen);
+  font-style: normal;
+  font-size: var(--text-4xl); /* 49px */
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  color: var(--blue);
+}
+
+.bee-footer-logo-desktop {
+  font-family: var(--font-just-me-again);
+  font-style: normal;
+  font-size: var(--text-6xl); /* 64px */
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  color: var(--blue);
+}
+
+/* Title Heading Typography - Used */
+.bee-title-h4-desktop {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-3xl); /* 32px */
+  font-weight: 600;
+  line-height: var(--leading-snug);
+}
+
+.bee-title-h6-desktop {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-2xl); /* 25px */
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  color: var(--blue);
+}
+
+.bee-glass {
+  filter: contrast(1.1) brightness(0.95);
+
+}
+
+.bee-title-h1-desktop {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-5xl); /* 49px */
+  font-weight: 600;
+  line-height: var(--leading-snug);
+}
+
+.bee-title-h2-desktop {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: 43px; /* 43px */
+  font-weight: 600;
+  line-height: 110%;
+  letter-spacing: -2%;
+}
+
+.bee-body-h6-desktop {
+  font-style: normal;
+  font-size: var(--text-2xl); /* 25px */
+  font-weight: 400;
+  line-height: var(--leading-snug);
+}
+
+/* Body Typography - Used */
+.bee-body-text-desktop {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 400;
+  line-height: var(--leading-normal);
+}
+
+.bee-title-text-desktop {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 600;
+  line-height: var(--leading-normal);
+}
+
+/* Navigation Typography - Used */
+.bee-nav-desktop {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-xl); /* 20px */
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--gray);
+  transition: color 0.3s ease;
+}
+
+/* Footer Typography - Used */
+.bee-footer-title {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-2xl); /* 25px */
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  color: var(--maroon);
+}
+
+.bee-footer-body {
+  font-family: var(--font-poppins);
+  font-style: normal;
+  font-size: var(--text-lg); /* 18px */
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--maroon);
+}
+
+.bee-footer-sitemap {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-xl); /* 20px */
+  font-weight: 600;
+  line-height: var(--leading-normal);
+  color: var(--maroon);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.bee-footer-sitemap:hover {
+  color: var(--black);
+}
+
+/* Product Card Typography - Used */
+.bee-body {
+  font-family: var(--font-quicksand);
+}
+
+.bee-title {
+    font-family: var(--font-fredoka);
+}
+
+.bee-price {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+}
+
+/* Button Typography - Used */
+.bee-button-desktop {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ========================================== */
+/* PRODUCT CARD TYPOGRAPHY CLASSES */
+/* ========================================== */
+
+/* Product Name Typography */
+.item-name {
+  font-family: var(--font-fredoka);
+  font-style: normal;
+  font-size: var(--text-2xl); /* 25px */
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.375px;
+  color: var(--red);
+}
+
+/* Seller Name Typography */
+.item-seller {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-sm); /* 14px */
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.07px;
+  color: var(--orange);
+}
+
+/* Product Price Typography */
+.item-price {
+  font-family: 'Fredoka One', cursive;
+  font-style: normal;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.42px;
+  color: var(--maroon);
+}
+
+/* Category Label Typography */
+.item-category {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-xs); /* 12px */
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.12px;
+  color: var(--maroon);
+}
+
+/* Likes Typography */
+.item-likes {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.08px;
+  color: var(--yellow);
+}
+
+/* Banner Text Typography */
+.item-banner {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.08px;
+  color: var(--white);
+}
+
+/* Button Text Typography */
+.item-button {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: var(--text-base); /* 16px */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ========================================== */
+/* RESPONSIVE TYPOGRAPHY - Used Classes */
+/* ========================================== */
+
+/* Mobile Breakpoint */
+@media (max-width: 768px) {
+  .bee-logo-desktop {
+    font-size: clamp(24px, 5vw, 32px);
+  }
+  
+  .bee-footer-logo-desktop {
+    font-size: clamp(32px, 6vw, 48px);
+  }
+  
+  .bee-title-h4-desktop {
+    font-size: clamp(20px, 4vw, 26px);
+  }
+  
+  .bee-title-h6-desktop {
+    font-size: clamp(18px, 4vw, 22px);
+  }
+  
+  .bee-nav-desktop {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+  
+  .bee-body-text-desktop {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+  
+  .bee-footer-title {
+    font-size: clamp(18px, 4vw, 22px);
+    font-family: "federoka, sans-serif";
+  }
+  
+  .bee-footer-body {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+  
+  .bee-footer-sitemap {
+    font-size: clamp(16px, 3vw, 18px);
+  }
+}
+
+/* Tablet Breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bee-logo-desktop {
+    font-size: 40px;
+  }
+  
+  .bee-footer-logo-desktop {
+    font-size: 56px;
+  }
+  
+  .bee-title-h4-desktop {
+    font-size: 28px;
+  }
+  
+  .bee-title-h6-desktop {
+    font-size: 22px;
+  }
+  
+  .bee-nav-desktop {
+    font-size: 18px;
+  }
+  
+  .bee-footer-body {
+    font-size: 16px;
+  }
+}
+
+/* ========================================== */
+/* UTILITY CLASSES - Used Only */
+/* ========================================== */
+
+/* Hide scrollbars while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Focus and Accessibility */
+.bee-focus-ring:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* SVG Color Filters */
+/* Use these classes to change SVG colors via CSS filters */
+.svg-yellow {
+  filter: brightness(0) saturate(100%) invert(85%) sepia(100%) saturate(406%) hue-rotate(353deg) brightness(101%) contrast(101%);
+}
+
+.svg-orange {
+  filter: brightness(0) saturate(100%) invert(65%) sepia(77%) saturate(450%) hue-rotate(10deg) brightness(100%) contrast(93%);
+}
+
+.svg-cream {
+  filter: brightness(0) saturate(100%) invert(94%) sepia(29%) saturate(450%) hue-rotate(353deg) brightness(101%) contrast(93%);
+}
+
+.svg-blue {
+  filter: brightness(0) saturate(100%) invert(9%) sepia(17%) saturate(2618%) hue-rotate(207deg) brightness(95%) contrast(98%);
+}
+
+.svg-maroon {
+  filter: brightness(0) saturate(100%) invert(9%) sepia(89%) saturate(1674%) hue-rotate(359deg) brightness(94%) contrast(103%);
+}
+
+.svg-red {
+  filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(348deg) brightness(99%) contrast(86%);
+}
+
+.svg-black {
+  filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+}
+
+.svg-white {
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+.svg-gray {
+  filter: brightness(0) saturate(100%) invert(55%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(89%) contrast(89%);
+}
+
+/* Catalog-specific styles */
+.product-card-hover {
+  transition: all 0.3s ease;
+}
+
+.product-card-hover:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.search-glow:focus {
+  box-shadow: 0 0 20px rgba(247, 184, 26, 0.4);
+}
+
+.category-badge {
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--orange) 100%);
+  transition: all 0.3s ease;
+}
+
+.category-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(247, 184, 26, 0.3);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+.bee-gradient-text {
+  background: linear-gradient(135deg, var(--orange) 0%, var(--yellow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animation Classes */
+.bee-transition {
+  transition: all 0.3s ease;
+}
+
+.bee-transition-fast {
+  transition: all 0.15s ease;
+}
+
+.bee-transition-slow {
+  transition: all 0.5s ease;
+}
+
+/* Button Animation Class - Reusable for all buttons */
+.btn-anim {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.btn-anim:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-anim-transform {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  background: var(--white);
+  color: var(--black);
+  border: 2px solid var(--black);
+}
+
+.btn-anim-transform:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+  outline: none;
+  background: var(--gradient-hover);
+  color: var(--white);
+  border: 2px transparent solid;
+}
+
+/* Responsive Design Helpers */
+@media (max-width: 768px) {
+  .bee-mobile-nav {
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-secondary);
+  }
+}
+
+/* Headroom.js styles */
+.headroom {
+  will-change: transform;
+  transition: transform 200ms linear;
+}
+
+.headroom--pinned {
+  transform: translateY(0%);
+}
+
+.headroom--unpinned {
+  transform: translateY(-100%);
+}

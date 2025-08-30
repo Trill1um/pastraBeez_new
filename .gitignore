@@ -1,0 +1,6 @@
+/.env
+/.vscode
+/DESIGN_SYSTEM_RULES.md
+/env_copies
+
+**/node_modules
