@@ -1,0 +1,32 @@
+[build]
+  # Where Netlify should run build commands from
+  base = "/"
+  
+  # Command to build your site
+  command = "npm install && npm run build"
+  
+  # Directory containing the built site to deploy
+  publish = "frontend/dist"
+  
+  # Ignore builds if these files haven't changed
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- frontend/"
+
+[build.environment]
+  # Node.js version to use
+  NODE_VERSION = "18"
+  
+  # Custom environment variables
+  VITE_API_PRODUCTION_URL = https://pastrabeez-production.up.railway.app
+
+# Redirects for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Custom headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
