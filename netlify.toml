@@ -1,6 +1,6 @@
 [build]
   # Where Netlify should run build commands from
-  base = "/"
+  base = "/frontend"
   
   # Command to build your site
   command = "npm install && npm run build"
