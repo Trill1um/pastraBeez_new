@@ -39,5 +39,6 @@ app.use("/api/products", productRoutes);
 
 app.listen(PORT, () => {
     console.log('Server is running on port 3000');
+    console.log("Authorized URL: ", process.env.VITE_SERVER_PRODUCTION_URL||"not found");
     connectDB();
 }); 
