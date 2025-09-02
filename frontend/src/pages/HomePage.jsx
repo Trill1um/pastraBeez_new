@@ -5,7 +5,6 @@ import imgHero from "../assets/hero-placeholder.jpg";
 import placeholder from "../assets/placeholder.png";
 import bg_honeycomb from "../assets/bg-honeyComb.svg";
 import bg_honey_mobile from "../assets/bg-honey-mobile.svg";
-import { div } from "framer-motion/client";
 
 // Figma asset constants
 const imgBeeRemovebgPreview3 =
