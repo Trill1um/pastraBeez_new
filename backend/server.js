@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 // CORS configuration - MUST be before routes
 app.use(cors({
-    origin:  process.env.VITE_SERVER_PRODUCTION_URL ||  process.env.VITE_SERVER_DEVELOPMENT_URL ,
+    origin:  process.env.VITE_SERVER_PRODUCTION_URL ||  "https://pastrabeez.netlify.app" ,
     credentials: true // Allow cookies
 }));
 
@@ -39,5 +39,6 @@ app.use("/api/products", productRoutes);
 
 app.listen(PORT, () => {
     console.log('Server is running on port 3000');
+    console.log("Authorized URL: ", process.env.VITE_SERVER_PRODUCTION_URL||"not found");
     connectDB();
 }); 
