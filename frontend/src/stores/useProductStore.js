@@ -59,9 +59,7 @@ export const useProductProcessor = create((set, get) => ({
           product.name?.toLowerCase().includes(searchLower) ||
           product.description?.toLowerCase().includes(searchLower) ||
           product.category?.toLowerCase().includes(searchLower) ||
-          product.sellerId._id?.toLowerCase().includes(searchLower) ||
-          product.colonyName?.toLowerCase().includes(searchLower) ||
-          product.tags?.some(tag => tag.toLowerCase().includes(searchLower));
+          product.sellerId.colonyName?.toLowerCase().includes(searchLower);
         if (!matchesSearch) return false;
       }
       
