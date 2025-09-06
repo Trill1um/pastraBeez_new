@@ -84,9 +84,9 @@ export const useUserStore = create((set, get) => ({
       // toast.error('Session expired. Please log in again.');
       
       // Redirect to login page after a brief delay
-      setTimeout(() => {
-        window.location.href = '/authenticate';
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.href = '/authenticate';
+      // }, 2000);
     } else {
       toast.success('Welcome to PastraBeez! Enjoy exploring the hive 🐝');
     }
