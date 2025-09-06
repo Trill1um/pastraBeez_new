@@ -36,6 +36,7 @@ export const useUserStore = create((set, get) => ({
     set({loading: true});
 
     try {
+      console.log("looging in with Store");
         const response = await axios.post(`/auth/login`, {
           email,
           password,
