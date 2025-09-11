@@ -3,7 +3,8 @@ import logo from "../assets/Pastra.svg"; // Adjust the path as necessary
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
 
-const ProfileSection = ({ user, logout }) => {
+const ProfileSection = ({ user }) => {
+  const { logout } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ const ProfileSection = ({ user, logout }) => {
 const NavBar = ({ user }) => {
   const navigate = useNavigate();
   const path = location.pathname;
-  const { logout } = useUserStore();
+  
 
   return (
     <div className="bg-yellow-300 z-40 shadow-lg w-full">
@@ -130,7 +131,7 @@ const NavBar = ({ user }) => {
         <h2 className="flex-1 bee-logo-desktop lg:inline hidden text-center">PastraBeez</h2>
 
         {/* Profile/Sell Button */}
-        <ProfileSection user={user} logout={logout} />
+        <ProfileSection user={user} />
       </div>
 
       {/* Navigation Links */}

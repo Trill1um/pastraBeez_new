@@ -28,8 +28,6 @@ app.use(cookieParser());
 // Debug middleware to log all requests
 app.use((req, res, next) => {
     console.log(`🚀 ${req.method} ${req.url}`);
-    console.log('Content-Type:', req.get('Content-Type'));
-    console.log('Body:', req.body);
     next();
 });
 
@@ -37,8 +35,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
-app.listen(PORT, () => {
-    console.log('Server is running on port 3000');
-    console.log("Authorized URL: ", process.env.VITE_SERVER_PRODUCTION_URL||"not found");
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('Server is running on port ', PORT);
     connectDB();
 }); 

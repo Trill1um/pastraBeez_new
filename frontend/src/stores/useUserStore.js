@@ -13,8 +13,6 @@ export const useUserStore = create((set, get) => ({
       set({loading: false});
       return toast.error('Passwords do not match');
     }
-    //send inputs to terminal for testing
-    console.log('Sign up inputs:', { colonyName, email, password, confirmPassword, messengerLink });
     try {
         const response = await axios.post(`/auth/signup`, {
           colonyName,
@@ -81,7 +79,7 @@ export const useUserStore = create((set, get) => ({
       console.log('🚨 Auth failure detected, clearing user session');
       set({ user: null, loading: false, checkingAuth: false });
 
-      // toast.error('Session expired. Please log in again.');
+      toast.error('Session expired. Please log in again.');
       
       // Redirect to login page after a brief delay
       setTimeout(() => {
@@ -92,7 +90,6 @@ export const useUserStore = create((set, get) => ({
     }
   }
 }));
-
 
 // Listen for auth failure events OUTSIDE the store creation
 if (typeof window !== 'undefined') {

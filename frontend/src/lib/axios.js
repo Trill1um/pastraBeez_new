@@ -57,7 +57,8 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Skip refresh logic for the refresh endpoint itself
+    // Case: refresh token doesn't exist then skip
+    console.log("original Request: ",originalRequest);
     if (originalRequest.url?.includes("/auth/refresh-token")) {
       if (error.response?.status === 401) {
         console.log("❌ Refresh token expired, redirecting to login");

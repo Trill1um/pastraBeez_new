@@ -109,7 +109,12 @@
   background: var(--gradient-primary);
   color: var(--white);
   border: none;
-  transition: all 0.2s ease;
+}
+
+.btn-unactive {
+  background: var(--white);
+  border: none;
+  box-shadow: 0 0 0 2px var(--orange) inset;
 }
 
 .btn-primary-h:hover {

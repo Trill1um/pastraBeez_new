@@ -5,7 +5,6 @@ import {
   useProductCreator,
   useProductBulkOperations,
 } from "../stores/useProductStore.js";
-import { useUserStore } from "../stores/useUserStore.js";
 import compressed from "../lib/compressor.js"; // Image compression utility
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -80,11 +79,10 @@ const fileToBase64 = (file) => {
   });
 };
 
-const CreationPage = () => {
+const CreationPage = ({user}) => {
   const location = useLocation();
   const pre_product = location.state?.product;
   const navigate = useNavigate();
-  const { user } = useUserStore();
   const { createProductAsync, isCreating } = useProductCreator();
   const { updateSingle  } = useProductBulkOperations();
 

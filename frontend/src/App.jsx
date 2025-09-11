@@ -1,89 +1,87 @@
-import { Route, Routes, Navigate } from "react-router-dom"
-import { Toaster } from "react-hot-toast"
-import { useUserStore } from "./stores/useUserStore"
-import { useEffect } from "react"
+import { Route, Routes, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { useUserStore } from "./stores/useUserStore";
+import { useEffect, Suspense, lazy } from "react";
 
-import HomePage from "./pages/HomePage"
-import Catalog from "./pages/Catalog"
-import CreationPage from "./pages/CreationPage"
-import SellerPage from "./pages/SellerPage"
-import AuthenticationPage from "./pages/AuthenticationPage"
-import ProductDetails from "./pages/ProductDetails"
-import AboutPage from "./pages/AboutUs"
+import Catalog from "./pages/Catalog";
+const HomePage = lazy(() => import("./pages/HomePage"));
+const CreationPage = lazy(() => import("./pages/CreationPage"));
+const SellerPage = lazy(() => import("./pages/SellerPage"));
+const AuthenticationPage = lazy(() => import("./pages/AuthenticationPage"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const AboutPage = lazy(() => import("./pages/AboutUs"));
 
 import BeeLoadingScreen from "./components/BeeLoadingScreen";
-import NavBar from "./components/NavBar"
-import Footer from "./components/Footer"
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 
 // Separate components for clarity
-const ProtectedRoute = ({ children }) => {
-    const { user } = useUserStore();
-    return user ? children : <Navigate to="/authenticate" />;
+const ProtectedRoute = ({ children, user }) => {
+  return user ? children : <Navigate to="/authenticate" replace />;
 };
 
-const PublicOnlyRoute = ({ children }) => {
-    const { user } = useUserStore();
-    return user ? <Navigate to="/SellerPage" /> : children;
+const PublicOnlyRoute = ({ children, user }) => {
+  return user ? <Navigate to="/SellerPage" /> : children;
 };
 
 function App() {
-    const { user, checkAuth, checkingAuth } = useUserStore();
-    
-    useEffect(() => {
-        checkAuth();
-    }, [checkAuth]); 
+  const { user, checkAuth, checkingAuth } = useUserStore();
 
-    if (checkingAuth) {
-        return <BeeLoadingScreen />;
-    }
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-    return (
-        <div className="App-Box">
-            <NavBar user={user} />
-            <div className="App">
-                <Routes>
-                    {/* Always accessible */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/product/:id" element={<ProductDetails />} />
-                    <Route path="/catalog" element={<Catalog />} />
-                    <Route path="/about-us" element={<AboutPage />} />
+  return (
+    <div className="App-Box">
+      {<BeeLoadingScreen isLoading={checkingAuth}/>}
+      <NavBar user={user} />
+      <div className="App">
 
-                    {/* Protected routes - need login */}
-                    <Route 
-                        path="/SellerPage" 
-                        element={
-                            <ProtectedRoute>
-                                <SellerPage />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/create-my-product" 
-                        element={
-                            <ProtectedRoute>
-                                <CreationPage />
-                            </ProtectedRoute>
-                        } 
-                    />
+        {/* add suspense fallback */}
+        <Suspense >
+          <Routes>
+            {/* Always accessible */}
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/about-us" element={<AboutPage />} />
 
-                    {/* Public only - redirect if logged in */}
-                    <Route 
-                        path="/authenticate" 
-                        element={
-                            <PublicOnlyRoute>
-                                <AuthenticationPage />
-                            </PublicOnlyRoute>
-                        } 
-                    />
+            {/* Protected routes - need login */}
+            <Route
+              path="/SellerPage"
+              element={
+                <ProtectedRoute user={user}>
+                  <SellerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-my-product"
+              element={
+                <ProtectedRoute user={user}>
+                  <CreationPage user={user}/>
+                </ProtectedRoute>
+              }
+            />
 
-                    {/* Catch all */}
-                    <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-            </div>
-            <Footer />
-            <Toaster />
-        </div>
-    );
+            {/* Public only - redirect if logged in */}
+            <Route
+              path="/authenticate"
+              element={
+                <PublicOnlyRoute user={user}>
+                  <AuthenticationPage />
+                </PublicOnlyRoute>
+              }
+            />
+
+            {/* Catch all */}
+            <Route path="*" element={<HomePage />} />
+          </Routes>
+        </Suspense>
+      </div>
+      <Footer />
+      <Toaster />
+    </div>
+  );
 }
 
-export default App
+export default App;

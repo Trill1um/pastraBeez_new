@@ -32,15 +32,7 @@ const SellerProducts = () => {
     Heart: <img src={heartIcon} alt="Heart" className="w-5 h-5" />,
   };
 
-  // You can also use SVG strings, font icons, or image URLs:
-  // const ICONS = {
-  //   bee: '<svg>...</svg>',
-  //   edit: '/icons/edit.svg',
-  //   delete: 'fa-trash', // for FontAwesome
-  //   etc...
-  // };
-
-  const user = useUserStore((state) => state.user._id);
+  const user = useUserStore((state) => state.user?._id);
 
   console.log("user in seller page: ", user);
   const { sellerProducts, isLoading, error } = useSellerProducts(user);

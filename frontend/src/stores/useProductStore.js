@@ -11,10 +11,11 @@ import {
 // ============ ZUSTAND STORE (Processing Logic) ============
 export const useProductProcessor = create((set, get) => ({
   // UI State
+  isFilterShow: null,
   sortBy: 'name',
   sortOrder: 'asc',
   filters: {
-    category: 'all',
+    category: null,
     inStock: null,
     searchTerm: '',
     isLimited: null,
@@ -44,7 +45,7 @@ export const useProductProcessor = create((set, get) => ({
     // Apply filters
     let filtered = rawProducts.filter(product => {
       // Category filter
-      if (filters.category !== "all" && product.category !== filters.category) return false;
+      if (filters.category !== null && product.category !== filters.category) return false;
       
       // Stock filter
       if (filters.inStock !== null && product.inStock !== filters.inStock) return false;
@@ -135,6 +136,10 @@ export const useProductProcessor = create((set, get) => ({
   },
 
   // ============ ENHANCED ACTIONS ============
+  setFilterShow: (isShow) => set({ isFilterShow: isShow }),
+  toggleFilterShow: (id) =>set((state) => ({
+      isFilterShow: state.isFilterShow === id ? null : id,
+  })),
   setSortBy: (sortBy) => set({ sortBy }),
   setSortOrder: (sortOrder) => set({ sortOrder }),
   
