@@ -34,12 +34,14 @@ const setCookies = (res, accessToken, refreshToken) => {
     secure: isProduction,
     sameSite: isProduction ? "None" : "Strict",
     maxAge: 15 * 60 * 1000, // 15 minutes
+    path: "/",
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "None" : "Strict",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: "/",
   });
 };
 
@@ -197,6 +199,7 @@ export const refreshToken = async (req, res) => {
       secure: isProduction,
       sameSite: isProduction ? "None" : "Strict",
       maxAge: 15 * 60 * 1000, // 15 minutes
+      path: "/",
     });
 
     res.status(200).json({ message: "Tokens refreshed successfully" });
