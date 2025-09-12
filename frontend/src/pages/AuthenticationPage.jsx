@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useUserStore } from '../stores/useUserStore.js';
-import beeIcon from '../assets/logo.png'; // Assuming you have a bee icon asset
+import React, { useState } from "react";
+import { useUserStore } from "../stores/useUserStore.js";
+import beeIcon from "../assets/logo.png"; // Assuming you have a bee icon asset
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
-    colonyName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    messengerLink: '',
-    acceptTerms: false
+    colonyName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    messengerLink: "",
+    acceptTerms: false,
   });
   const [errors, setErrors] = useState({});
 
@@ -20,28 +20,28 @@ const AuthPage = () => {
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setFormData({
-      colonyName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      messengerLink: '',
-      acceptTerms: false
+      colonyName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      messengerLink: "",
+      acceptTerms: false,
     });
     setErrors({});
   };
 
   // Handle input changes
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
   };
@@ -51,34 +51,38 @@ const AuthPage = () => {
     const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!isLogin) {
       if (!formData.colonyName) {
-        newErrors.colonyName = 'Colony name is required';
+        newErrors.colonyName = "Colony name is required";
       }
-      
+
       if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
+        newErrors.confirmPassword = "Passwords do not match";
       }
-      
+
       if (!formData.messengerLink) {
-        newErrors.messengerLink = 'Messenger link is required';
-      } else if (!formData.messengerLink.includes('m.me/') && !formData.messengerLink.includes('messenger.com/')) {
-        newErrors.messengerLink = 'Please provide a valid Messenger link (e.g., m.me/username)';
+        newErrors.messengerLink = "Messenger link is required";
+      } else if (
+        !formData.messengerLink.includes("m.me/") &&
+        !formData.messengerLink.includes("messenger.com/")
+      ) {
+        newErrors.messengerLink =
+          "Please provide a valid Messenger link (e.g., m.me/username)";
       }
-      
+
       if (!formData.acceptTerms) {
-        newErrors.acceptTerms = 'Please accept the terms and conditions';
+        newErrors.acceptTerms = "Please accept the terms and conditions";
       }
     }
 
@@ -89,7 +93,7 @@ const AuthPage = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     if (isLogin) {
@@ -97,11 +101,19 @@ const AuthPage = () => {
       login(formData.email, formData.password);
     } else {
       // Handle signup
-      signUp(formData.colonyName, formData.email, formData.password, formData.confirmPassword, formData.messengerLink);
+      signUp(
+        formData.colonyName,
+        formData.email,
+        formData.password,
+        formData.confirmPassword,
+        formData.messengerLink
+      );
     }
   };
 
+  const [isDataModalVisible, setIsDataModalVisible] = useState(false);
 
+  // Example useEffect to close modal on Escape key
 
   return (
     <div className="min-h-screen w-full">
@@ -114,13 +126,35 @@ const AuthPage = () => {
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
 
+      <div className={`${isDataModalVisible? "flex": "hidden"} fixed inset-0 bg-black/30 items-center justify-center z-50`}>
+        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative">
+          <button
+            onClick={() => setIsDataModalVisible(false)}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+          >
+            &times;
+          </button>
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">
+            Data Use Notice
+          </h3>
+          <p className="text-gray-700 mb-3">This research tool collects:</p>
+          <ul className="list-disc list-inside text-gray-700 mb-4 space-y-1">
+            <li>Email addresses for account creation</li>
+            <li>Survey responses for research analysis</li>
+            <li>Usage patterns to improve the tool</li>
+          </ul>
+          <p className="text-gray-700 text-sm">
+            Your data will be kept confidential and used only for research
+            purposes...
+          </p>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 lg:py-16 max-w-[1440px] mx-auto">
         <div className="flex items-center justify-center min-h-[70vh]">
-          
           {/* Form Container */}
           <div className="card rounded-[50px] p-8 lg:p-16 shadow-xl max-w-2xl w-full">
-            
             {/* Header Section */}
             <div className="text-center mb-8">
               <div
@@ -128,13 +162,12 @@ const AuthPage = () => {
                 style={{ backgroundImage: `url('${beeIcon}')` }}
               />
               <h1 className="bee-title-h4-desktop mb-2">
-                {isLogin ? 'Welcome Back to the Hive! 🍯' : 'Join the Hive! 🐝'}
+                {isLogin ? "Welcome Back to the Hive! 🍯" : "Join the Hive! 🐝"}
               </h1>
               <p className="bee-body-text-desktop text-secondary">
-                {isLogin 
-                  ? 'Sign in to access your sweet account' 
-                  : 'Register your colony and start selling honey products'
-                }
+                {isLogin
+                  ? "Sign in to access your sweet account"
+                  : "Register your colony and start selling honey products"}
               </p>
             </div>
 
@@ -144,9 +177,9 @@ const AuthPage = () => {
                 <button
                   onClick={() => !isLogin && toggleMode()}
                   className={`px-6 py-2 rounded-[20px] transition-all duration-300 bee-body-text-desktop font-medium ${
-                    isLogin 
-                      ? 'bg-brand text-primary shadow-md' 
-                      : 'text-secondary hover:text-primary'
+                    isLogin
+                      ? "bg-brand text-primary shadow-md"
+                      : "text-secondary hover:text-primary"
                   }`}
                 >
                   Sign In
@@ -154,9 +187,9 @@ const AuthPage = () => {
                 <button
                   onClick={() => isLogin && toggleMode()}
                   className={`px-6 py-2 rounded-[20px] transition-all duration-300 bee-body-text-desktop font-medium ${
-                    !isLogin 
-                      ? 'bg-brand text-primary shadow-md' 
-                      : 'text-secondary hover:text-primary'
+                    !isLogin
+                      ? "bg-brand text-primary shadow-md"
+                      : "text-secondary hover:text-primary"
                   }`}
                 >
                   Sign Up
@@ -166,7 +199,6 @@ const AuthPage = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              
               {/* Colony Name Field - Only for Signup */}
               {!isLogin && (
                 <div>
@@ -176,10 +208,12 @@ const AuthPage = () => {
                   <input
                     type="text"
                     value={formData.colonyName}
-                    onChange={(e) => handleInputChange('colonyName', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("colonyName", e.target.value)
+                    }
                     placeholder="This is what sellers see you as"
                     className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.colonyName ? 'border-accent' : ''
+                      errors.colonyName ? "border-accent" : ""
                     }`}
                   />
                   {errors.colonyName && (
@@ -198,10 +232,10 @@ const AuthPage = () => {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   placeholder="your@email.com"
                   className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                    errors.email ? 'border-accent' : ''
+                    errors.email ? "border-accent" : ""
                   }`}
                 />
                 {errors.email && (
@@ -219,10 +253,12 @@ const AuthPage = () => {
                 <input
                   type="password"
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   placeholder="Enter your password"
                   className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                    errors.password ? 'border-accent' : ''
+                    errors.password ? "border-accent" : ""
                   }`}
                 />
                 {errors.password && (
@@ -241,10 +277,12 @@ const AuthPage = () => {
                   <input
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
                     placeholder="Confirm your password"
                     className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.confirmPassword ? 'border-accent' : ''
+                      errors.confirmPassword ? "border-accent" : ""
                     }`}
                   />
                   {errors.confirmPassword && (
@@ -259,19 +297,22 @@ const AuthPage = () => {
               {!isLogin && (
                 <div>
                   <label className="block bee-title-h6-desktop mb-2">
-                    Messenger Link *
+                    Facebook Profile Link *
                   </label>
                   <input
                     type="url"
                     value={formData.messengerLink}
-                    onChange={(e) => handleInputChange('messengerLink', e.target.value)}
-                    placeholder="m.me/yourusername or messenger.com/t/yourusername"
+                    onChange={(e) =>
+                      handleInputChange("messengerLink", e.target.value)
+                    }
+                    placeholder="https://www.facebook.com/your.username"
                     className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.messengerLink ? 'border-accent' : ''
+                      errors.messengerLink ? "border-accent" : ""
                     }`}
                   />
                   <p className="text-secondary bee-body-text-desktop text-sm mt-1">
-                    Example: m.me/yourusername
+                    Note: Go to your Facebook (Web) Profile Page and copy the
+                    URL
                   </p>
                   {errors.messengerLink && (
                     <p className="text-accent bee-body-text-desktop text-sm mt-1">
@@ -288,22 +329,28 @@ const AuthPage = () => {
                     type="checkbox"
                     id="acceptTerms"
                     checked={formData.acceptTerms}
-                    onChange={(e) => handleInputChange('acceptTerms', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("acceptTerms", e.target.checked)
+                    }
                     className="mt-1 w-4 h-4 text-brand border-2 border-secondary rounded focus:ring-brand focus:ring-2"
                   />
-                  <label htmlFor="acceptTerms" className="bee-body-text-desktop flex-1">
-                    I agree to the{' '}
-                    <span className="text-brand cursor-pointer hover:underline">
-                      Terms and Conditions
-                    </span>{' '}
-                    and{' '}
-                    <span className="text-brand cursor-pointer hover:underline">
-                      Privacy Policy
-                    </span>
+                  <label
+                    htmlFor="acceptTerms"
+                    className="bee-body-text-desktop flex-1"
+                  >
+                    I understand this is a research tool and consent to data
+                    collection for research purposes.
                   </label>
+                  <a
+                    className="text-amber-500 mt-1"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setIsDataModalVisible(true)}
+                  >
+                    Learn more
+                  </a>
                 </div>
               )}
-              
+
               {errors.acceptTerms && (
                 <p className="text-accent bee-body-text-desktop text-sm">
                   {errors.acceptTerms}
@@ -331,11 +378,13 @@ const AuthPage = () => {
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>{isLogin ? 'Signing In...' : 'Creating Colony...'}</span>
+                    <span>
+                      {isLogin ? "Signing In..." : "Creating Colony..."}
+                    </span>
                   </div>
                 ) : (
                   <span>
-                    {isLogin ? 'Sign In to Hive 🍯' : 'Join the Hive 🐝'}
+                    {isLogin ? "Sign In to Hive 🍯" : "Join the Hive 🐝"}
                   </span>
                 )}
               </button>
@@ -343,13 +392,15 @@ const AuthPage = () => {
               {/* Bottom Text */}
               <div className="text-center pt-4">
                 <p className="bee-body-text-desktop text-secondary">
-                  {isLogin ? "Don't have a colony account? " : "Already registered your colony? "}
+                  {isLogin
+                    ? "Don't have a colony account? "
+                    : "Already registered your colony? "}
                   <button
                     type="button"
                     onClick={toggleMode}
                     className="text-brand hover:text-accent font-medium transition-colors"
                   >
-                    {isLogin ? 'Register Colony' : 'Sign In'}
+                    {isLogin ? "Register Colony" : "Sign In"}
                   </button>
                 </p>
               </div>
