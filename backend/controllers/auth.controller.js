@@ -1,7 +1,6 @@
 import { client } from "../lib/redis.js";
 import Seller from "../models/Seller.js";
 import jwt from "jsonwebtoken";
-import toast from "react-hot-toast";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -49,7 +48,7 @@ const setCookies = (res, accessToken, refreshToken) => {
 export const login = async (req, res) => {
   try {
     console.log("login route activated");
-    toast.success(isProduction);
+    console.log("isProduction: ",isProduction);
     const { email, password } = req.body;
 
     // Validate input
