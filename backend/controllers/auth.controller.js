@@ -39,12 +39,15 @@ const cookieConfiguration = {
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     ...cookieConfiguration,
+    ...cookieConfiguration,
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie("refreshToken", refreshToken, {
     ...cookieConfiguration,
+    ...cookieConfiguration,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+
 
   console.log("Cookies set: ", { accessToken, refreshToken })
     console.log("🍪 Sent cookies:", {
@@ -204,6 +207,7 @@ export const refreshToken = async (req, res) => {
     });
 
     res.cookie("accessToken", accessToken, {
+      ...cookieConfiguration,
       ...cookieConfiguration,
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
