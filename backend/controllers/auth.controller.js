@@ -32,13 +32,13 @@ const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "Strict",
+    sameSite: isProduction ? "None" : "Strict",
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "Strict",
+    sameSite: isProduction ? "None" : "Strict",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 };
@@ -195,7 +195,7 @@ export const refreshToken = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "Strict",
+      sameSite: isProduction ? "None" : "Strict",
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
