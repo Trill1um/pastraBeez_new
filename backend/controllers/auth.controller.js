@@ -1,7 +1,6 @@
 import { client } from "../lib/redis.js";
 import Seller from "../models/Seller.js";
 import jwt from "jsonwebtoken";
-import toast from "react-hot-toast";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -44,12 +43,17 @@ const setCookies = (res, accessToken, refreshToken) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: "/",
   });
+  console.log("Cookies set: ", { accessToken, refreshToken })
+    console.log("🍪 Sent cookies:", {
+    accessToken: res.getHeader("Set-Cookie")?.find(c => c.includes("accessToken")),
+    refreshToken: res.getHeader("Set-Cookie")?.find(c => c.includes("refreshToken")),
+  });
 };
 
 export const login = async (req, res) => {
   try {
     console.log("login route activated");
-    toast.success(isProduction);
+    console.log("isProduction: ",isProduction);
     const { email, password } = req.body;
 
     // Validate input
