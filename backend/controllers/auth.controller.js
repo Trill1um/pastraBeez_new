@@ -27,22 +27,25 @@ const storeRefreshToken = async (userId, refreshToken) => {
   }
 };
 
+const cookieConfiguration = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Strict",
+  path: "/",
+  partitioned: isProduction ? "None" : "Strict",
+}
+
 //Config: Production = secure-true, sameSite-none; Development = secure-false, sameSite-Strict
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "None" : "Strict",
+    ...cookieConfiguration,
     maxAge: 15 * 60 * 1000, // 15 minutes
-    path: "/",
   });
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "None" : "Strict",
+    ...cookieConfiguration,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/",
   });
+
   console.log("Cookies set: ", { accessToken, refreshToken })
     console.log("🍪 Sent cookies:", {
     accessToken: res.getHeader("Set-Cookie")?.find(c => c.includes("accessToken")),
@@ -201,11 +204,8 @@ export const refreshToken = async (req, res) => {
     });
 
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "None" : "Strict",
+      ...cookieConfiguration,
       maxAge: 15 * 60 * 1000, // 15 minutes
-      path: "/",
     });
 
     res.status(200).json({ message: "Tokens refreshed successfully" });
