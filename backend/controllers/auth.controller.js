@@ -31,8 +31,6 @@ const cookieConfiguration = {
   httpOnly: true,
   secure: isProduction,
   sameSite: isProduction ? "None" : "Strict",
-  path: "/",
-  partitioned: isProduction ? true : undefined,
 }
 
 //Config: Production = secure-true, sameSite-none; Development = secure-false, sameSite-Strict
@@ -207,7 +205,6 @@ export const refreshToken = async (req, res) => {
     });
 
     res.cookie("accessToken", accessToken, {
-      ...cookieConfiguration,
       ...cookieConfiguration,
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
