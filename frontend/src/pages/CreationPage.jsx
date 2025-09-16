@@ -1,14 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import plusIcon from "../assets/plus-sign.svg";
-import {
-  useProductCreator,
-  useProductBulkOperations,
-} from "../stores/useProductStore.js";
+import {  useProcessedProducts, useProductById } from "../stores/useProductStore.js";
 import compressed from "../lib/compressor.js"; // Image compression utility
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Additional Info Section Component - Moved outside to prevent re-creation
 const AdditionalInfoSection = React.memo(
@@ -80,15 +76,20 @@ const fileToBase64 = (file) => {
 };
 
 const CreationPage = ({user}) => {
-  const location = useLocation();
-  const pre_product = location.state?.product;
+  const { isLoading, createProductAsync, updateProductAsync } = useProcessedProducts((state) => ({
+    isLoading: state.isLoading,
+    createProductAsync: state.createProductAsync,
+    updateProductAsync: state.updateProductAsync,
+  }));
+  
+  const { id } = useParams();
+  const { product } = useProductById(id.includes("creation")? "" : id.slice(8));
+
   const navigate = useNavigate();
-  const { createProductAsync, isCreating } = useProductCreator();
-  const { updateSingle  } = useProductBulkOperations();
 
   // Form state
   const [formData, setFormData] = useState(
-    pre_product || {
+    product || {
       name: "",
       description: "",
       price: "",
@@ -99,7 +100,6 @@ const CreationPage = ({user}) => {
       additionalInfo: [],
     }
   );
-
   // Scroll tracking state
   const [categoryScrollState, setCategoryScrollState] = useState({
     canScrollLeft: false,
@@ -341,12 +341,9 @@ const CreationPage = ({user}) => {
 
           return {
             id: Date.now() + Math.random(),
-            file: compressedFile,
             name: file.name,
             url: URL.createObjectURL(compressedFile),
             base64: await fileToBase64(compressedFile),
-            size: compressedFile.size,
-            originalSize: file.size,
           };
         })
       );
@@ -385,10 +382,11 @@ const CreationPage = ({user}) => {
         toast.error("At least one product image is required");
         return;
       }
-      if (!pre_product) {
+      console.log("is it loading: ", isLoading);
+      if (!product) {
         await createProductAsync(formData);
       } else {
-        await updateSingle (formData._id, formData);
+        await updateProductAsync ({ productId: formData._id, productData: formData });
       }
       toast.success("Product created successfully!");
 
@@ -455,15 +453,15 @@ const CreationPage = ({user}) => {
       </div>
 
       {/* Main Content */}
-      <div className={`${isCreating? "opacity-60":""} min-h-screen px-0 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 xl:py-16 max-w-[1440px] mx-auto`}>
+      <div className={`${isLoading? "opacity-60":""} min-h-screen px-0 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 xl:py-16 max-w-[1440px] mx-auto`}>
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 px-2 sm:px-4 py-2 mb-2 sm:mb-4">
-          <span
-            className="text-primary cursor-pointer hover:underline text-sm sm:text-base"
+          <div
+            className="text-primary btn-anim text-sm sm:text-base"
             onClick={() => navigate(-1)}
           >
             Seller Page
-          </span>
+          </div>
           <span className="mx-1 sm:mx-2 text-gray-400 text-sm sm:text-base">
             &gt;
           </span>

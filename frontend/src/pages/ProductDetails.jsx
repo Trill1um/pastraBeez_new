@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProductById } from "../stores/useProductStore.js";
 import cloudify from "../lib/cloudify.js";
@@ -22,7 +22,7 @@ const ProductDetails = () => {
     if (product?.images?.length > 0) {
       setCurrentImageIndex(0);
     }
-  }, [product?.id, product?.images]);
+  }, [product?._id, product?.images]);
 
   const nextImage = () => {
     if (product?.images?.length > 0) {

@@ -3,7 +3,6 @@ import cloudinary from "../lib/cloudinary.js";
 import toast from "react-hot-toast"
 
 // Function to get all products
-
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
@@ -36,7 +35,6 @@ export const getAllProducts = async (req, res) => {
 };
 
 export const createMyProduct = async (req, res) => {
-  console.log("creating product: ", req.body);
   try {
     const {
       name,
@@ -54,7 +52,6 @@ export const createMyProduct = async (req, res) => {
     if (!name || !description || !price || !category) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    console.log("passed validation 2");
     let cloudinaryResponses = [];
     
     additionalInfo.forEach(element => {
@@ -71,7 +68,6 @@ export const createMyProduct = async (req, res) => {
       console.error("Error uploading images to Cloudinary:", error);
       return res.status(500).json({ message: "Image upload failed" });
     }
-    console.log("passed validation 2");
     
     // Create new product
     const product = await Product.create({
@@ -84,12 +80,11 @@ export const createMyProduct = async (req, res) => {
       inStock,
       images:
       cloudinaryResponses
-      ?.filter((response) => response.secure_url)
-          .map((response) => response.secure_url) || [],
+        ?.filter((response) => response.secure_url)
+        .map((response) => response.secure_url) || [],
       additionalInfo,
     });
     
-    console.log("passed validation 3");
     res.status(201).json({ product, message: "Product created successfully" });
     toast.success("Product created successfully!");
   } catch (error) {
@@ -131,8 +126,6 @@ export const updateMyProduct = async (req, res) => {
       additionalInfo,
       imageChanged,
     } = req.body;
-
-    console.log("pre get by ID");
     const product = await Product.findById(req.params.id).populate(
       "sellerId",
       "colonyName"
@@ -147,8 +140,6 @@ export const updateMyProduct = async (req, res) => {
         .status(403)
         .json({ message: "You are not authorized to update this product" });
     }
-
-    console.log("You are authorized to update this product");
 
     // Handle image updates
     let updatedImages = product.images || [];
@@ -194,15 +185,11 @@ export const updateMyProduct = async (req, res) => {
             .status(400)
             .json({ message: "No images were successfully uploaded" });
         }
-        console.log("Updated images:", updatedImages);
       } catch (error) {
         console.error("Error handling Cloudinary images:", error);
         return res.status(500).json({ message: "Image processing failed" });
       }
     }
-    console.log("images update successful");
-
-    console.log("old product data:", product);
 
     // Update product fields
     product.name = name;
@@ -214,7 +201,6 @@ export const updateMyProduct = async (req, res) => {
     product.images = updatedImages;
     product.additionalInfo = additionalInfo;
 
-    console.log("new product data:", product);
     await product.save();
 
     res.status(200).json({
@@ -229,9 +215,7 @@ export const updateMyProduct = async (req, res) => {
 
 export const deleteMyProduct = async (req, res) => {
   try {
-    console.log("check proudct Id: ",req.params.id)
     const product = await Product.findById(req.params.id);
-    console.log("check user id: ",req.user.id, "check sellerId: ",product.sellerId._id.toString());
     if (req.user.id != product.sellerId._id) {
       return res
         .status(403)

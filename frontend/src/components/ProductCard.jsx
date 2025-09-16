@@ -1,7 +1,7 @@
 import cloudify from "../lib/cloudify";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
 //  Assets
 import accessoryIcon from "../assets/accessory.svg";
 import burgerIcon from "../assets/burger.svg";
@@ -14,6 +14,7 @@ import placeholder from "../assets/placeholder.png";
 
 const ProductCard = ({ product, isPreview = false }) => {
   // Function to get category icon based on product category
+  const navigate = useNavigate();
   const getCategoryIcon = (category) => {
     const iconMap = {
       Food: burgerIcon,
@@ -24,8 +25,6 @@ const ProductCard = ({ product, isPreview = false }) => {
     };
     return iconMap[category] || heartIcon;
   };
-  const navigate = useNavigate();
-  // console.log("product ",product)
   const [showOverlay, setShowOverlay] = useState(false);
   const onViewDetails = () => {
     if (isPreview) {
@@ -42,7 +41,15 @@ const ProductCard = ({ product, isPreview = false }) => {
 
   return (
     <>
-      <div className="group/card card flex flex-col rounded-[1.5rem] h-full min-h-[20vh] w-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+      <div className=" flex flex-col rounded-[1.5rem] h-full min-h-[20vh] w-full 
+
+    transition-all duration-300 ease-out
+    group-hover:-translate-y-6 -rotate-x-3
+    
+    "
+    // hover:shadow-xl 
+      // transition-all duration-300 hover:shadow-xl hover:-translate-y-2
+      >
         {/* Image Section */}
         <div className="flex flex-col rounded-t-[1.5rem] overflow-hidden h-[200px] w-full relative">
           <div className="w-full h-full overflow-hidden flex items-center justify-center relative">

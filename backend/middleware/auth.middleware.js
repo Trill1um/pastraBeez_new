@@ -4,8 +4,6 @@ import Seller from '../models/Seller.js';
 export const protectRoute = async (req, res, next) => {
     try {
         const token = req.cookies.accessToken;
-        console.log("Token from cookies:", token);
-        console.log("Access Token:", token);
         if (!token) {
             return res.status(401).json({ message: "Unauthorized - No Access Token Provided" });
         }
@@ -17,7 +15,6 @@ export const protectRoute = async (req, res, next) => {
                 return res.status(401).json({ message: "User not found" });
             }
             req.user = user; // Attach user to request object for further use
-            console.log("Authenticated user:", req.user.id);
             next();
         } catch (error) {
             if (error.name === 'TokenExpiredError') {

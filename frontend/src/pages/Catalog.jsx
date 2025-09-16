@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import BeeLoading from "../components/BeeLoadingScreen";
 import { useProcessedProducts } from "../stores/useProductStore.js";
@@ -17,13 +17,14 @@ const FILTER_CONFIG = {
     label: "📂 Category",
     type: "select",
     options: [
-      { value: null, label: "All Categories", icon:OtherIcon},
-      { value: "Food", label: "Food", icon: FoodIcon  },
-      { value: "Drinks", label: "Drinks", icon: DrinksIcon  },
+      { value: null, label: "All Categories", icon: OtherIcon },
+      { value: "Food", label: "Food", icon: FoodIcon },
+      { value: "Drinks", label: "Drinks", icon: DrinksIcon },
       { value: "Accessories", label: "Accessories", icon: AccessoryIcon },
       { value: "Clothes", label: "Clothes", icon: ClothesIcon },
-      { value: "Other", label: "Other", icon: OtherIcon},
+      { value: "Other", label: "Other", icon: OtherIcon },
     ],
+    color: "bg-blue-100 text-blue-800 border-blue-300"
   },
   inStock: {
     key: "inStock",
@@ -34,6 +35,7 @@ const FILTER_CONFIG = {
       { value: true, label: "In Stock" },
       { value: false, label: "Out of Stock" },
     ],
+    color: "bg-green-100 text-green-800 border-green-300"
   },
   isLimited: {
     key: "isLimited",
@@ -44,6 +46,7 @@ const FILTER_CONFIG = {
       { value: true, label: "Limited Edition" },
       { value: false, label: "Regular Items" },
     ],
+    color: "bg-purple-100 text-purple-800 border-purple-300"
   },
   sortBy: {
     key: "sortBy",
@@ -53,7 +56,6 @@ const FILTER_CONFIG = {
       { value: "name", label: "Product Name" },
       { value: "price", label: "Price" },
       { value: "createdAt", label: "Date Created" },
-      { value: "category", label: "Category" },
     ],
   },
 };
@@ -89,23 +91,16 @@ const PageHeader = () => (
   </section>
 );
 
-const FilterSelect = ({ id, config, value, onChange }) => {
-  const {isFilterShow, setFilterShow, toggleFilterShow}=useProcessedProducts();
-  useEffect(() => {
-    const detect = (event) => {
-      console.log("clicked dropdown: ", !event.target.closest(".dropdown"));
-      if (!event.target.closest(".dropdown")) setFilterShow(null);
-    };
-    document.addEventListener("click", detect);
-    return () => {
-      document.removeEventListener("click", detect);
-    };
-  }, [setFilterShow]);
-  
+const FilterSelect = ({
+  id,
+  config,
+  value,
+  onChange,
+  whichFilterShow,
+  setFilterShow,
+}) => {
   //option object
-  const selectedOption = config.options.find(
-    (opt) => (opt.value) === value
-  );
+  const selectedOption = config.options.find((opt) => opt.value === value);
   return (
     <div className="relative">
       {/* Label with bee styling */}
@@ -117,11 +112,13 @@ const FilterSelect = ({ id, config, value, onChange }) => {
       <div className="dropdown relative">
         <button
           onClick={() => {
-            toggleFilterShow(id)
-            console.log("id: ", id, " isFilterShow: ", isFilterShow)
-
+            setFilterShow((state) => (state === id ? null : id));
           }}
-          className={` ${ isFilterShow===id?"ring-2  ring-amber-400 border-amber-400": "border-[#f7b81a]"}
+          className={` ${
+            whichFilterShow === id
+              ? "ring-2  ring-amber-400 border-amber-400"
+              : "border-[#f7b81a]"
+          }
                 w-full px-4 py-3 rounded-xl border-2 
                 hover:from-amber-100 hover:via-yellow-100 hover:to-amber-100
                 hover:border-amber-300
@@ -134,14 +131,20 @@ const FilterSelect = ({ id, config, value, onChange }) => {
               `}
         >
           <div className="flex items-center gap-2">
-          {selectedOption?.icon && <selectedOption.icon className="text-amber-600 stroke-current w-4 h-4" />}
+            {selectedOption?.icon && (
+              <selectedOption.icon className="text-amber-600 stroke-current w-4 h-4" />
+            )}
             {selectedOption?.label || "Select..."}
           </div>
-          <ArrowIcon className={`text-amber-600 stroke-current w-4 h-4 ${isFilterShow===null? "rotate-180": ""}`} />
+          <ArrowIcon
+            className={`text-amber-600 stroke-current w-4 h-4 ${
+              whichFilterShow === null ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
         {/* Dropdown Menu */}
-        {isFilterShow===id && (
+        {whichFilterShow === id && (
           <div
             className="
                   absolute top-full left-0 right-0 mt-2 z-50 bg-white border-2 border-amber-200 rounded-xl shadow-lg animate-in slide-in-from-top-2 duration-200"
@@ -152,8 +155,8 @@ const FilterSelect = ({ id, config, value, onChange }) => {
                 <button
                   key={option.value}
                   onClick={() => {
-                    onChange(config.key, option.value)
-                    toggleFilterShow(null)
+                    onChange(config.key, option.value);
+                    setFilterShow(null);
                   }}
                   className={`
                           w-full text-left px-4 py-3 cursor-pointer transition-all duration-200 gap-2 flex items-center gap-2border-b border-amber-100 last:border-b-0 bee-body-text-desktop
@@ -164,15 +167,17 @@ const FilterSelect = ({ id, config, value, onChange }) => {
                           }
 
                           ${
-                            index === 0 ? 
-                              "rounded-t-xl" 
-                            : index=== config.options.length - 1?      
-                              "rounded-b-xl"
-                            : ""
+                            index === 0
+                              ? "rounded-t-xl"
+                              : index === config.options.length - 1
+                              ? "rounded-b-xl"
+                              : ""
                           }
                         `}
                 >
-                  {option?.icon && <option.icon className="text-amber-600 stroke-current w-4 h-4" />}
+                  {option?.icon && (
+                    <option.icon className="text-amber-600 stroke-current w-4 h-4" />
+                  )}
                   {option.label}
                   {isSelected && (
                     <span className="ml-auto text-amber-600">✓</span>
@@ -185,7 +190,7 @@ const FilterSelect = ({ id, config, value, onChange }) => {
       </div>
 
       {/* Optional: Floating bee decoration */}
-      {isFilterShow===id && (
+      {whichFilterShow === id && (
         <div className="absolute -top-1 -right-1 text-lg animate-bounce z-50">
           🐝
         </div>
@@ -196,40 +201,23 @@ const FilterSelect = ({ id, config, value, onChange }) => {
 
 const ActiveFilters = ({ filters, onReset }) => {
   const getFilterTags = () => {
-    const tags = [];
+    const tags = Object.entries(FILTER_CONFIG)
+      .filter(([key]) => key != "sortBy" && filters[key] !== null)
+      .map(([key, config]) => {
+        const option = config.options.find((opt) => opt.value === filters[key]);
+        return {
+          key,
+          label: option?.label,
+          icon: option?.icon,
+          color: config.color,
+        }
+      });
 
     if (filters.searchTerm) {
       tags.push({
         key: "search",
         label: `🔍 "${filters.searchTerm}"`,
-        color: "amber",
-      });
-    }
-
-    if (filters.category !== null && filters.category !== "all") {
-      const categoryOption = FILTER_CONFIG.category.options.find(
-        (opt) => opt.value === filters.category
-      );
-      tags.push({
-        key: "category",
-        label: `📂 ${categoryOption?.label || filters.category}`,
-        color: "blue",
-      });
-    }
-
-    if (filters.inStock !== null) {
-      tags.push({
-        key: "inStock",
-        label: `📦 ${filters.inStock ? "In Stock" : "Out of Stock"}`,
-        color: "green",
-      });
-    }
-
-    if (filters.isLimited !== null) {
-      tags.push({
-        key: "isLimited",
-        label: `⭐ ${filters.isLimited ? "Limited" : "Regular"}`,
-        color: "purple",
+        color: "bg-amber-100 text-amber-800 border-amber-300",
       });
     }
 
@@ -239,30 +227,21 @@ const ActiveFilters = ({ filters, onReset }) => {
   const filterTags = getFilterTags();
   const hasActiveFilters = filterTags.length > 0;
 
-  const getTagClasses = (color) => {
-    const colorClasses = {
-      amber: "bg-amber-100 text-amber-800 border-amber-300",
-      blue: "bg-blue-100 text-blue-800 border-blue-300",
-      green: "bg-green-100 text-green-800 border-green-300",
-      purple: "bg-purple-100 text-purple-800 border-purple-300",
-    };
-    return `px-3 py-1 rounded-full text-sm border ${
-      colorClasses[color] || colorClasses.blue
-    }`;
-  };
-
   return (
     <div className="flex flex-wrap items-center gap-2">
       {filterTags.map((tag) => (
-        <span key={tag.key} className={getTagClasses(tag.color)}>
+        <div key={tag.key} className={`${tag.color} px-3 py-1 rounded-full text-sm border btn-anim flex items-center `}>
+          {tag.icon && (
+            <tag.icon className="inline-block w-full aspect-auto mr-1 text-current stroke-current" />
+          )}
           {tag.label}
-        </span>
+        </div>
       ))}
 
       {hasActiveFilters && (
         <button
           onClick={onReset}
-          className="px-4 py-2 rounded-full text-sm bg-red-100 text-red-800 border border-red-300 hover:bg-red-200 transition-colors duration-300"
+          className="px-4 py-2 rounded-full text-sm bg-red-100 text-red-800 border border-red-300 hover:bg-red-200 transition-colors duration-300 btn-anim"
         >
           🔄 Reset All
         </button>
@@ -271,26 +250,32 @@ const ActiveFilters = ({ filters, onReset }) => {
   );
 };
 
-const FilterSection = ({
-  showFilters,
-  onToggleFilters,
-  filters,
-  sortBy,
-  sortOrder,
-  onFilterChange,
-  onSortByChange,
-  onToggleSortOrder,
-  onResetFilters,
-  productCount,
-}) => {
-  const getSortLabel = () => {
-    const labels = {
-      price: sortOrder === "asc" ? "Low-High" : "High-Low",
-      createdAt: sortOrder === "asc" ? "Old-New" : "New-Old",
-      default: sortOrder === "asc" ? "A-Z" : "Z-A",
+const FilterSection = ({ productCount }) => {
+  const {
+    filters,
+    sort,
+    labels,
+    setFilter,
+    setSortBy,
+    toggleSortOrder,
+    resetFilters,
+  } = useProcessedProducts();
+
+  const [showFilters, setShowFilters] = useState(false);
+  const onToggleFilters = () => setShowFilters(!showFilters);
+
+  const [whichFilterShow, setFilterShow] = useState(null);
+
+  useEffect(() => {
+    const detect = (event) => {
+      if (!event.target.closest(".dropdown")) setFilterShow(null);
     };
-    return labels[sortBy] || labels.default;
-  };
+    document.addEventListener("click", detect);
+    return () => {
+      document.removeEventListener("click", detect);
+    };
+  }, []);
+
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
       <div className="bg-white rounded-[1.5rem] p-4 lg:p-6 mb-6 lg:mb-8 max-w-[1440px] mx-auto shadow-lg">
@@ -321,7 +306,6 @@ const FilterSection = ({
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search Input with Sort Order Button */}
-
             <div className="sm:col-span-2 flex-col flex justify-between lg:col-span-4">
               <label
                 htmlFor="search"
@@ -335,38 +319,46 @@ const FilterSection = ({
                   type="text"
                   placeholder="Search products or sellers..."
                   value={filters.searchTerm}
-                  onChange={(e) => onFilterChange("searchTerm", e.target.value)}
+                  onChange={(e) => setFilter("searchTerm", e.target.value)}
                   className="outline-none sm:flex-2 md:flex-4 px-4 py-3 rounded-[0.75rem] border-2 bg-white  bee-body-text-desktop border-[#f7b81a]"
                 />
                 <button
-                  onClick={onToggleSortOrder}
+                  onClick={() => {
+                    toggleSortOrder();
+                  }}
                   className={`transition-all duration-300 cursor-pointer flex-1 outline-none px-3 py-3 rounded-[0.75rem] border-2 bee-body-text-desktop ${
-                    sortOrder != "asc" ? "btn-primary" : "btn-unactive"
+                    sort.order != "asc" ? "btn-primary" : "btn-unactive"
                   }`}
                 >
-                  {sortOrder === "asc" ? "⬆️" : "⬇️"} {getSortLabel()}
+                  {labels[sort.by].direction[sort.order] || "Sort Order"}
                 </button>
               </div>
             </div>
 
             {/* Dynamic Filter Selects */}
+
             {Object.entries(FILTER_CONFIG)
-              .filter(([key]) => key!="sortBy")
+              .filter(([key]) => key != "sortBy")
               .map(([key, config]) => (
                 <FilterSelect
                   id={`filter-${config.key}`}
                   key={key}
                   config={config}
                   value={filters[config.key]}
-                  onChange={onFilterChange}
+                  onChange={setFilter}
+                  whichFilterShow={whichFilterShow}
+                  setFilterShow={setFilterShow}
                 />
               ))}
 
             {/* Sort By Select */}
             <FilterSelect
+              id={`filter-${FILTER_CONFIG.sortBy.key}`}
               config={FILTER_CONFIG.sortBy}
-              value={sortBy}
-              onChange={(_, value) => onSortByChange(value)}
+              value={sort.by}
+              onChange={(_, value) => setSortBy(value)}
+              whichFilterShow={whichFilterShow}
+              setFilterShow={setFilterShow}
             />
           </div>
 
@@ -379,7 +371,7 @@ const FilterSection = ({
               🍯 Found {productCount} Honey Cells!
             </p>
 
-            <ActiveFilters filters={filters} onReset={onResetFilters} />
+            <ActiveFilters filters={filters} onReset={resetFilters} />
           </div>
         </div>
       </div>
@@ -388,33 +380,15 @@ const FilterSection = ({
 };
 
 const ProductGrid = ({ products }) => {
-  if (products.length === 0) {
-    return (
-      <div className="text-center py-16 lg:py-20">
-        <div className="text-6xl lg:text-8xl mb-6 animate-bounce">🐝</div>
-        <h3
-          className="bee-title-h4-desktop mb-4"
-          style={{ color: "var(--blue)" }}
-        >
-          No honey found in this hive!
-        </h3>
-        <p
-          className="bee-body-text-desktop mb-8 max-w-md mx-auto"
-          style={{ color: "var(--maroon)" }}
-        >
-          Buzz buzz... looks like our bees are still gathering products that
-          match your search. Try adjusting your filters to discover more sweet
-          treats!
-        </p>
-      </div>
-    );
-  }
-
+  const {isLoading} = useProcessedProducts((state) => state.isLoading);
+  // const isLoading=true;
+  products = isLoading ? Array.from({ length: 6 }) : products;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
       {products.map((product) => (
-        <div key={product._id} className="product-card-hover">
-          <ProductCard product={product} />
+        <div key={product?._id } className="will-change-transform group bg-amber-400 rounded-[1.5rem]">
+          {isLoading?<div className="w-full min-h-[430px] h-full bg-gray-300 rounded-[1.5rem]">
+          </div>:<ProductCard product={product} />}
         </div>
       ))}
     </div>
@@ -423,30 +397,8 @@ const ProductGrid = ({ products }) => {
 
 // ============ MAIN COMPONENT ============
 const Catalog = () => {
-  const [showFilters, setShowFilters] = useState(false);
-
   // Use the processed products hook
-  const {
-    products: filteredProducts,
-    isLoading,
-    error,
-    filters,
-    sortBy, 
-    sortOrder,
-    setFilter,
-    setSortBy,
-    toggleSortOrder,
-    resetFilters,
-  } = useProcessedProducts();
-
-  // Handlers
-  const handleToggleFilters = () => setShowFilters(!showFilters);
-  const handleFilterChange = (key, value) => setFilter(key, value);
-  const handleSortByChange = (value) => setSortBy(value);
-  const handleResetFilters = () => {
-    resetFilters();
-    setShowFilters(false); // Hide filters on mobile after reset
-  };
+  const { products, error } = useProcessedProducts();
 
   // Error state
   if (error) {
@@ -470,22 +422,11 @@ const Catalog = () => {
       <BeeBackground />
       <PageHeader />
 
-      <FilterSection
-        showFilters={showFilters}
-        onToggleFilters={handleToggleFilters}
-        filters={filters}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onFilterChange={handleFilterChange}
-        onSortByChange={handleSortByChange}
-        onToggleSortOrder={toggleSortOrder}
-        onResetFilters={handleResetFilters}
-        productCount={filteredProducts.length}
-      />
+      <FilterSection productCount={products.length} />
 
       <main className="w-full px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16">
         <div className="max-w-[1440px] mx-auto">
-          <ProductGrid products={filteredProducts} />
+          <ProductGrid products={products} />
         </div>
       </main>
     </div>

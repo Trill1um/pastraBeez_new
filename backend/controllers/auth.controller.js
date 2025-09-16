@@ -4,14 +4,33 @@ import jwt from "jsonwebtoken";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const generateToken = (userId) => {
+const cookieConfiguration = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Strict",
+}
+
+const genSetAccessToken = (res, userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
   });
+
+  res.cookie("accessToken", accessToken, {
+    ...cookieConfiguration,
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  });
+  return accessToken;
+};
+
+const genSetRefreshToken = (res, userId) => {
   const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: "7d",
   });
-  return { accessToken, refreshToken };
+  res.cookie("refreshToken", refreshToken, {
+    ...cookieConfiguration,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+  return refreshToken;
 };
 
 const storeRefreshToken = async (userId, refreshToken) => {
@@ -27,39 +46,11 @@ const storeRefreshToken = async (userId, refreshToken) => {
   }
 };
 
-const cookieConfiguration = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "None" : "Strict",
-  path: "/",
-  partitioned: isProduction ? true : undefined,
-}
-
 //Config: Production = secure-true, sameSite-none; Development = secure-false, sameSite-Strict
-const setCookies = (res, accessToken, refreshToken) => {
-  res.cookie("accessToken", accessToken, {
-    ...cookieConfiguration,
-    ...cookieConfiguration,
-    maxAge: 15 * 60 * 1000, // 15 minutes
-  });
-  res.cookie("refreshToken", refreshToken, {
-    ...cookieConfiguration,
-    ...cookieConfiguration,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
-
-
-  console.log("Cookies set: ", { accessToken, refreshToken })
-    console.log("🍪 Sent cookies:", {
-    accessToken: res.getHeader("Set-Cookie")?.find(c => c.includes("accessToken")),
-    refreshToken: res.getHeader("Set-Cookie")?.find(c => c.includes("refreshToken")),
-  });
-};
 
 export const login = async (req, res) => {
   try {
     console.log("login route activated");
-    console.log("isProduction: ",isProduction);
     const { email, password } = req.body;
 
     // Validate input
@@ -77,9 +68,9 @@ export const login = async (req, res) => {
     }
 
     // Generate tokens
-    const { accessToken, refreshToken } = generateToken(user._id);
+    const accessToken = genSetAccessToken(res, user._id);
+    const refreshToken = genSetRefreshToken(res, user._id);
     await storeRefreshToken(user._id, refreshToken);
-    setCookies(res, accessToken, refreshToken);
 
     res.status(200).json({
       user: {
@@ -122,17 +113,14 @@ export const signup = async (req, res) => {
     if (!messengerLink || messengerLink.trim() === "") {
       return res.status(400).json({
         message:
-          "Messenger link is required - buyers need a way to contact you!",
+          "Facebook link is required - buyers need a way to contact you!",
       });
     }
 
-    if (
-      !messengerLink.includes("m.me/") &&
-      !messengerLink.includes("messenger.com/")
-    ) {
+    if (!messengerLink.includes("www.facebook.com/")) {
       return res.status(400).json({
         message:
-          "Please enter a valid Messenger link (m.me/username or messenger.com/t/username)",
+          "Please enter a valid Facebook link (www.facebook.com/...)",
       });
     }
 
@@ -152,7 +140,7 @@ export const signup = async (req, res) => {
       messengerLink,
     });
 
-    // Call Login immediately after signup
+    // Call login() immediately after signup
     req.body.email = email;
     req.body.password = password;
     return login(req, res);
@@ -202,15 +190,7 @@ export const refreshToken = async (req, res) => {
     }
 
     // Generate new access token only
-    const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "15m",
-    });
-
-    res.cookie("accessToken", accessToken, {
-      ...cookieConfiguration,
-      ...cookieConfiguration,
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
+    genSetAccessToken(res, userId);
 
     res.status(200).json({ message: "Tokens refreshed successfully" });
   } catch (error) {

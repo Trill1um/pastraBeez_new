@@ -1,47 +1,42 @@
-import { useUserStore } from "../stores/useUserStore.js";
 import {
   useSellerProducts,
   useProcessedProducts,
 } from "../stores/useProductStore";
 import cloudify from "../lib/cloudify.js";
 import { useNavigate } from "react-router-dom";
+import PlusIcon from "../assets/plus-sign.svg?react";
 
-import plusIcon from "../assets/plus-sign.svg";
-import accessoryIcon from "../assets/accessory.svg";
-import burgerIcon from "../assets/burger.svg";
-import drinksIcon from "../assets/drinks.svg";
-import hoodieIcon from "../assets/hoodie.svg";
-import otherIcon from "../assets/other.svg";
-import heartIcon from "../assets/icon-heart.svg";
+import DrinksIcon from "../assets/drinks.svg?react";
+import FoodIcon from "../assets/burger.svg?react";
+import AccessoryIcon from "../assets/accessory.svg?react";
+import ClothesIcon from "../assets/hoodie.svg?react";
+import OtherIcon from "../assets/other.svg?react";
+
 import { useState } from "react";
 
 import placeholder from "../assets/placeholder.png";
 
-const SellerProducts = () => {
+const SellerProducts = ({user}) => {
   const navigate = useNavigate();
   // Icon variables - replace these with your preferred icons/assets
   const ICONS = {
     bee: "🐝",
     edit: "✏️",
     delete: "🗑️",
-    Accessories: <img src={accessoryIcon} alt="Accessory" className="w-5 h-5" />,
-    Food: <img src={burgerIcon} alt="Burger" className="w-5 h-5" />,
-    Drinks: <img src={drinksIcon} alt="Drinks" className="w-5 h-5" />,
-    Clothes: <img src={hoodieIcon} alt="Hoodie" className="w-5 h-5" />,
-    Other: <img src={otherIcon} alt="Other" className="w-5 h-5" />,
-    Heart: <img src={heartIcon} alt="Heart" className="w-5 h-5" />,
+  Accessories: <AccessoryIcon className="text-amber-600 stroke-current w-5 h-5" />,
+  Food: <FoodIcon className="text-amber-600 stroke-current w-5 h-5" />,
+  Drinks: <DrinksIcon className="text-amber-600 stroke-current w-5 h-5" />,
+  Clothes: <ClothesIcon className="text-amber-600 stroke-current w-5 h-5" />,
+  Other: <OtherIcon className="text-amber-600 stroke-current w-5 h-5" />,
   };
 
-  const user = useUserStore((state) => state.user?._id);
-
-  console.log("user in seller page: ", user);
-  const { sellerProducts, isLoading, error } = useSellerProducts(user);
-  const { deleteProductAsync, isLoadingD } = useProcessedProducts();
+  const { sellerProducts, isLoading, error } = useSellerProducts(user._id);
+  const { deleteProductAsync, isDeleting, isCreating } = useProcessedProducts();
 
   // Update local products when filtered products change
   const handleEdit = (product) => {
     console.log("editihng: ", product)
-    navigate(`/create-my-product`, { state: { product: product } });
+    navigate(`/myProduct/editing-${product._id}`);
     // Add your edit logic here
   };
 
@@ -94,7 +89,7 @@ const SellerProducts = () => {
   );
 
   const handleAddProduct = () => {
-    navigate("/create-my-product", { state: { from: "Seller Page" } });
+    navigate("/myProduct/creation");
   };
 
   if (isLoading) {
@@ -127,7 +122,7 @@ const SellerProducts = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 p-3 sm:p-6">
-      <div className={`${isLoadingD?"opacity-20":"opacity-100"} max-w-7xl mx-auto`}>
+      <div className={`${isDeleting||isCreating?"opacity-50 cursor-not-allowed pointer-events-none":" pointer-events-auto opacity-100"} max-w-7xl mx-auto`}>
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex items-center justify-between">
@@ -427,10 +422,7 @@ const SellerProducts = () => {
             onClick={handleAddProduct}
             className="btn-anim w-full py-3 sm:py-4 border-2 border-dashed border-amber-300 rounded-2xl text-amber-700 font-medium bg-amber-50/50 hover:bg-amber-100/50 transition-colors duration-200 flex items-center justify-center gap-2"
           >
-            <img
-              className="text-lg opacity-40 w-4 h-4 sm:w-5 sm:h-5"
-              src={plusIcon}
-            />
+            <PlusIcon className="text-amber-800 stroke-current w-4 h-4" />
             Add a Honey Cell
           </button>
         </div>

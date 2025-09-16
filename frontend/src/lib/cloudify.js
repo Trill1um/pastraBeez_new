@@ -9,17 +9,20 @@ export default function cloudinaryImage(url, type, isPreview) {
     }
 
     let transformation = "";
-
-    if (type === "grid") {
-      // Smaller size for product cards
-      transformation = "w_400,h_400,c_fill,f_auto,q_auto";
-    } else if (type === "detail") {
-      // Larger image for product detail page
-      transformation = "w_1200,f_auto,q_auto";
-    } else if (type === "thumbnail") {
-      transformation = "w_150,h_150,c_fill,f_auto,q_auto";
-    } else {
-      throw new Error(`Unknown type: ${type}`);
+    switch (type) {
+      case "grid":
+        // Smaller size for product cards
+        transformation = "w_400,h_400,c_fill,f_auto,q_auto";
+        break;
+      case "detail":
+        // Larger image for product detail page
+        transformation = "w_1200,f_auto,q_auto";
+        break;
+      case "thumbnail":
+        transformation = "w_150,h_150,c_fill,f_auto,q_auto";
+        break;
+      default:
+        throw new Error(`Unknown type: ${type}`);
     }
 
     return `${parts[0]}/upload/${transformation}/${parts[1]}`;

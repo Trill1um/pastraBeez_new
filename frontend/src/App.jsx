@@ -50,15 +50,15 @@ function App() {
               path="/SellerPage"
               element={
                 <ProtectedRoute user={user}>
-                  <SellerPage />
+                  <SellerPage user={user}/>
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/create-my-product"
+              path="/myProduct/:id"
               element={
                 <ProtectedRoute user={user}>
-                  <CreationPage user={user}/>
+                  <CreationPage user={user} />
                 </ProtectedRoute>
               }
             />

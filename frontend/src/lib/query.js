@@ -122,3 +122,13 @@ export function useInvalidateProducts() {
     }
   };
 }
+
+        // showFilters={showFilters}
+        // filters={filters}
+        // sort={sort}
+        // labels={labels}
+        // onFilterChange={handleFilterChange}
+        // onSortByChange={handleSortByChange}
+        // onToggleSortOrder={toggleSortOrder}
+        // onResetFilters={handleResetFilters}
+        // productCount={products.length}

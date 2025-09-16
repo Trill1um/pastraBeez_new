@@ -152,18 +152,6 @@
   transform: scale(1.05);
 }
 
-/* Card Components */
-.card {
-  background-color: var(--white);
-  box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15);
-  transform: translateY(-8px);
-}
-
 /* Footer Components */
 .footer {
   background-color: var(--orange);
