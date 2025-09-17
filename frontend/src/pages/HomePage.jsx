@@ -132,6 +132,11 @@ const HoneyCell = ({className=""}) => {
 
 const HomePage = () => {
   return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+      <h1 className="bee-logo-desktop text-4xl text-yellow-700">Home Page Coming Soon!</h1>
+  </div>
+  )
+  return (
     <div className="relative w-full min-h-screen flex flex-col items-start justify-start font-fredoka bg-white overflow-hidden">
       {/* Hero Section */}
       <div className="flex flex-col items-center justify-start w-full">
@@ -155,7 +160,7 @@ const HomePage = () => {
             <h2 className="bee-title font-bold text-[24px] lg:bee-title-h4-desktop not-italic w-fit">
               Welcome Busy Beez
             </h2>
-            <p className="text-center lg:text-start  lg:bee-body-h6-desktop w-fit">
+            <p className="text-center lg:text-start bee-body-h6-desktop w-fit">
               Your go-to e-catalog for unique creations, made for students, by
               students.
             </p>
@@ -200,10 +205,10 @@ const HomePage = () => {
 
             {/* Description */}
             <div className="flex order-2 flex-2 flex-col gap-4 items-start leading-none relative shrink-0 weight text-black w-96">
-              <h2 className="font-bold text-4xl bee-title w-full">
+              <h2 className="bee-title font-bold bee-title-h4-desktop not-italic w-fit">
                 What's in the Hive?
               </h2>
-              <p className=" w-full bee-body-h6-desktop opacity-90">
+              <p className="text-center lg:text-start bee-body-h6-desktop w-fit">
                 From the sweetest snacks to the handiest supplies, the hive has
                 something for every moment in your day.
               </p>
