@@ -1,13 +1,12 @@
 import Product from "../models/Products.js";
 import cloudinary from "../lib/cloudinary.js";
-import toast from "react-hot-toast"
 
 // Function to get all products
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
       "sellerId",
-      "colonyName messengerLink"
+      "colonyName facebookLink"
     );
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -23,7 +22,7 @@ export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({}).populate(
       "sellerId",
-      "colonyName messengerLink"
+      "colonyName facebookLink"
     );
     res
       .status(200)
@@ -86,7 +85,6 @@ export const createMyProduct = async (req, res) => {
     });
     
     res.status(201).json({ product, message: "Product created successfully" });
-    toast.success("Product created successfully!");
   } catch (error) {
     console.error("Error creating product:", error);
     res.status(500).json({ message: "Internal Server Error" });

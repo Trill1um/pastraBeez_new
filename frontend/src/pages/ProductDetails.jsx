@@ -49,8 +49,8 @@ const ProductDetails = () => {
   };
 
   const handleBuy = () => {
-    if (product && product.sellerId && product.sellerId.messengerLink) {
-      window.open(product.sellerId.messengerLink, "_blank");
+    if (product && product.sellerId && product.sellerId.facebookLink) {
+      window.open("https://m.me/" + product.sellerId.facebookLink, "_blank");
     }
   };
 // cloudify(product.images?.[currentImageIndex] || '', "detail", false
@@ -206,10 +206,9 @@ const ProductDetails = () => {
                     <h1 className="bee-title text-accent text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-fredoka">
                       {product.name}
                     </h1>
-
                     {/* Price */}
                     <div className="bee-price text-brand text-3xl sm:text-4xl font-bold mb-6 font-fredoka">
-                      ${product.price}
+                      &#8369; {product.price}
                     </div>
                   </div>
 

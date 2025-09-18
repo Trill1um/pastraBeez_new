@@ -9,7 +9,7 @@ const AuthPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    messengerLink: "",
+    facebookLink: "",
     acceptTerms: false,
   });
   const [errors, setErrors] = useState({});
@@ -24,7 +24,7 @@ const AuthPage = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      messengerLink: "",
+      facebookLink: "",
       acceptTerms: false,
     });
     setErrors({});
@@ -71,21 +71,16 @@ const AuthPage = () => {
         newErrors.confirmPassword = "Passwords do not match";
       }
 
-      if (!formData.messengerLink) {
-        newErrors.messengerLink = "Messenger link is required";
-      } else if (
-        !formData.messengerLink.includes("m.me/") &&
-        !formData.messengerLink.includes("messenger.com/")
-      ) {
-        newErrors.messengerLink =
-          "Please provide a valid Messenger link (e.g., m.me/username)";
+      if (!formData.facebookLink) {
+        newErrors.facebookLink = "Messenger link is required";
+      } else if (!formData.facebookLink.includes("www.facebook.com/")) {
+        newErrors.facebookLink = "Please provide a valid Facebook link (www.facebook.com/...)";
       }
 
       if (!formData.acceptTerms) {
         newErrors.acceptTerms = "Please accept the terms and conditions";
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -106,7 +101,7 @@ const AuthPage = () => {
         formData.email,
         formData.password,
         formData.confirmPassword,
-        formData.messengerLink
+        formData.facebookLink
       );
     }
   };
@@ -140,6 +135,7 @@ const AuthPage = () => {
           <p className="text-gray-700 mb-3">This research tool collects:</p>
           <ul className="list-disc list-inside text-gray-700 mb-4 space-y-1">
             <li>Email addresses for account creation</li>
+            <li>Facebook Account for buyer-seller communication</li>
             <li>Survey responses for research analysis</li>
             <li>Usage patterns to improve the tool</li>
           </ul>
@@ -151,10 +147,10 @@ const AuthPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 lg:py-16 max-w-[1440px] mx-auto">
+      <div className="min-h-screen px-4  sm:px-6 lg:px-8 py-8 lg:py-16 max-w-[1440px] mx-auto">
         <div className="flex items-center justify-center min-h-[70vh]">
           {/* Form Container */}
-          <div className="card rounded-[50px] p-8 lg:p-16 shadow-xl max-w-2xl w-full">
+          <div className="card rounded-[50px] bg-white p-8 lg:p-16 shadow-xl max-w-2xl w-full">
             {/* Header Section */}
             <div className="text-center mb-8">
               <div
@@ -301,22 +297,22 @@ const AuthPage = () => {
                   </label>
                   <input
                     type="url"
-                    value={formData.messengerLink}
+                    value={formData.facebookLink}
                     onChange={(e) =>
-                      handleInputChange("messengerLink", e.target.value)
+                      handleInputChange("facebookLink", e.target.value)
                     }
                     placeholder="https://www.facebook.com/your.username"
                     className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.messengerLink ? "border-accent" : ""
+                      errors.facebookLink ? "border-accent" : ""
                     }`}
                   />
                   <p className="text-secondary bee-body-text-desktop text-sm mt-1">
                     Note: Go to your Facebook (Web) Profile Page and copy the
                     URL
                   </p>
-                  {errors.messengerLink && (
+                  {errors.facebookLink && (
                     <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                      {errors.messengerLink}
+                      {errors.facebookLink}
                     </p>
                   )}
                 </div>

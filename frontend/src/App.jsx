@@ -25,8 +25,8 @@ const PublicOnlyRoute = ({ children, user }) => {
 };
 
 function App() {
-  const { user, checkAuth, checkingAuth } = useUserStore();
-
+  const { checkAuth, checkingAuth } = useUserStore();
+  const user = useUserStore((state) => state.user);
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);

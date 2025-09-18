@@ -8,7 +8,7 @@ const ProfileSection = ({ user }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
+  console.log("User in NavBar:", user);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {

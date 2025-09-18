@@ -7,7 +7,7 @@ export const useUserStore = create((set, get) => ({
   loading: false,
   checkingAuth: true,
 
-  signUp: async (colonyName, email, password, confirmPassword, messengerLink) => {
+  signUp: async (colonyName, email, password, confirmPassword, facebookLink) => {
     set({loading: true});
     if (password !== confirmPassword) {
       set({loading: false});
@@ -18,12 +18,13 @@ export const useUserStore = create((set, get) => ({
           colonyName,
           email,
           password,
-          messengerLink,
+          facebookLink,
           confirmPassword
         });
-        console.log(response.data);
         set({user: response.data, loading: false});
+        console.log("Signup response data from user store", response.data);
         toast.success('Welcome to PastraBeez! Colony registered successfully! 🐝');
+        await get().checkAuth();
     } catch (error) {   
         set({loading: false});
         toast.error(error.message || 'Sign up failed. Please try again later.');
@@ -40,8 +41,9 @@ export const useUserStore = create((set, get) => ({
         });
         
         set({user: response.data, loading: false});
+        console.log('Login response data from user store:', response.data);
         toast.success('Welcome back to the hive! 🍯');
-        await get().checkAuth(); 
+        await get().checkAuth();
     } catch (error) {
         set({loading: false});
         toast.error(error.response.data.message || 'Login failed. Please try again later.');

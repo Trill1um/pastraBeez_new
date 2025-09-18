@@ -25,16 +25,10 @@ const sellerSchema = new mongoose.Schema({
         maxlength: 1024,
         minlength: [6, 'Password must be at least 6 characters long']
     },
-    messengerLink: {
+    facebookLink: {
         type: String,
         required: [true, 'Messenger link is required'],
         trim: true,
-        validate: {
-            validator: function(v) {
-                return v.includes('m.me/') || v.includes('messenger.com/');
-            },
-            message: 'Please provide a valid Messenger link'
-        }
     }
 }, {
     timestamps: true

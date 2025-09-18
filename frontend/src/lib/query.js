@@ -17,6 +17,7 @@ const fetchAllProducts = async () => {
 const createProduct = async (productData) => {
   const response = await axios.post('/products/create-my-product', productData);
   console.log("Product created:", response.data);
+  toast.success(response.data.message);
   return response.data;
 };
 
@@ -59,8 +60,6 @@ export function useCreateProduct() {
       queryClient.invalidateQueries({ 
         queryKey: productQueryKeys.all 
       });
-      
-      toast.success("Product created successfully!");
     },
     onError: (error) => {
       console.error("Error creating product:", error);

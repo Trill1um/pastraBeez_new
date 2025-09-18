@@ -48,48 +48,69 @@ const storeRefreshToken = async (userId, refreshToken) => {
 
 //Config: Production = secure-true, sameSite-none; Development = secure-false, sameSite-Strict
 
-export const login = async (req, res) => {
+const loginLogic = async (email, password, res) => {
   try {
-    console.log("login route activated");
-    const { email, password } = req.body;
-
+    console.log("loginLogic activated for email:", email);
+    
     // Validate input
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+      throw new Error("Email and password are required");
     }
-
+    
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error("Invalid email format");
+    }
+    
     // Check credentials
     const user = await Seller.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
-      console.log("Invalid Credentials");
-      return res.status(404).json({ message: "Invalid Credentials" });
+      console.log("Invalid login attempt for email:", email);
+      throw new Error("Invalid email or password");
     }
-
+    
     // Generate tokens
     const accessToken = genSetAccessToken(res, user._id);
     const refreshToken = genSetRefreshToken(res, user._id);
+    
+    // Store refresh token
     await storeRefreshToken(user._id, refreshToken);
-
-    res.status(200).json({
+    
+    console.log("User authenticated successfully:", user);
+    
+    // Return user data for the calling function to use
+    return {
       user: {
         _id: user._id,
         colonyName: user.colonyName,
         email: user.email,
-        messengerLink: user.messengerLink,
+        facebookLink: user.facebookLink,
       },
+    };
+    
+  } catch (error) {
+    console.error("Error in loginLogic:", error.message);
+    throw error; // Re-throw so calling function can handle it
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user= await loginLogic(email, password, res);
+    return res.status(200).json({
+      user,
       message: "Login successful",
     });
   } catch (error) {
     console.error("Error logging in:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const signup = async (req, res) => {
-  const { colonyName, email, password, messengerLink, confirmPassword } =
-    req.body;
+  const { colonyName, email, password, facebookLink, confirmPassword } = req.body;
   try {
     // Validate input
     if (!colonyName || !email || !password) {
@@ -110,14 +131,14 @@ export const signup = async (req, res) => {
       });
     }
 
-    if (!messengerLink || messengerLink.trim() === "") {
+    if (!facebookLink || facebookLink.trim() === "") {
       return res.status(400).json({
         message:
           "Facebook link is required - buyers need a way to contact you!",
       });
     }
 
-    if (!messengerLink.includes("www.facebook.com/")) {
+    if (!facebookLink.includes("www.facebook.com/")) {
       return res.status(400).json({
         message:
           "Please enter a valid Facebook link (www.facebook.com/...)",
@@ -133,21 +154,22 @@ export const signup = async (req, res) => {
     }
 
     // Create new user
-    const user = await Seller.create({
+    await Seller.create({
       colonyName,
       email,
       password,
-      messengerLink,
+      facebookLink: facebookLink.slice(facebookLink.indexOf("www.facebook.com/") + 17),
     });
 
-    // Call login() immediately after signup
-    req.body.email = email;
-    req.body.password = password;
-    return login(req, res);
-
+    // Automatically log in after signup using loginLogic
+    const user= await loginLogic(email, password, res);
+    return res.status(201).json({
+      user,
+      message: "User created and logged in successfully",
+    });
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

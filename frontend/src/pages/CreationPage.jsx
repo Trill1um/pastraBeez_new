@@ -481,7 +481,7 @@ const CreationPage = ({user}) => {
             </div>
 
             {/* Form Container */}
-            <div className="card rounded-none sm:rounded-[35px] lg:rounded-[50px] p-6 md:p-8 lg:p-12 xl:p-16 shadow-lg">
+            <div className="card bg-white rounded-none sm:rounded-[35px] lg:rounded-[50px] p-6 md:p-8 lg:p-12 xl:p-16 shadow-lg">
               <div className="space-y-12 sm:space-y-12 lg:space-y-16">
                 {/* Product Name */}
                 <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:flex-row items-start lg:items-center">
@@ -871,7 +871,7 @@ const CreationPage = ({user}) => {
           <div className="hidden lg:block flex-1 min-w-0 max-w-full lg:max-w-[400px] xl:max-w-[500px]">
             <div className="flex flex-col h-full gap-4">
               <h2 className="bee-title-h4-desktop">Mini Live Preview</h2>
-              <div className="sticky top-5 card rounded-[50px] p-6 shadow-lg flex flex-col gap-4 h-fit">
+              <div className="sticky bg-white top-5 card rounded-[50px] p-6 shadow-lg flex flex-col gap-4 h-fit">
                 {/* Preview Card Container - Compact size */}
                 <div className="flex items-center justify-center">
                   <div className="w-full max-w-sm">
