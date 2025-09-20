@@ -27,9 +27,13 @@ const sellerSchema = new mongoose.Schema({
     },
     facebookLink: {
         type: String,
-        required: [true, 'Messenger link is required'],
+        required: [true, 'Facebook link is required'],
         trim: true,
-    }
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
 }, {
     timestamps: true
     }

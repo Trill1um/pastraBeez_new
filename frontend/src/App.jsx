@@ -10,7 +10,7 @@ const SellerPage = lazy(() => import("./pages/SellerPage"));
 const AuthenticationPage = lazy(() => import("./pages/AuthenticationPage"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AboutPage = lazy(() => import("./pages/AboutUs"));
-
+const VerificationPage = lazy(() => import("./pages/Verification"));
 import BeeLoadingScreen from "./components/BeeLoadingScreen";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -24,33 +24,41 @@ const PublicOnlyRoute = ({ children, user }) => {
   return user ? <Navigate to="/SellerPage" /> : children;
 };
 
+const VerificationRoute = ({ children, isVerifying }) => {
+  console.log("From app: ", isVerifying);
+  return isVerifying ? children : <Navigate to="/authenticate" replace />;
+};
+
 function App() {
-  const { checkAuth, checkingAuth } = useUserStore();
-  const user = useUserStore((state) => state.user);
+  const { checkAuth, checkingAuth, user, isVerifying, persist } =
+    useUserStore();
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+  const hasHydrated = useUserStore.persist.hasHydrated();
+  if (!hasHydrated) {
+    return <BeeLoadingScreen isLoading={checkingAuth} />; // or a loading spinner
+  }
 
   return (
     <div className="App-Box">
-      {<BeeLoadingScreen isLoading={checkingAuth}/>}
+      {<BeeLoadingScreen isLoading={checkingAuth} />}
       <NavBar user={user} />
       <div className="App">
-
         {/* add suspense fallback */}
-        <Suspense >
+        <Suspense>
           <Routes>
             {/* Always accessible */}
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/catalog" element={<Catalog />} />
-              <Route path="/about-us" element={<AboutPage />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/about-us" element={<AboutPage />} />
 
             {/* Protected routes - need login */}
             <Route
               path="/SellerPage"
               element={
                 <ProtectedRoute user={user}>
-                  <SellerPage user={user}/>
+                  <SellerPage user={user} />
                 </ProtectedRoute>
               }
             />
@@ -70,6 +78,12 @@ function App() {
                 <PublicOnlyRoute user={user}>
                   <AuthenticationPage />
                 </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/verify"
+              element={
+                <VerificationPage />
               }
             />
 

@@ -4,30 +4,32 @@ import {
 } from "../stores/useProductStore";
 import cloudify from "../lib/cloudify.js";
 import { useNavigate } from "react-router-dom";
-import PlusIcon from "../assets/plus-sign.svg?react";
+import { useState } from "react";
+import ConfirmOverlay from "../components/Notice.jsx";
 
+// Assets
+import PlusIcon from "../assets/plus-sign.svg?react";
 import DrinksIcon from "../assets/drinks.svg?react";
 import FoodIcon from "../assets/burger.svg?react";
 import AccessoryIcon from "../assets/accessory.svg?react";
 import ClothesIcon from "../assets/hoodie.svg?react";
 import OtherIcon from "../assets/other.svg?react";
-
-import { useState } from "react";
-
 import placeholder from "../assets/placeholder.png";
 
-const SellerProducts = ({user}) => {
+const SellerProducts = ({ user }) => {
   const navigate = useNavigate();
   // Icon variables - replace these with your preferred icons/assets
   const ICONS = {
     bee: "🐝",
     edit: "✏️",
     delete: "🗑️",
-  Accessories: <AccessoryIcon className="text-amber-600 stroke-current w-5 h-5" />,
-  Food: <FoodIcon className="text-amber-600 stroke-current w-5 h-5" />,
-  Drinks: <DrinksIcon className="text-amber-600 stroke-current w-5 h-5" />,
-  Clothes: <ClothesIcon className="text-amber-600 stroke-current w-5 h-5" />,
-  Other: <OtherIcon className="text-amber-600 stroke-current w-5 h-5" />,
+    Accessories: (
+      <AccessoryIcon className="text-amber-600 stroke-current w-5 h-5" />
+    ),
+    Food: <FoodIcon className="text-amber-600 stroke-current w-5 h-5" />,
+    Drinks: <DrinksIcon className="text-amber-600 stroke-current w-5 h-5" />,
+    Clothes: <ClothesIcon className="text-amber-600 stroke-current w-5 h-5" />,
+    Other: <OtherIcon className="text-amber-600 stroke-current w-5 h-5" />,
   };
 
   const { sellerProducts, isLoading, error } = useSellerProducts(user._id);
@@ -35,7 +37,7 @@ const SellerProducts = ({user}) => {
 
   // Update local products when filtered products change
   const handleEdit = (product) => {
-    console.log("editihng: ", product)
+    console.log("editihng: ", product);
     navigate(`/myProduct/editing-${product._id}`);
     // Add your edit logic here
   };
@@ -59,34 +61,6 @@ const SellerProducts = ({user}) => {
   };
 
   // Bee-themed confirmation overlay component
-  const BeeDeleteOverlay = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="bg-white rounded-2xl shadow-xl border-4 border-amber-300 p-6 max-w-xs text-center relative">
-        <div className="flex flex-col items-center gap-2 mb-4">
-          <span className="text-5xl">🐝</span>
-          <h2 className="bee-title text-lg font-bold text-amber-900">Buzz Alert!</h2>
-          <p className="text-amber-700 text-sm">
-            Are you sure you want to remove this honey cell from your catalog?
-          </p>
-        </div>
-        <div className="flex gap-3 justify-center mt-4">
-          <button
-            onClick={confirmDelete}
-            className="btn-anim px-4 py-2 rounded-xl bg-amber-400 text-white font-semibold hover:bg-amber-500 transition"
-          >
-            Yes, Delete
-          </button>
-          <button
-            onClick={cancelDelete}
-            className="btn-anim px-4 py-2 rounded-xl bg-gray-100 text-amber-700 font-semibold hover:bg-amber-200 transition"
-          >
-            Cancel
-          </button>
-        </div>
-        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-3xl">🍯</span>
-      </div>
-    </div>
-  );
 
   const handleAddProduct = () => {
     navigate("/myProduct/creation");
@@ -122,7 +96,13 @@ const SellerProducts = ({user}) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-yellow-50 p-3 sm:p-6">
-      <div className={`${isDeleting||isCreating?"opacity-50 cursor-not-allowed pointer-events-none":" pointer-events-auto opacity-100"} max-w-7xl mx-auto`}>
+      <div
+        className={`${
+          isDeleting || isCreating
+            ? "opacity-50 cursor-not-allowed pointer-events-none"
+            : " pointer-events-auto opacity-100"
+        } max-w-7xl mx-auto`}
+      >
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex items-center justify-between">
@@ -141,9 +121,19 @@ const SellerProducts = ({user}) => {
             </div>
           </div>
         </div>
-        {confirmDeleteId? <BeeDeleteOverlay /> : null}
+        {confirmDeleteId ? (
+          <ConfirmOverlay
+            message={
+              "Are you sure you want to remove this honey cell from your catalog?"
+            }
+            accept={confirmDelete}
+            decline={cancelDelete}
+          />
+        ) : null}
         {/* Table - Desktop & Tablet */}
-        <div className={` hidden md:block bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 overflow-hidden`}>
+        <div
+          className={` hidden md:block bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 overflow-hidden`}
+        >
           <div className="w-full">
             <table className="w-full table-fixed">
               <thead className="bee-grad border-b border-amber-200">

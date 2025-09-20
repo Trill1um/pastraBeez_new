@@ -1,9 +1,8 @@
 import axios from "axios";
-import { toast } from "react-hot-toast";
 
-const baseURL = (
-  (import.meta.env.VITE_API_PRODUCTION_URL|| import.meta.env.VITE_API_DEVELOPMENT_URL)  + "/api"
-);
+const baseURL =
+  (import.meta.env.VITE_API_PRODUCTION_URL ||
+    import.meta.env.VITE_API_DEVELOPMENT_URL) + "/api";
 
 const axiosInstance = axios.create({
   baseURL,
@@ -57,8 +56,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Don't try to refresh on login failure
+    if (originalRequest.url.includes("/auth/login")) {
+      return Promise.reject(error);
+    }
+
     // Case: refresh token doesn't exist then skip
-    console.log("original Request: ",originalRequest);
     if (originalRequest.url?.includes("/auth/refresh-token")) {
       if (error.response?.status === 401) {
         console.log("❌ Refresh token expired, redirecting to login");
@@ -93,7 +96,6 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.log("❌ Token refresh failed, redirecting to login");
-        // toast.error("Session expired. Please log in again.");
         processQueue(refreshError);
         window.dispatchEvent(new Event("auth-failed"));
         return Promise.reject(refreshError);
@@ -105,7 +107,7 @@ axiosInstance.interceptors.response.use(
     if (import.meta.env.MODE === "development") {
       console.error(
         `❌ API Error: ${error.response?.status} ${error.config?.url}`,
-        error.response?.data
+        error.response?.data.message || error.response?.data 
       );
     }
     return Promise.reject(error);

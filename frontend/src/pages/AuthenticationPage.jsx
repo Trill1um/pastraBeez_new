@@ -102,7 +102,7 @@ const AuthPage = () => {
         formData.password,
         formData.confirmPassword,
         formData.facebookLink
-      );
+      )
     }
   };
 

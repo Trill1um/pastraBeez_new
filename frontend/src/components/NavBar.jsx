@@ -2,13 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import logo from "../assets/Pastra.svg"; // Adjust the path as necessary
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
+import Notice from "./Notice";
+import { useLocation } from "react-router-dom";
 
 const ProfileSection = ({ user }) => {
   const { logout } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  console.log("User in NavBar:", user);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -110,63 +112,121 @@ const ProfileSection = ({ user }) => {
 };
 
 const NavBar = ({ user }) => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const {
+    isVerifying,
+    setVerificationProgress,
+    sendVerifyEmail,
+    cancelVerification,
+    tempUser,
+    debugVerification,
+    login,
+  } = useUserStore();
+  // test\
   const path = location.pathname;
-  
+  useEffect(() => {
+    if (isVerifying && tempUser) {
+      sendVerifyEmail();
+    } else if (tempUser) {
+      login(tempUser.email, tempUser.password);
+    }
+  }, [isVerifying, sendVerifyEmail, tempUser, login]);
+
+  const cancelVerify = () => {
+    setVerificationProgress(false);
+    cancelVerification();
+    console.log("Verification cancelled");
+  };
 
   return (
-    <div className="bg-yellow-300 z-40 shadow-lg w-full">
-      <div className="flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 py-2">
-        {/* Logo */}
-        <div className="flex items-center flex-shrink-0">
-          <img
-            src={logo}
-            alt="PastraBeez Logo"
-            className="h-11 w-15 object-contain"
-          />
+    <>
+      {!location.pathname.includes("verify") && (
+        <div className="bg-yellow-300 z-40 shadow-lg w-full">
+          {
+            isVerifying && tempUser && (
+              <Notice
+                message={
+                  "Email verification required, sending verification email..."
+                }
+                accept={{ fn: sendVerifyEmail, msg: "Resend" }}
+                decline={{ fn: cancelVerify, msg: "Cancel" }}
+              />
+            ) //Setup a timer
+          }
+
+          <button onClick={() => setVerificationProgress(!isVerifying)}>
+            {isVerifying ? "\tisVerifying" : "not verifying"}
+          </button>
+
+          <button
+            className="
+bg-red-500 text-white p-2 m-2 rounded
+      "
+            onClick={() => debugVerification(user.email)}
+          >
+            Danger!!!
+          </button>
+
+          {/* {tempUser? "tempUser exists": "no tempUser"} */}
+          <div className="flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 py-2">
+            {/* Logo */}
+            <div className="flex items-center flex-shrink-0">
+              <img
+                src={logo}
+                alt="PastraBeez Logo"
+                className="h-11 w-15 object-contain"
+              />
+            </div>
+
+            {/* Logo Text - Centered */}
+            <h2 className="flex-1 bee-logo-desktop lg:inline hidden text-center">
+              PastraBeez
+            </h2>
+
+            {/* Profile/Sell Button */}
+            <ProfileSection user={user} />
+          </div>
+
+          {/* Navigation Links */}
+          <div
+            className="bg-white flex items-center justify-center gap-8 lg:gap-32 w-fu
+      ll px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-100"
+          >
+            <button
+              className={
+                path === "/"
+                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
+              }
+              onClick={() => navigate("/")}
+            >
+              Home
+            </button>
+            <button
+              className={
+                path === "/catalog"
+                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
+              }
+              onClick={() => navigate("/catalog")}
+            >
+              Hive
+            </button>
+            <button
+              className={
+                path === "/about-us"
+                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
+              }
+              onClick={() => navigate("/about-us")}
+            >
+              About Us
+            </button>
+          </div>
         </div>
-
-        {/* Logo Text - Centered */}
-        <h2 className="flex-1 bee-logo-desktop lg:inline hidden text-center">PastraBeez</h2>
-
-        {/* Profile/Sell Button */}
-        <ProfileSection user={user} />
-      </div>
-
-      {/* Navigation Links */}
-      <div className="bg-white flex items-center justify-center gap-8 lg:gap-32 w-full px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-100">
-        <button
-          className={
-            path === "/"
-              ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-              : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
-          }
-          onClick={() => navigate("/")}
-        >
-          Home
-        </button>
-        <button
-          className={
-            path === "/catalog"
-              ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-              : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
-          }
-          onClick={() => navigate("/catalog")}
-        >
-          Hive
-        </button>
-        <button
-          className={
-            path === "/about-us"
-              ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-              : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
-          }
-          onClick={() => navigate("/about-us")}
-        >
-          About Us
-        </button>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
