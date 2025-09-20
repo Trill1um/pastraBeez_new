@@ -4,6 +4,7 @@ import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
 import Notice from "./Notice";
 import { useLocation } from "react-router-dom";
+import Honeycell from "../assets/honey-cell.svg?react";
 
 const ProfileSection = ({ user }) => {
   const { logout } = useUserStore();
@@ -52,29 +53,19 @@ const ProfileSection = ({ user }) => {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={toggleDropdown}
-          className="btn-anim flex items-center gap-2 px-4 py-1 rounded-full bg-yellow-100 border border-yellow-400 shadow-sm hover:bg-yellow-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
-        >
-          <div>
-            <span className="font-bold text-yellow-700">
-              {user.colonyName || "Unnamed Colony"}
+          className={`group btn-anim focus:scale-120 flex items-center gap-2 justify-center w-fit h-fit relative transition-all duration-300
+            
+            ${isDropdownOpen ? "rotate-360" : ""}
+            `}
+            >
+          {/* rounded-full bg-yellow-100 border border-yellow-400  focus:ring-yellow-500 focus:ring-opacity-50  */}
+            {user?.colonyName && (
+              <Honeycell className="drop-shadow-sm group-hover:text-yellow-200 text-amber-100 h-10 w-10" />
+            )}
+            <span className="absolute font-bold text-yellow-700">
+              {user.colonyName.charAt(0).toUpperCase() || "0"}
             </span>
-          </div>
           {/* Optional dropdown arrow */}
-          <svg
-            className={`w-4 h-4 text-yellow-700 transition-transform duration-200 ${
-              isDropdownOpen ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
         </button>
 
         {/* Dropdown Menu */}
@@ -113,6 +104,7 @@ const ProfileSection = ({ user }) => {
 
 const NavBar = ({ user }) => {
   const location = useLocation();
+  const path = location.pathname;
   const navigate = useNavigate();
   const {
     isVerifying,
@@ -120,11 +112,10 @@ const NavBar = ({ user }) => {
     sendVerifyEmail,
     cancelVerification,
     tempUser,
-    debugVerification,
+    // debugVerification,
     login,
   } = useUserStore();
   // test\
-  const path = location.pathname;
   useEffect(() => {
     if (isVerifying && tempUser) {
       sendVerifyEmail();
@@ -155,20 +146,17 @@ const NavBar = ({ user }) => {
             ) //Setup a timer
           }
 
-          <button onClick={() => setVerificationProgress(!isVerifying)}>
+          {/* <button onClick={() => setVerificationProgress(!isVerifying)}>
             {isVerifying ? "\tisVerifying" : "not verifying"}
-          </button>
+          </button> */}
 
-          <button
-            className="
-bg-red-500 text-white p-2 m-2 rounded
-      "
+          {/* <button
+            className="bg-red-500 text-white p-2 m-2 rounded"
             onClick={() => debugVerification(user.email)}
           >
             Danger!!!
-          </button>
+          </button> */}
 
-          {/* {tempUser? "tempUser exists": "no tempUser"} */}
           <div className="flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 py-2">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">

@@ -77,7 +77,6 @@ export const useUserStore = create(
           isVerifying: false,
         });
         get().cancelVerification();
-        console.log("Login response data from user store:", response.data);
         toast.success("Welcome to the hive! 🍯");
 
         await get().checkAuth();

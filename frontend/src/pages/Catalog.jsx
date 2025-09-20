@@ -382,7 +382,7 @@ const FilterSection = ({ productCount }) => {
 const ProductGrid = ({ products }) => {
   // const {isLoading} = useProcessedProducts((state) => state.isLoading);
   const isLoading=true;
-  products = isLoading ? Array.from({ length: 6 }) : products;
+  products = isLoading ? Array.from({ length: 6, _id: "placeholder-"+Date.now() }) : products;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
       {products.map((product) => (

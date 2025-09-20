@@ -38,25 +38,22 @@ const VerificationPage = () => {
   const queries = Object.fromEntries(searchParams.entries());
   const { token, email } = queries;
 
-  console.log("isVerifying: ", isVerify);
-  console.log("Verification queries:", queries);
-  console.log(
-    "check existence: ",
-    queries.token && queries.email ? true : false
-  );
-
   useEffect(() => {
     const onVerify = async () => {
       const response = await verifyEmail(token, email);
-      if (response === 410) {
-        setMessages("expired");
-        console.error("Verification Attempt Failed");
-      } else if (response === 400) {
-        setMessages("sus");
-      } else if (response === 404) {
-        setMessages("who");
-      } else {
-        setMessages("success");
+      switch (response) {
+        case 410:
+          setMessages("expired");
+          break;
+        case 400:
+          setMessages("sus");
+          break;
+        case 404:
+          setMessages("who");
+          break;
+          default:
+          setMessages("success");
+          break;
       }
     };
     onVerify();
