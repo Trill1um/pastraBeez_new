@@ -11,8 +11,7 @@ const Footer = () => {
   return (
     <div>
     {!location.pathname.includes("verify") &&
-      <div
-        className={`footer w-full px-3 sm:px-4 md:px-6 lg:px-8 xl:px-16 py-6 sm:py-8 ${
+      <div className={`footer w-full px-3 relative sm:px-4 md:px-6 lg:px-8 xl:px-16 py-6 sm:py-8 ${
           !location.pathname === "/" ? "mt-8 sm:mt-12 lg:mt-16" : ""
         }`}
       >

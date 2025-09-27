@@ -30,7 +30,7 @@ const VerificationRoute = ({ children, isVerifying }) => {
 };
 
 function App() {
-  const { checkAuth, checkingAuth, user, isVerifying, persist } =
+  const { checkAuth, checkingAuth, user } =
     useUserStore();
   useEffect(() => {
     checkAuth();

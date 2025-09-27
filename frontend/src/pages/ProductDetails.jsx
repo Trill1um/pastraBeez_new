@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useProductById } from "../stores/useProductStore.js";
 import cloudify from "../lib/cloudify.js";
 import arrow from "../assets/arrow.svg";
@@ -9,12 +9,13 @@ import buy from "../assets/buy.svg"
 const ProductDetails = () => {
   const { id } = useParams(); // 'id' matches the route param name
   const navigate = useNavigate();
+  const location = useLocation();
   const { product, isLoading, error } = useProductById(id);
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const to_Catalog = () => {
-    navigate("/catalog");
+  const to_Back = () => {
+    if (location.state?.from) navigate(-1);
+    else navigate("/catalog");
   };
 
   // Reset image index when product changes
@@ -79,10 +80,10 @@ const ProductDetails = () => {
         <div className="text-center">
           <span className="bee-title text-brand text-xl mb-4 block">Product not found</span>
           <button
-            onClick={to_Catalog}
+            onClick={to_Back}
             className="px-6 py-3 bg-orange text-white rounded-xl hover:scale-105 transition-transform"
           >
-            Back to Catalog
+            Go Back
           </button>
         </div>
       </div>
@@ -105,10 +106,15 @@ const ProductDetails = () => {
         <div className="max-w-[1440px] mx-auto">
           <div className="flex items-center gap-2 text-sm font-medium">
             <button
-              onClick={to_Catalog}
+              onClick={to_Back}
               className="cursor-pointer hover:scale-105 transition-transform text-blue"
             >
-              {"Catalog"}
+              {location.state?.from ? 
+              location.state?.from.pathname=="/"?
+                "Home Page":
+                "Catalog"
+              : "Catalog"}
+
             </button>
             <span className="text-orange">&gt;</span>
             <span className="text-maroon">Product Details</span>

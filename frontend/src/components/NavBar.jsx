@@ -63,7 +63,7 @@ const ProfileSection = ({ user }) => {
               <Honeycell className="drop-shadow-sm group-hover:text-yellow-200 text-amber-100 h-10 w-10" />
             )}
             <span className="absolute font-bold text-yellow-700">
-              {user.colonyName.charAt(0).toUpperCase() || "0"}
+              {user.colonyName?.charAt(0).toUpperCase() || "0"}
             </span>
           {/* Optional dropdown arrow */}
         </button>
@@ -113,16 +113,13 @@ const NavBar = ({ user }) => {
     cancelVerification,
     tempUser,
     // debugVerification,
-    login,
   } = useUserStore();
-  // test\
+  // test
   useEffect(() => {
-    if (isVerifying && tempUser) {
+    if (isVerifying) {
       sendVerifyEmail();
-    } else if (tempUser) {
-      login(tempUser.email, tempUser.password);
     }
-  }, [isVerifying, sendVerifyEmail, tempUser, login]);
+  }, [isVerifying, sendVerifyEmail]);
 
   const cancelVerify = () => {
     setVerificationProgress(false);
@@ -133,7 +130,7 @@ const NavBar = ({ user }) => {
   return (
     <>
       {!location.pathname.includes("verify") && (
-        <div className="bg-yellow-300 z-40 shadow-lg w-full">
+        <div className="bg-yellow-300 relative z-40 shadow-lg w-full">
           {
             isVerifying && tempUser && (
               <Notice
@@ -168,7 +165,7 @@ const NavBar = ({ user }) => {
             </div>
 
             {/* Logo Text - Centered */}
-            <h2 className="flex-1 bee-logo-desktop lg:inline hidden text-center">
+            <h2 className="flex-1 select-none bee-logo-desktop lg:inline hidden text-center">
               PastraBeez
             </h2>
 
@@ -178,15 +175,15 @@ const NavBar = ({ user }) => {
 
           {/* Navigation Links */}
           <div
-            className="bg-white flex items-center justify-center gap-8 lg:gap-32 w-fu
+            className="select-none bg-white flex items-center justify-center gap-8 lg:gap-32 w-fu
       ll px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-100"
           >
             <button
-              className={
-                path === "/"
-                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
-              }
+              className={`
+                ${path === "/"
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 btn-anim font-medium transition-colors duration-200 cursor-pointer"}
+              `}
               onClick={() => navigate("/")}
             >
               Home
@@ -194,8 +191,8 @@ const NavBar = ({ user }) => {
             <button
               className={
                 path === "/catalog"
-                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 btn-anim font-medium transition-colors duration-200 cursor-pointer"
               }
               onClick={() => navigate("/catalog")}
             >
@@ -204,8 +201,8 @@ const NavBar = ({ user }) => {
             <button
               className={
                 path === "/about-us"
-                  ? "text-yellow-700 font-semibold cursor-pointer border-b-2 border-yellow-400"
-                  : "text-gray-600 hover:text-yellow-700 font-medium transition-colors duration-200 cursor-pointer"
+                  ? "text-yellow-700 font-semibold border-b-2 border-yellow-400"
+                  : "text-gray-600 hover:text-yellow-700 btn-anim font-medium transition-colors duration-200 cursor-pointer"
               }
               onClick={() => navigate("/about-us")}
             >

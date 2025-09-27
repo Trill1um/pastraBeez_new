@@ -109,6 +109,7 @@
   background: var(--gradient-primary);
   color: var(--white);
   border: none;
+  cursor: pointer;
 }
 
 .btn-unactive {
@@ -120,7 +121,6 @@
 .btn-primary-h:hover {
   background: var(--gradient-hover);
   transform: scale(1.05);
-  cursor: pointer;
 }
 
 .btn-reset {
@@ -613,6 +613,22 @@
   transition: all 0.15s ease;
 }
 
+.honey-cell-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.honey-cell-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .bee-transition-slow {
   transition: all 0.5s ease;
 }
@@ -622,6 +638,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
+  user-select: none;
 }
 
 .btn-anim:hover {

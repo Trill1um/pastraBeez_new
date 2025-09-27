@@ -9,6 +9,7 @@ import AccessoryIcon from "../assets/accessory.svg?react";
 import ClothesIcon from "../assets/hoodie.svg?react";
 import OtherIcon from "../assets/other.svg?react";
 import ArrowIcon from "../assets/arrow.svg?react";
+import noProduct from "../assets/no_maidens.png";
 
 // ============ FILTER CONFIGURATION ============
 const FILTER_CONFIG = {
@@ -24,7 +25,7 @@ const FILTER_CONFIG = {
       { value: "Clothes", label: "Clothes", icon: ClothesIcon },
       { value: "Other", label: "Other", icon: OtherIcon },
     ],
-    color: "bg-blue-100 text-blue-800 border-blue-300"
+    color: "bg-blue-100 text-blue-800 border-blue-300",
   },
   inStock: {
     key: "inStock",
@@ -35,7 +36,7 @@ const FILTER_CONFIG = {
       { value: true, label: "In Stock" },
       { value: false, label: "Out of Stock" },
     ],
-    color: "bg-green-100 text-green-800 border-green-300"
+    color: "bg-green-100 text-green-800 border-green-300",
   },
   isLimited: {
     key: "isLimited",
@@ -46,7 +47,7 @@ const FILTER_CONFIG = {
       { value: true, label: "Limited Edition" },
       { value: false, label: "Regular Items" },
     ],
-    color: "bg-purple-100 text-purple-800 border-purple-300"
+    color: "bg-purple-100 text-purple-800 border-purple-300",
   },
   sortBy: {
     key: "sortBy",
@@ -199,7 +200,7 @@ const FilterSelect = ({
   );
 };
 
-const ActiveFilters = ({ filters, onReset }) => {
+const ActiveFilters = ({ filters, onReset, onResetOne }) => {
   const getFilterTags = () => {
     const tags = Object.entries(FILTER_CONFIG)
       .filter(([key]) => key != "sortBy" && filters[key] !== null)
@@ -210,12 +211,12 @@ const ActiveFilters = ({ filters, onReset }) => {
           label: option?.label,
           icon: option?.icon,
           color: config.color,
-        }
+        };
       });
 
     if (filters.searchTerm) {
       tags.push({
-        key: "search",
+        key: "searchTerm",
         label: `🔍 "${filters.searchTerm}"`,
         color: "bg-amber-100 text-amber-800 border-amber-300",
       });
@@ -230,10 +231,17 @@ const ActiveFilters = ({ filters, onReset }) => {
   return (
     <div className="flex flex-wrap items-center gap-2">
       {filterTags.map((tag) => (
-        <div key={tag.key} className={`${tag.color} px-3 py-1 rounded-full text-sm border btn-anim flex items-center `}>
+        <div
+          onClick={() => {
+            onResetOne(tag.key, tag.key === "searchTerm" ? "" : null);
+          }}
+          key={tag.key}
+          className={`${tag.color} px-3 py-1 rounded-full text-sm border btn-anim flex items-center `}
+        >
           {tag.icon && (
             <tag.icon className="inline-block w-full aspect-auto mr-1 text-current stroke-current" />
           )}
+
           {tag.label}
         </div>
       ))}
@@ -259,11 +267,15 @@ const FilterSection = ({ productCount }) => {
     setSortBy,
     toggleSortOrder,
     resetFilters,
+    resetSort
   } = useProcessedProducts();
 
   const [showFilters, setShowFilters] = useState(false);
   const onToggleFilters = () => setShowFilters(!showFilters);
-
+  const reset = () => {
+    resetFilters();
+    resetSort();
+  }
   const [whichFilterShow, setFilterShow] = useState(null);
 
   useEffect(() => {
@@ -335,21 +347,35 @@ const FilterSection = ({ productCount }) => {
               </div>
             </div>
 
-            {/* Dynamic Filter Selects */}
+            {/* Category Filter */}
+            <FilterSelect
+              id={`filter-category`}
+              config={FILTER_CONFIG.category}
+              value={filters.category}
+              onChange={setFilter}
+              whichFilterShow={whichFilterShow}
+              setFilterShow={setFilterShow}
+            />
 
-            {Object.entries(FILTER_CONFIG)
-              .filter(([key]) => key != "sortBy")
-              .map(([key, config]) => (
-                <FilterSelect
-                  id={`filter-${config.key}`}
-                  key={key}
-                  config={config}
-                  value={filters[config.key]}
-                  onChange={setFilter}
-                  whichFilterShow={whichFilterShow}
-                  setFilterShow={setFilterShow}
-                />
-              ))}
+            {/* Stock Filter */}
+            <FilterSelect
+              id={`filter-inStock`}
+              config={FILTER_CONFIG.inStock}
+              value={filters.inStock}
+              onChange={setFilter}
+              whichFilterShow={whichFilterShow}
+              setFilterShow={setFilterShow}
+            />
+
+            {/* Limited Filter */}
+            <FilterSelect
+              id={`filter-isLimited`}
+              config={FILTER_CONFIG.isLimited}
+              value={filters.isLimited}
+              onChange={setFilter}
+              whichFilterShow={whichFilterShow}
+              setFilterShow={setFilterShow}
+            />
 
             {/* Sort By Select */}
             <FilterSelect
@@ -371,7 +397,11 @@ const FilterSection = ({ productCount }) => {
               🍯 Found {productCount} Honey Cells!
             </p>
 
-            <ActiveFilters filters={filters} onReset={resetFilters} />
+            <ActiveFilters
+              filters={filters}
+              onReset={reset}
+              onResetOne={setFilter}
+            />
           </div>
         </div>
       </div>
@@ -380,22 +410,41 @@ const FilterSection = ({ productCount }) => {
 };
 
 const ProductGrid = ({ products }) => {
-  // const {isLoading} = useProcessedProducts((state) => state.isLoading);
-  const isLoading=true;
-  products = isLoading ? Array.from({ length: 6, _id: "placeholder-"+Date.now() }) : products;
+  const { isLoading } = useProcessedProducts((state) => state.isLoading);
+  // const isLoading=true;
+  products = isLoading
+    ? Array.from({ length: 6, _id: "placeholder-" + Date.now() })
+    : products;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      {products.map((product) => (
-        <div key={product?._id } className="will-change-transform group bg-amber-400 rounded-[1.5rem]">
-          {isLoading?
-          <div className="w-full min-h-[430px] flex items-end justify-center h-full bg-gray-500 rounded-[1.5rem]">
-            <div className="rounded-t-[1.5rem] w-18/20 h-18/20 bg-gray-700 shadow-[4px_-6px_20px] shadow-gray-800">test</div>
-          </div>
-          
-          :<ProductCard product={product} />}
+    <>
+      {products.length ? (
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {products.map((product) => (
+            <div
+              key={product?._id}
+              className="will-change-transform group bg-amber-400 rounded-[1.5rem]"
+            >
+              {isLoading ? (
+                <div className="w-full min-h-[430px] flex items-end justify-center h-full bg-gray-500 rounded-[1.5rem]">
+                  <div className="rounded-t-[1.5rem] w-18/20 h-18/20 bg-gray-700 shadow-[4px_-6px_20px] shadow-gray-800">
+                    test
+                  </div>
+                </div>
+              ) : (
+                <ProductCard product={product} />
+              )}
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      ) : (
+        <div className="gap-2 w-1/3 h-fit flex items-center justify-center flex-col">
+          <img src={noProduct} className="w-1/2 aspect-auto" alt="" />
+          <p className="bee-title text-2xl text-amber-900">
+            No Products Available...
+          </p>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -429,7 +478,7 @@ const Catalog = () => {
       <FilterSection productCount={products.length} />
 
       <main className="w-full px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16">
-        <div className="max-w-[1440px] mx-auto">
+        <div className="max-w-[1440px] w-full justify-center flex items-center mx-auto">
           <ProductGrid products={products} />
         </div>
       </main>

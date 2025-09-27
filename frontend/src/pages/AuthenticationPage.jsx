@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUserStore } from "../stores/useUserStore.js";
-import beeIcon from "../assets/logo.png"; // Assuming you have a bee icon asset
+import beeIcon from "../assets/bee.png";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(false);
