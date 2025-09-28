@@ -16,12 +16,6 @@ export const protectRoute = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
-      // Check if Verified
-      if (!user.isVerified) {
-        return res
-          .status(403)
-          .json({ message: "Forbidden - Email Not Verified" });
-      }
 
       req.user = user; // Attach user to request object for further use
       next();

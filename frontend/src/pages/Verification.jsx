@@ -10,8 +10,13 @@ const BANK = {
   },
   sus: {
     title: "Suspicious Activity Detected",
-    message:
-      "Please wait while we verify your IP address, email address, home address, and phone number.\nIf you did not provide this information, you may want to check your privacy settings.\nOur security team has been notified.",
+    message: 
+      `Please wait while we verify the following:\n
+      IP address\n
+      Email address\n
+      Home address\n
+      Phone number\n
+      If you did not provide this information, you may want to check your privacy settings. Our security team has been notified.`,
   },
   who: {
     title: "User Not Found",
@@ -65,7 +70,7 @@ const VerificationPage = () => {
           { isVerify? BANK["verifying"]?.title: 
           BANK[messages]?.title || "Verifying...Hold on a sec..."}
         </h2>
-        <p className="text-amber-700">
+        <p className="whitespace-pre-line text-left text-amber-700">
           { isVerify? BANK["verifying"]?.message :
           BANK[messages]?.message || "Oh no. Oh no. Oh no.Oh no. Oh no.Oh no.Oh no. Oh no. Oh no. Oh no.Oh no. Oh no. Oh no. Oh no. ".repeat(1000)}
         </p>

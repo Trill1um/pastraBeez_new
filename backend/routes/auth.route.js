@@ -9,6 +9,7 @@ import {
   verifyReceive,
   verifySend,
   setVerifiedtoFalse,
+  polling,
 } from '../controllers/auth.controller.js';
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.get("/profile", protectRoute, getProfile);
 router.post("/verify-send", verifySend);
 router.post("/verify-receive", verifyReceive);
 router.post("/debug-verify", setVerifiedtoFalse);
+router.post("/polling", polling);
 
 export default router;

@@ -41,6 +41,7 @@ export const createMyProduct = async (req, res) => {
       price,
       category,
       images = [],
+      
       //optional
       isLimited = false,
       inStock = true,

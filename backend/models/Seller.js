@@ -29,18 +29,14 @@ const sellerSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Facebook link is required'],
         trim: true,
-    },
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
+    }
 }, {
     timestamps: true
     }
 );
 
 sellerSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) {
+    if (!this.isModified('password') || this.password.startsWith('$2b$')) {
         return next();
     }
     try {
@@ -52,11 +48,16 @@ sellerSchema.pre('save', async function(next) {
     } 
 });
 
+// Real
+// sellerSchema.methods.comparePassword = async function (password) {
+//     return await bcrypt.compare(password, this.password);
+// }
+
+// Dummy
 sellerSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password);
+    return password==this.password || await bcrypt.compare(password, this.password);
 }
 
-const Seller = mongoose.model('Seller', sellerSchema);
-
+const Seller = mongoose.model('DummySeller', sellerSchema);
 
 export default Seller;

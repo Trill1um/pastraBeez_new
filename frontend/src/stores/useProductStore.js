@@ -6,12 +6,11 @@ import {
   useDeleteProduct,
 } from '../lib/query';
 
-// ============ ZUSTAND STORE (Processing Logic) ============
 export const useProductProcessor = create((set, get) => ({
-  // UI State
+  // states
   sort: {
-    by: 'name', // Default sort by name
-    order: 'asc' // Default ascending order
+    by: 'name', 
+    order: 'asc'
   },
   filters: {
     category: null,
@@ -19,8 +18,6 @@ export const useProductProcessor = create((set, get) => ({
     searchTerm: '',
     isLimited: null,
   },
-
-  // Sort Labels and Types
   labels: {
     price: {
       direction: {
@@ -45,7 +42,7 @@ export const useProductProcessor = create((set, get) => ({
     },
   },
 
-  // ============ CORE PROCESSING FUNCTIONS ============
+  // Products with applied filters and soritng
   processProducts: (rawProducts) => {
     const { filters } = get();
     if (!rawProducts || !Array.isArray(rawProducts)) return [];
@@ -77,7 +74,7 @@ export const useProductProcessor = create((set, get) => ({
     return get().sortProducts(filtered);
   },
 
-  // Enhanced sorting function
+  // Helper function for sorting
   sortProducts: (products) => {
     const { sort, labels } = get();
     
@@ -122,8 +119,7 @@ export const useProductProcessor = create((set, get) => ({
     });
   },
 
-  // ============ ENHANCED ACTIONS ============
-
+  // Case-specific setters
   setSortBy: (sortBy) => set((state) => ({
     sort: { ...state.sort, by: sortBy }
   })),
@@ -132,7 +128,6 @@ export const useProductProcessor = create((set, get) => ({
     sort: { ...state.sort, order: sortOrder }
   })),
 
-  // Toggle sort order for current sort.by
   toggleSortOrder: () => set((state) => ({
     sort: { ...state.sort, order: state.sort.order === 'asc' ? 'desc' : 'asc' }
   })),
@@ -147,7 +142,8 @@ export const useProductProcessor = create((set, get) => ({
       inStock: null,
       searchTerm: '',
       isLimited: null,
-    }
+    },
+
   }),
   
   resetSort: () => set({
@@ -156,12 +152,8 @@ export const useProductProcessor = create((set, get) => ({
       order: 'asc'
     }
   }),
-
 }));
 
-// ============ COMBINED HOOKS (Magic Layer) ============
-
-// Hook for all products with processing and mutations
 export function useProcessedProducts() {
   const query = useAllProducts();
   const processor = useProductProcessor();
@@ -206,7 +198,79 @@ export function useProcessedProducts() {
   };
 }
 
-// Helper hook to get a specific product by ID from all products
+export function useFeaturedProducts() {
+  const { rawProducts, isLoading, error } = useProcessedProducts();
+  const maxProducts = 6;
+
+  // Evreryday I'm shuffling
+  const shuffled = [...rawProducts].sort(() => Math.random() - 0.5);
+  const featuredProducts = shuffled.slice(0, maxProducts);
+  return {
+    featuredProducts,
+    isFeaturedLoading: isLoading,
+    featuredError: error,
+  };
+}
+
+export function useUniqueProductCategories() {
+  const { rawProducts, isLoading, error } = useProcessedProducts();
+  const availableCategories = ["Food", "Drinks", "Accessories", "Clothes", "Other"];
+  
+  // Early return if still loading or error
+  if (isLoading || error) {
+    return {
+      uniqueProducts: [],
+      isUniqueLoading: isLoading,
+      uniqueError: error,
+    };
+  }
+
+  // Early return if no products
+  if (!rawProducts || rawProducts.length === 0) {
+    return {
+      uniqueProducts: [],
+      isUniqueLoading: false,
+      uniqueError: error,
+    };
+  }
+
+  console.log("Raw products:", rawProducts);
+
+  // Group products by category and shuffle each group
+  const productsByCategory = availableCategories.map(category => {
+    const categoryProducts = rawProducts.filter(product => product.category === category);
+    // Shuffle the products in this category
+    return categoryProducts.sort(() => Math.random() - 0.5);
+  }).filter(categoryArray => categoryArray.length > 0); // Only keep categories that have products
+
+  // If we don't have enough categories with products, return what we have
+  if (productsByCategory.length === 0) {
+    return {
+      uniqueProducts: [],
+      isUniqueLoading: false,
+      uniqueError: error,
+    };
+  }
+
+  let products = [];
+  let maxRounds = Math.max(...productsByCategory.map(arr => arr.length));
+  
+  // Distribute products from each category evenly
+  for (let round = 0; round < maxRounds && products.length < availableCategories.length; round++) {
+    for (const categoryProducts of productsByCategory) {
+      if (categoryProducts[round] && products.length < availableCategories.length) {
+        products.push(categoryProducts[round]);
+      }
+    }
+  }
+
+  return {
+    uniqueProducts: products,
+    isUniqueLoading: false,
+    uniqueError: error,
+  };
+}
+
 export function useProductById(productId) {
   const { rawProducts, isLoading, error } = useProcessedProducts();
   if (!productId) return {product:null};
@@ -219,7 +283,6 @@ export function useProductById(productId) {
   };
 }
 
-// Hook for seller-specific products (filters from all products)
 export function useSellerProducts(sellerId) {
   const { rawProducts, isLoading, error } = useProcessedProducts();
   

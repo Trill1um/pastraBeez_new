@@ -110,20 +110,20 @@ const NavBar = ({ user }) => {
     isVerifying,
     setVerificationProgress,
     sendVerifyEmail,
-    cancelVerification,
-    tempUser,
+    cancelPolling,
     // debugVerification,
   } = useUserStore();
   // test
   useEffect(() => {
     if (isVerifying) {
+      console.log("Sending verification email...");
       sendVerifyEmail();
     }
   }, [isVerifying, sendVerifyEmail]);
 
   const cancelVerify = () => {
     setVerificationProgress(false);
-    cancelVerification();
+    cancelPolling();
     console.log("Verification cancelled");
   };
 
@@ -132,7 +132,7 @@ const NavBar = ({ user }) => {
       {!location.pathname.includes("verify") && (
         <div className="bg-yellow-300 relative z-40 shadow-lg w-full">
           {
-            isVerifying && tempUser && (
+            isVerifying && (
               <Notice
                 message={
                   "Email verification required, sending verification email..."

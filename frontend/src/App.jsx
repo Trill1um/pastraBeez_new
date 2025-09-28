@@ -24,21 +24,12 @@ const PublicOnlyRoute = ({ children, user }) => {
   return user ? <Navigate to="/SellerPage" /> : children;
 };
 
-const VerificationRoute = ({ children, isVerifying }) => {
-  console.log("From app: ", isVerifying);
-  return isVerifying ? children : <Navigate to="/authenticate" replace />;
-};
-
 function App() {
   const { checkAuth, checkingAuth, user } =
     useUserStore();
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  const hasHydrated = useUserStore.persist.hasHydrated();
-  if (!hasHydrated) {
-    return <BeeLoadingScreen isLoading={checkingAuth} />; // or a loading spinner
-  }
 
   return (
     <div className="App-Box">
