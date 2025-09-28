@@ -189,183 +189,173 @@ const HomePage = () => {
     "absolute bottom-[-486px] left-[-195px] lg:hidden lg:pointer-events-none",
   ]
   return (
-    <>
-      {isProduction ? (
-        <div className="min-h-screen w-full flex items-center justify-center">
-          <h1 className="bee-logo-desktop text-4xl text-yellow-700">
-            Home Page Coming Soon!
-          </h1>
-        </div>
-      ) : (
-        <div className="relative w-full min-h-screen flex flex-col items-start justify-start font-fredoka bg-white overflow-hidden">
-          <HomeBg />
-          {/* Hero Section */}
-          <div className="flex relative flex-col items-center justify-start w-full">
-            <div
-              className="bg-center bg-cover bg-no-repeat box-border flex flex-col gap-2.5 h-[600px] items-start justify-end px-4 lg:px-16 py-[52px] w-full"
-              style={{ backgroundImage: `url('${imgHero}')` }}
-            >
-              <div className="flex flex-col gap-4 items-center lg:items-start w-full lg:w-fit">
-                <h1 className="bee-title-h1-desktop text-center lg:text-start text-white tracking-tight w-fit">
-                  Borem ipsum dolor sit amet
-                </h1>
-                <button className="bg-white flex gap-2.5 items-center justify-center px-8 py-4 font-quicksand font-semibold text-active text-[16px] text-center rounded shadow-md hover:bg-amber-100 transition-colors">
-                  View Hive
-                </button>
-              </div>
-            </div>
-
-            {/* Welcome Section */}
-            <div className="drop-shadow-2xl box-border flex flex-col h-[531px] items-center justify-start w-full">
-              <div className="bg-brand justify-center h-fit py-[48px] px-4 lg:px-0 gap-[8px] flex flex-col items-center relative w-full">
-                <h2 className="bee-title font-bold text-[24px] lg:bee-title-h4-desktop not-italic w-fit">
-                  Welcome Busy Beez
-                </h2>
-                <p className="text-center lg:text-start bee-body-h6-desktop w-fit">
-                  Your go-to e-catalog for unique creations, made for students,
-                  by students.
-                </p>
-              </div>
-              <img
-                alt="Welcome Background"
-                className="hidden lg:block w-full aspect-auto transform scale-x-[-1]"
-                src={honey}
-              />
-              <img
-                alt="Welcome Background"
-                className="block lg:hidden w-full aspect-auto"
-                src={bg_honey_mobile}
-              />
-            </div>
-          </div>
-
-          {/* Honeycomb Section */}
-
-          <div className="relative drop-shadow-2xl w-full flex pt-140 pb-200 lg:py-0 items-center justify-center h-fit lg:h-[1515px]">
-            <div className="bg-blue-300 lg:relative absolute flex flex-col items-center justify-center w-fit h-fit">
-              {featuredProducts?.map((product, index) => {
-                return (
-                  <HoneyCell
-                    key={`honey-cell-${product._id}`}
-                    className={coordinates[index]}
-                    product={product}
-                    location={location}
-                  />
-                );
-              })}
-            </div>
-            <div className="lg:relative absolute flex flex-col items-center justify-center z-0 w-fit h-fit">
-              {Array.from({length: 5}, (_, index) => {
-                return (
-                  <HoneyCell
-                    key={`honey-cell-${Date.now()}-${index}`}
-                    className={coordinatesEmpty[index]}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Carousel Section */}
-          <div className="box-border content-stretch flex flex-col items-center justify-start relative w-full">
-            {/* Background */}
-
-            <div className="drop-shadow-2xl z-10 flex flex-col w-full ">
-              <div className="bg-brand h-[800px] lg:h-[506px] py-18 flex items-center justify-center px-4 lg:px-16 shrink-0 w-full">
-                {/* Main content */}
-                <div className="flex lg:flex-row h-full flex-col gap-8 items-center w-full">
-                  {/* Carousel container */}
-                  <ScrollingCarousel
-                    className="order-3 lg:order-1 w-full"
-                    products={uniqueProducts}
-                    location={location}
-                  />
-
-                  {/* Description */}
-                  <div className="flex order-2 flex-1 lg:flex-2 flex-col gap-4 lg:items-start items-center leading-none relative text-black w-full lg:w-96">
-                    <h2 className="bee-title-h2 text-center lg:text-start w-fit">
-                      What's in the Hive?
-                    </h2>
-                    <p className="bee-body-h6 text-center lg:text-start w-fit">
-                      From the sweetest snacks to the handiest supplies, the
-                      hive has something for every moment in your day.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <img
-                alt="Welcome Background"
-                className="hidden lg:block w-full z-10  aspect-auto transform scale-x-[-1]"
-                src={honey}
-              />
-              <img
-                alt="Welcome Background"
-                className="block lg:hidden w-full z-10 aspect-auto"
-                src={bg_honey_mobile}
-              />
-              {/* <img src={honey} alt="" className="z-10 flex w-full" /> */}
-            </div>
-          </div>
-
-          <div className="w-full mt-[128px] lg:mt-0 z-20 relative">
-            {/* left-[170px] */}
-            {/* top-[290px]  */}
-            {/* CTA Section */}
-            <div
-              className="lg:top-[16%] lg:left-[11.3vw]
-              w-4/5
-              sm:w-3/5
-              lg:w-auto
-              left-1/2 -translate-x-1/2
-              lg:-translate-x-0
-              -top-1/4
-              sm:-top-1/7
-              absolute flex flex-col gap-8 items-center lg:items-start z-20"
-            >
-              <div className="flex text-center lg:text-left flex-col gap-4 text-gray-800">
-                <h2 className="bee-title-h2 font-bold">
-                  Want to be Part of the Colony?
-                </h2>
-                <p className="bee-body-h6">
-                  Sign up today—faster than you can say bzzt!
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  navigate("/SellerPage");
-                }}
-                className="btn-primary btn-anim rounded-2xl box-border flex items-center justify-center px-8 py-2 lg:px-16 lg:py-4 relative border-2 shadow-md hover:bg-amber-100 whitespace-nowrap font-semibold"
-              >
-                Sell Now
-              </button>
-              <img
-                className="absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100"
-                src={bee}
-                alt=""
-              />
-            </div>
-
-            {/* Main BG Image */}
-            <div className="relative w-full aspect-auto">
-              <img alt="Beez Background" className="lg:block relative hidden max-w-none w-full h-full z-10 object-cover" src={bg_honeycomb} />
-              <img alt="Beez Background" className="lg:hidden relative block max-w-none w-full  h-full z-10 object-cover" src={bg_comb_mobile} />
-
-
-
-              <img className="absolute lg:block hidden left-10 top-1/3 z-0" src={bee} alt="" />
-              <img className="hidden lg:block absolute w-70 aspect-auto left-4/9 top-2/5 z-0 -scale-x-100" src={bee} alt="" />
-              <img className="hidden lg:block absolute w-70 aspect-auto left-1/2 -top-1/10 z-0 rotate-10 -scale-x-100" src={bee} alt="" />
-
-              <img className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:-top-1/10 z-0 block" src={bee} alt="" />
-
-              <img className="absolute w-40 aspect-auto top-1/4 right-1/5 lg:right-10 lg:top-8/19 z-0 -scale-x-100 " src={bee} alt="" />
-              <img className="hidden lg:block absolute w-30 aspect-auto left-4/5 top-2/11 z-0" src={bee} alt="" />
-              <img className="-scale-x-100 lg:scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-1/1000 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-1/2 z-0" src={bee} alt="" />
-            </div>
+    <div className="relative w-full min-h-screen flex flex-col items-start justify-start font-fredoka bg-white overflow-hidden">
+      <HomeBg />
+      {/* Hero Section */}
+      <div className="flex relative flex-col items-center justify-start w-full">
+        <div
+          className="bg-center bg-cover bg-no-repeat box-border flex flex-col gap-2.5 h-[600px] items-start justify-end px-4 lg:px-16 py-[52px] w-full"
+          style={{ backgroundImage: `url('${imgHero}')` }}
+        >
+          <div className="flex flex-col gap-4 items-center lg:items-start w-full lg:w-fit">
+            <h1 className="bee-title-h1-desktop text-center lg:text-start text-white tracking-tight w-fit">
+              Borem ipsum dolor sit amet
+            </h1>
+            <button className="bg-white flex gap-2.5 items-center justify-center px-8 py-4 font-quicksand font-semibold text-active text-[16px] text-center rounded shadow-md hover:bg-amber-100 transition-colors">
+              View Hive
+            </button>
           </div>
         </div>
-      )}
-    </>
+
+        {/* Welcome Section */}
+        <div className="drop-shadow-2xl box-border flex flex-col h-[531px] items-center justify-start w-full">
+          <div className="bg-brand justify-center h-fit py-[48px] px-4 lg:px-0 gap-[8px] flex flex-col items-center relative w-full">
+            <h2 className="bee-title font-bold text-[24px] lg:bee-title-h4-desktop not-italic w-fit">
+              Welcome Busy Beez
+            </h2>
+            <p className="text-center lg:text-start bee-body-h6-desktop w-fit">
+              Your go-to e-catalog for unique creations, made for students,
+              by students.
+            </p>
+          </div>
+          <img
+            alt="Welcome Background"
+            className="hidden lg:block w-full aspect-auto transform scale-x-[-1]"
+            src={honey}
+          />
+          <img
+            alt="Welcome Background"
+            className="block lg:hidden w-full aspect-auto"
+            src={bg_honey_mobile}
+          />
+        </div>
+      </div>
+
+      {/* Honeycomb Section */}
+
+      <div className="relative drop-shadow-2xl w-full flex pt-140 pb-200 lg:py-0 items-center justify-center h-fit lg:h-[1515px]">
+        <div className="bg-blue-300 lg:relative absolute flex flex-col items-center justify-center w-fit h-fit">
+          {featuredProducts?.map((product, index) => {
+            return (
+              <HoneyCell
+                key={`honey-cell-${product._id}`}
+                className={coordinates[index]}
+                product={product}
+                location={location}
+              />
+            );
+          })}
+        </div>
+        <div className="lg:relative absolute flex flex-col items-center justify-center z-0 w-fit h-fit">
+          {Array.from({length: 5}, (_, index) => {
+            return (
+              <HoneyCell
+                key={`honey-cell-${Date.now()}-${index}`}
+                className={coordinatesEmpty[index]}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Carousel Section */}
+      <div className="box-border content-stretch flex flex-col items-center justify-start relative w-full">
+        {/* Background */}
+
+        <div className="drop-shadow-2xl z-10 flex flex-col w-full ">
+          <div className="bg-brand h-[800px] lg:h-[506px] py-18 flex items-center justify-center px-4 lg:px-16 shrink-0 w-full">
+            {/* Main content */}
+            <div className="flex lg:flex-row h-full flex-col gap-8 items-center w-full">
+              {/* Carousel container */}
+              <ScrollingCarousel
+                className="order-3 lg:order-1 w-full"
+                products={uniqueProducts}
+                location={location}
+              />
+
+              {/* Description */}
+              <div className="flex order-2 flex-1 lg:flex-2 flex-col gap-4 lg:items-start items-center leading-none relative text-black w-full lg:w-96">
+                <h2 className="bee-title-h2 text-center lg:text-start w-fit">
+                  What's in the Hive?
+                </h2>
+                <p className="bee-body-h6 text-center lg:text-start w-fit">
+                  From the sweetest snacks to the handiest supplies, the
+                  hive has something for every moment in your day.
+                </p>
+              </div>
+            </div>
+          </div>
+          <img
+            alt="Welcome Background"
+            className="hidden lg:block w-full z-10  aspect-auto transform scale-x-[-1]"
+            src={honey}
+          />
+          <img
+            alt="Welcome Background"
+            className="block lg:hidden w-full z-10 aspect-auto"
+            src={bg_honey_mobile}
+          />
+          {/* <img src={honey} alt="" className="z-10 flex w-full" /> */}
+        </div>
+      </div>
+
+      <div className="w-full mt-[128px] lg:mt-0 z-20 relative">
+        {/* left-[170px] */}
+        {/* top-[290px]  */}
+        {/* CTA Section */}
+        <div
+          className="lg:top-[16%] lg:left-[11.3vw]
+          w-4/5
+          sm:w-3/5
+          lg:w-auto
+          left-1/2 -translate-x-1/2
+          lg:-translate-x-0
+          -top-1/4
+          sm:-top-1/7
+          absolute flex flex-col gap-8 items-center lg:items-start z-20"
+        >
+          <div className="flex text-center lg:text-left flex-col gap-4 text-gray-800">
+            <h2 className="bee-title-h2 font-bold">
+              Want to be Part of the Colony?
+            </h2>
+            <p className="bee-body-h6">
+              Sign up today—faster than you can say bzzt!
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              navigate("/SellerPage");
+            }}
+            className="btn-primary btn-anim rounded-2xl box-border flex items-center justify-center px-8 py-2 lg:px-16 lg:py-4 relative border-2 shadow-md hover:bg-amber-100 whitespace-nowrap font-semibold"
+          >
+            Sell Now
+          </button>
+          <img
+            className="absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100"
+            src={bee}
+            alt=""
+          />
+        </div>
+
+        {/* Main BG Image */}
+        <div className="relative w-full aspect-auto">
+          <img alt="Beez Background" className="lg:block relative hidden max-w-none w-full h-full z-10 object-cover" src={bg_honeycomb} />
+          <img alt="Beez Background" className="lg:hidden relative block max-w-none w-full  h-full z-10 object-cover" src={bg_comb_mobile} />
+
+
+
+          <img className="absolute lg:block hidden left-10 top-1/3 z-0" src={bee} alt="" />
+          <img className="hidden lg:block absolute w-70 aspect-auto left-4/9 top-2/5 z-0 -scale-x-100" src={bee} alt="" />
+          <img className="hidden lg:block absolute w-70 aspect-auto left-1/2 -top-1/10 z-0 rotate-10 -scale-x-100" src={bee} alt="" />
+
+          <img className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:-top-1/10 z-0 block" src={bee} alt="" />
+
+          <img className="absolute w-40 aspect-auto top-1/4 right-1/5 lg:right-10 lg:top-8/19 z-0 -scale-x-100 " src={bee} alt="" />
+          <img className="hidden lg:block absolute w-30 aspect-auto left-4/5 top-2/11 z-0" src={bee} alt="" />
+          <img className="-scale-x-100 lg:scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-1/1000 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-1/2 z-0" src={bee} alt="" />
+        </div>
+      </div>
+    </div>
   );
 };
 
