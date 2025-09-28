@@ -352,19 +352,6 @@ const AuthPage = () => {
                   {errors.acceptTerms}
                 </p>
               )}
-
-              {/* Forgot Password - Only for Login */}
-              {isLogin && (
-                <div className="text-right">
-                  <button
-                    type="button"
-                    className="bee-body-text-desktop text-brand hover:text-accent transition-colors cursor-pointer"
-                  >
-                    Forgot Password? 🤔
-                  </button>
-                </div>
-              )}
-
               {/* Submit Button */}
               <button
                 type="submit"

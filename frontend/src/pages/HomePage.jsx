@@ -24,7 +24,7 @@ function ScrollingCarousel({ className = "", products, location }) {
     navigate(`/product/${id}`, { state: { from: location } });
   };
 
-  const SCROLL_SPEED = 0.5;
+  const SCROLL_SPEED = 1;
   const ITEM_WIDTH = 292;
 
   const seamlessProducts = [...products, ...products];
@@ -190,7 +190,7 @@ const HomePage = () => {
   ]
   return (
     <>
-      {!isProduction ? (
+      {isProduction ? (
         <div className="min-h-screen w-full flex items-center justify-center">
           <h1 className="bee-logo-desktop text-4xl text-yellow-700">
             Home Page Coming Soon!

@@ -135,7 +135,7 @@ const NavBar = ({ user }) => {
             isVerifying && (
               <Notice
                 message={
-                  "Email verification required, sending verification email...check you spam..."
+                  "Email verification required, sending verification email...Check you're spam..."
                 }
                 accept={{ fn: sendVerifyEmail, msg: "Resend" }}
                 decline={{ fn: cancelVerify, msg: "Cancel" }}

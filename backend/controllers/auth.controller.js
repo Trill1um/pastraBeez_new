@@ -102,23 +102,23 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Check if user is already logged in case of multiple login attempts from different tabs and users
-    const existingAccessToken = req.cookies?.accessToken;
-    if (existingAccessToken) {
-      try {
-        jwt.verify(existingAccessToken, process.env.ACCESS_TOKEN_SECRET);
-        return res.status(200).json({
-          user,
-          message: "Already logged in",
-        });
-      } catch (err) {
-        // Token is invalid or expired, proceed to generate new tokens
-        console.error("Existing access token invalid or expired:", err);
-        return res
-          .status(401)
-          .json({ message: "Session expired, please log in again" });
-      }
-    }
+    // // Check if user is already logged in case of multiple login attempts from different tabs and users
+    // const existingAccessToken = req.cookies?.accessToken;
+    // if (existingAccessToken) {
+    //   try {
+    //     jwt.verify(existingAccessToken, process.env.ACCESS_TOKEN_SECRET);
+    //     return res.status(200).json({
+    //       user,
+    //       message: "Already logged in",
+    //     });
+    //   } catch (err) {
+    //     // Token is invalid or expired, proceed to generate new tokens
+    //     console.error("Existing access token invalid or expired:", err);
+    //     return res
+    //       .status(401)
+    //       .json({ message: "Session expired, please log in again" });
+    //   }
+    // }
 
     // Generate tokens
     const accessToken = genSetAccessToken(res, user._id);
