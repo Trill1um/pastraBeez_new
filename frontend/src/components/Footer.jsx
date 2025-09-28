@@ -4,10 +4,11 @@ import Instagram from "../assets/instagram.svg?react";
 import Telegram from "../assets/telegram.svg?react";
 import Mail from "../assets/mail.svg?react";
 import Messenger from "../assets/messenger.svg?react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Footer = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   return (
     <div>
     {!location.pathname.includes("verify") &&
@@ -29,15 +30,15 @@ const Footer = () => {
               {/* Navigation Links */}
               <div className="flex w-fit h-fit flex-1 flex-row lg:flex-col justify-center items-center gap-6 sm:gap-8">
                 <div className="flex flex-row lg:flex-col gap-6 sm:gap-8 items-center lg:items-start">
-                  <span className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
+                  <button onClick={() => {navigate("/")}} className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
                     Home
-                  </span>
-                  <span className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
+                  </button>
+                  <button onClick={() => {navigate("/catalog")}} className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
                     Hive
-                  </span>
-                  <span className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
+                  </button>
+                  <button onClick={() => {navigate("/about-us")}} className="w-fit bee-footer-sitemap cursor-pointer  sm:text-base">
                     Contacts
-                  </span>
+                  </button>
                 </div>
               </div>
 
@@ -57,27 +58,75 @@ const Footer = () => {
                 {/* Social Media */}
                 <div className="flex gap-8 sm:gap-12 lg:gap-16 items-center justify-center h-10 sm:h-12">
 
-                  <Facebook className="w-10 sm:w-12 h-10 sm:h-12 bg-blue-600 rounded-full cursor-pointer hover:bg-blue-700 transition-colors" />
-                  <Telegram className="w-10 sm:w-12 h-10 sm:h-12 bg-blue-400 rounded-full cursor-pointer hover:bg-blue-500 transition-colors" />
-                  <Instagram className="w-10 sm:w-12 h-10 sm:h-12 bg-pink-500 rounded-full cursor-pointer hover:bg-pink-600 transition-colors" />
+                  <button
+                    type="button"
+                    className="p-0 bg-transparent border-none"
+                    style={{ lineHeight: 0 }}
+                    onClick={() => {
+                      window.open('https://facebook.com/kevinmenard.fernandez', '_blank');
+                    }}
+                    aria-label="Open Facebook"
+                  >
+                    <Facebook className="w-10 sm:w-12 h-10 sm:h-12 bg-blue-600 rounded-full cursor-pointer hover:bg-blue-700 transition-colors" />
+                  </button>
+                  <button
+                    type="button"
+                    className="p-0 bg-transparent border-none"
+                    style={{ lineHeight: 0 }}
+                    onClick={() => {
+                      window.open('http://t.me/KevinFer04', '_blank');
+                    }}
+                    aria-label="Open Telegram"
+                  >
+                    <Telegram className="w-10 sm:w-12 h-10 sm:h-12 bg-blue-400 rounded-full cursor-pointer hover:bg-blue-500 transition-colors" />
+                  </button>
+                  <button
+                    type="button"
+                    className="p-0 bg-transparent border-none"
+                    style={{ lineHeight: 0 }}
+                    onClick={() => {
+                      window.open('https://www.instagram.com/brightsmilebrightday', '_blank');
+                    }}
+                    aria-label="Open Instagram"
+                  >
+                    <Instagram className="w-10 sm:w-12 h-10 sm:h-12 bg-pink-500 rounded-full cursor-pointer hover:bg-pink-600 transition-colors" />
+                  </button>
                   
                 </div>
 
                 {/* Contact Info */}
                 <div className="flex flex-col gap-4 sm:gap-6 w-full">
-                  <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4">
+                  <button
+                    type="button"
+                    className="cursor-pointer flex items-center justify-center lg:justify-start gap-3 sm:gap-4 hover:underline focus:outline-none"
+                    onClick={() => {
+                      window.open(
+                        'https://m.me/kevinmenard.fernandez',
+                        '_blank'
+                      );
+                    }}
+                  >
                     <Messenger className="h-[24px] aspect-auto w-6" />
                     <span className="bee-footer-body text-sm sm:text-base">
                       Message Me
                     </span>
-                  </div>
+                  </button>
 
-                  <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4">
+                  <button
+                    type="button"
+                    className="cursor-pointer flex items-center justify-center lg:justify-start gap-3 sm:gap-4 hover:underline focus:outline-none"
+                    onClick={() => {
+                      window.open(
+                        'https://mail.google.com/mail/?view=cm&fs=1&to=menardkevin810@gmail.com',
+                        '_blank'
+                      );
+                    }}
+                  >
                     <Mail className="h-[24px] aspect-auto w-6" />
-                    <span className="</div>bee-footer-body break-all lg:break-normal min-w-0 text-sm sm:text-base">
+                    <span className="bee-footer-body break-all lg:break-normal min-w-0 text-sm sm:text-base">
                       menardkevin810@gmail.com
                     </span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

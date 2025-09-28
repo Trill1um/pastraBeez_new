@@ -1,4 +1,4 @@
-const BeeOverlay = ({message, accept, decline, isCritical}) => {
+const BeeOverlay = ({message, accept, decline, isCritical=false}) => {
   const onDecline =() => {
     const input = alert("Are you suer? Cancelled processes will not be saved.");
     if (isCritical && !input) return;

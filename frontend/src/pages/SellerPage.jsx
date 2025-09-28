@@ -50,6 +50,7 @@ const SellerProducts = ({ user }) => {
   };
 
   const confirmDelete = () => {
+    console.log("Confirming delete")
     if (confirmDeleteId) {
       deleteProductAsync(confirmDeleteId);
       setConfirmDeleteId(null);
@@ -126,8 +127,8 @@ const SellerProducts = ({ user }) => {
             message={
               "Are you sure you want to remove this honey cell from your catalog?"
             }
-            accept={confirmDelete}
-            decline={cancelDelete}
+            accept={{fn: confirmDelete, msg: "Yes, Remove"}}
+            decline={{fn: cancelDelete, mmsg: "Cancel"}}
           />
         ) : null}
         {/* Table - Desktop & Tablet */}
