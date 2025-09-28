@@ -1,15 +1,14 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { client } from "../lib/redis.js";
-
 import sgMail from "@sendgrid/mail";
-sgMail.setApiKey(process.env.SEND_API);
 
 dotenv.config();
 
-export const sendVerificationEmail = async (userEmail) => {
+export const sendVerificationEmail = async (userEmail, sender = process.env.EMAIL_USER, api_key=process.env.SEND_API) => {
   try {
-    console.log("Sending verification email to:", userEmail);
+    sgMail.setApiKey(api_key);
+    console.log("Sending verification email to:", userEmail, "from:", sender);
     const key = `verify_cooldown:${userEmail}`;
     const inCooldown = await client.exists(key);
     if (inCooldown) {
@@ -45,20 +44,26 @@ export const sendVerificationEmail = async (userEmail) => {
     `;
     const msg = {
       to: userEmail,
-      from: process.env.EMAIL_USER,
+      from: sender,
       subject: "Verify Your Email for PastraBeez",
       text: `Click the link to verify your email: ${verificationLink}`,
       html,
     };
     await sgMail.send(msg);
     await client.set(key, '1', 'EX', 60);
-    console.log(`Verification email sent to ${userEmail}`);
+    console.log(`Verification email sent to ${userEmail} from ${sender}`);
   } catch (error) {
-    console.error("Error sending verification email via SendGrid, Deleting redis keys:", error);
-    await client.del(`verify_cooldown:${userEmail}`);
-    await client.del(`verifying:${userEmail}`);
-    await client.del(`temp:${userEmail}`);
-    throw new Error("Could not send verification email");
+    if (sender === process.env.EMAIL_USER) {
+      console.error("Error sending verification email via SendGrid with primary sender, retrying with backup:", error);
+      // Try backup sender
+      return await sendVerificationEmail(userEmail, process.env.EMAIL_USER_BACKUP, process.env.SEND_API_BACKUP);
+    } else {
+      console.error("Error sending verification email via SendGrid with backup sender, Deleting redis keys:", error);
+      await client.del(`verify_cooldown:${userEmail}`);
+      await client.del(`verifying:${userEmail}`);
+      await client.del(`temp:${userEmail}`);
+      throw new Error("Could not send verification email");
+    }
   }
 };
 
