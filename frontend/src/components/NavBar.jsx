@@ -135,24 +135,13 @@ const NavBar = ({ user }) => {
             isVerifying && (
               <Notice
                 message={
-                  "Email verification required, sending verification email..."
+                  "Email verification required, sending verification email...check you spam..."
                 }
                 accept={{ fn: sendVerifyEmail, msg: "Resend" }}
                 decline={{ fn: cancelVerify, msg: "Cancel" }}
               />
             ) //Setup a timer
           }
-
-          {/* <button onClick={() => setVerificationProgress(!isVerifying)}>
-            {isVerifying ? "\tisVerifying" : "not verifying"}
-          </button> */}
-
-          {/* <button
-            className="bg-red-500 text-white p-2 m-2 rounded"
-            onClick={() => debugVerification(user.email)}
-          >
-            Danger!!!
-          </button> */}
 
           <div className="flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 py-2">
             {/* Logo */}

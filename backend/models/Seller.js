@@ -55,7 +55,11 @@ sellerSchema.pre('save', async function(next) {
 
 // Dummy
 sellerSchema.methods.comparePassword = async function (password) {
-    return password==this.password || await bcrypt.compare(password, this.password);
+  console.log("Comparing: ", password, this.password);
+  const raw = password==this.password;
+  const hashed = await bcrypt.compare(password, this.password);
+  console.log("Result: raw:", raw, " hashed:", hashed);
+    return raw || hashed;
 }
 
 const Seller = mongoose.model('DummySeller', sellerSchema);

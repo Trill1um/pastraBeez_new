@@ -88,6 +88,16 @@ export const useUserStore = create((set, get) => ({
     try {
       await axios.post(`/auth/logout`);
       set({ user: null });
+
+      // Clear React Query cache
+      // if (typeof window !== "undefined") {
+      //   import('../lib/query').then((mod) => {
+      //     if (mod && mod.useInvalidateProducts) {
+      //       mod.useInvalidateProducts().invalidateAll();
+      //     }
+      //   });
+      // }
+
       toast.success("Logged out successfully");
     } catch (error) {
       console.error(error);

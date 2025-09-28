@@ -12,7 +12,6 @@ import bg_honeycomb from "../assets/bg-comb.svg";
 import bg_honey_mobile from "../assets/bg-drip-mobile.svg";
 import bee from "../assets/new_bee.gif";
 import bg_comb_mobile from "../assets/bg-comb-mobile.svg";
-// import bg_honeycomb_Mobile from "../assets/bg-"
 
 import HomeBg from "../components/HomeBg";
 
@@ -83,7 +82,8 @@ function ScrollingCarousel({ className = "", products, location }) {
   );
 }
 
-const HoneyCell = ({ className = "", product }) => {
+const HoneyCell = ({ className = "", product, location }) => {
+  const navigate = useNavigate();
   return (
     <div
       className={`w-20 lg:w-[548px] select-none flex items-center justify-center aspect-auto ${className}`}
@@ -130,7 +130,7 @@ const HoneyCell = ({ className = "", product }) => {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
             </p>
           </div>
-          <button className="btn-anim-transform flex-1 flex items-center w-fit justify-center px-8 py-2 rounded-[0.75rem] border-2">
+          <button onClick={() => {navigate(`/product/${product?._id}`, { state:{ from: location }})}} className="btn-anim-transform flex-1 flex items-center w-fit justify-center px-8 py-2 rounded-[0.75rem] border-2">
             <span className="item-button">Learn More</span>
           </button>
         </div>

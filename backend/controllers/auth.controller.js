@@ -127,7 +127,10 @@ export const login = async (req, res) => {
     // Store refresh token
     await storeRefreshToken(user._id, refreshToken);
 
-    const temp = await client.del(`temp:${email}`);
+    // Clean up temp and cooldown tokens
+    await client.del(`temp:${email}`);
+    await client.del(`verify_cooldown:${email}`);
+
     console.log("User authenticated successfully:", user);
     return res.status(200).json({
       user,
@@ -192,7 +195,7 @@ export const signup = async (req, res) => {
       ),
       id: "attempt-" + Date.now().toString(),
     };
-    userData.password = await bcrypt.hash(email, salt);
+    userData.password = await bcrypt.hash(password, salt);
 
     // Store temp user and verifying user tokens in redis
     await client.set(
