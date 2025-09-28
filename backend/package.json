@@ -24,9 +24,8 @@
     "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.6",
-    "resend": "^6.1.0",
-    "sendpulse-api": "^1.1.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

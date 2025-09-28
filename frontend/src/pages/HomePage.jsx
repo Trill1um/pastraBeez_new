@@ -152,7 +152,7 @@ const HoneyCell = ({ className = "", product=[], location="" }) => {
 const isProduction = import.meta.env.MODE === "production";
 
   // const coordinates = [
-  //   "absolute left-[-675px] top-[-940px] bg-gray-700/50",
+  //   "absolute left-[-675px] top-[-940px]",
   //   "absolute bg-red-400/50",
   //   "absolute top-[-710px] bg-yellow-400/50",
   //   "absolute left-[64px] top-[-6px] lg:left-[125px] lg:top-[-20px] bg-green-400/50",
@@ -174,19 +174,19 @@ const HomePage = () => {
     [];
     // "absolute left-[-675px] top-[-940px] bg-gray-700/50",
   const coordinates = [
-    "absolute top-[-490px] left-[-195px]",
-    "absolute top-[-394px] left-[-30px]",
-    "absolute top-[-105px] left-[-195px]",
-    "absolute top-[-9px] left-[-30px]",
-    "absolute top-[88px] left-[-195px]",
-    "absolute top-[377px] left-[-30px]",
+    "absolute top-[-490px] left-[-195px] lg:left-[-675px] lg:top-[-940px]",
+    "absolute top-[-394px] left-[-30px] lg:top-[-250px] lg:left-[-272px]",
+    "absolute top-[-105px] left-[-195px] lg:top-[-710px] lg:left-[-270px]",
+    "absolute top-[-9px] left-[-30px] lg:left-[125px] lg:top-[-20px]",
+    "absolute top-[88px] left-[-195px] lg:left-[125px] lg:top-[-480px]",
+    "absolute top-[377px] left-[-30px] lg:left-[-675px] lg:top-[-17px]",
   ];
   const coordinatesEmpty = [
-    "absolute bottom-[-4px] left-[-30px]",
-    "absolute bottom-[93px] left-[-195px]",
-    "absolute bottom-[380px] left-[-30px]",
-    "absolute bottom-[-390px] left-[-30px]",
-    "absolute bottom-[-486px] left-[-195px]",
+    "absolute bottom-[-4px] left-[-30px] lg:hidden lg:pointer-events-none",
+    "absolute bottom-[93px] left-[-195px] lg:hidden lg:pointer-events-none",
+    "absolute bottom-[380px] left-[-30px] lg:hidden lg:pointer-events-none",
+    "absolute bottom-[-390px] left-[-30px] lg:hidden lg:pointer-events-none",
+    "absolute bottom-[-486px] left-[-195px] lg:hidden lg:pointer-events-none",
   ]
   return (
     <>
@@ -339,7 +339,7 @@ const HomePage = () => {
                 Sell Now
               </button>
               <img
-                className="absolute w-20 lg:w-40 aspect-auto -right-4 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-40 z-0 -scale-x-100"
+                className="absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100"
                 src={bee}
                 alt=""
               />
@@ -350,15 +350,17 @@ const HomePage = () => {
               <img alt="Beez Background" className="lg:block relative hidden max-w-none w-full h-full z-10 object-cover" src={bg_honeycomb} />
               <img alt="Beez Background" className="lg:hidden relative block max-w-none w-full  h-full z-10 object-cover" src={bg_comb_mobile} />
 
-              <img className="absolute lg:block hidden left-10 bottom-150 z-0" src={bee} alt="" />
-              <img className="hidden lg:block absolute w-70 aspect-auto left-200 bottom-170 z-0 -scale-x-100" src={bee} alt="" />
-              <img className="hidden lg:block absolute w-70 aspect-auto left-190 bottom-410 z-0 rotate-10 -scale-x-100" src={bee} alt="" />
 
-              <img className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:bottom-140 z-0 block" src={bee} alt="" />
 
-              <img className="absolute w-40 aspect-auto right-10 top-20 z-0 -scale-x-100" src={bee} alt="" />
-              <img className="hidden lg:block absolute w-30 aspect-auto right-40 top-88 z-0" src={bee} alt="" />
-              <img className="-scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-20 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-180 z-0" src={bee} alt="" />
+              <img className="absolute lg:block hidden left-10 top-1/3 z-0" src={bee} alt="" />
+              <img className="hidden lg:block absolute w-70 aspect-auto left-4/9 top-2/5 z-0 -scale-x-100" src={bee} alt="" />
+              <img className="hidden lg:block absolute w-70 aspect-auto left-1/2 -top-1/10 z-0 rotate-10 -scale-x-100" src={bee} alt="" />
+
+              <img className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:-top-1/10 z-0 block" src={bee} alt="" />
+
+              <img className="absolute w-40 aspect-auto top-1/4 right-1/5 lg:right-10 lg:top-8/19 z-0 -scale-x-100 " src={bee} alt="" />
+              <img className="hidden lg:block absolute w-30 aspect-auto left-4/5 top-2/11 z-0" src={bee} alt="" />
+              <img className="-scale-x-100 lg:scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-1/1000 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-1/2 z-0" src={bee} alt="" />
             </div>
           </div>
         </div>

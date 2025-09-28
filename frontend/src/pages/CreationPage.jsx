@@ -76,8 +76,9 @@ const fileToBase64 = (file) => {
 };
 
 const CreationPage = ({user}) => {
-  const { isLoading, createProductAsync, updateProductAsync } = useProcessedProducts((state) => ({
-    isLoading: state.isLoading,
+  const { isCreating, isUpdating, createProductAsync, updateProductAsync } = useProcessedProducts((state) => ({
+    isCreating: state.isCreating,
+    isUpdating: state.isUpdating,
     createProductAsync: state.createProductAsync,
     updateProductAsync: state.updateProductAsync,
   }));
@@ -129,19 +130,14 @@ const CreationPage = ({user}) => {
   const updateScrollState = (element, setScrollState) => {
     if (!element) return;
 
-    // Use requestAnimationFrame to ensure we get the final scroll position after bounce
     requestAnimationFrame(() => {
       const scrollLeft = Math.round(element.scrollLeft);
       const scrollWidth = element.scrollWidth;
       const clientWidth = element.clientWidth;
       const maxScrollLeft = scrollWidth - clientWidth;
 
-      // Account for px-2 padding (8px) when determining if we can scroll left
-      // Only show left indicator if we've scrolled more than the padding offset
-      const canScrollLeft = scrollLeft > 8; // 8px = px-2 padding
+      const canScrollLeft = scrollLeft > 8; 
 
-      // Only show right indicator if there's content to scroll to the right
-      // and we haven't reached the end
       const canScrollRight = maxScrollLeft > 0 && scrollLeft < maxScrollLeft;
 
       setScrollState({
@@ -382,7 +378,6 @@ const CreationPage = ({user}) => {
         toast.error("At least one product image is required");
         return;
       }
-      console.log("is it loading: ", isLoading);
       if (!product) {
         await createProductAsync(formData);
       } else {
@@ -453,7 +448,7 @@ const CreationPage = ({user}) => {
       </div>
 
       {/* Main Content */}
-      <div className={`${isLoading? "opacity-60":""} min-h-screen px-0 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 xl:py-16 max-w-[1440px] mx-auto`}>
+      <div className={`${isCreating||isUpdating?"opacity-60 cursor-progress pointer-events-none":""} min-h-screen px-0 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 xl:py-16 max-w-[1440px] mx-auto`}>
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 px-2 sm:px-4 py-2 mb-2 sm:mb-4">
           <div

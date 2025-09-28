@@ -12,6 +12,7 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AboutPage = lazy(() => import("./pages/AboutUs"));
 const VerificationPage = lazy(() => import("./pages/Verification"));
 import BeeLoadingScreen from "./components/BeeLoadingScreen";
+import BeeNavigating from "./components/BeeNavigating";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
@@ -37,7 +38,7 @@ function App() {
       <NavBar user={user} />
       <div className="App">
         {/* add suspense fallback */}
-        <Suspense>
+        <Suspense fallback={<BeeNavigating />}>
           <Routes>
             {/* Always accessible */}
             <Route path="/product/:id" element={<ProductDetails />} />

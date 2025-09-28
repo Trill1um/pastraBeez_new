@@ -7,6 +7,7 @@ import {
 } from "../services/verifyEmail.js";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
+import fetch from "node-fetch";
 
 dotenv.config();
 
@@ -166,10 +167,22 @@ export const signup = async (req, res) => {
     }
     if (!facebookLink.includes("www.facebook.com/")) {
       return res.status(400).json({
-        message: "Please enter a valid Facebook link (www.facebook.com/...)",
+        message: "Please enter a valid Facebook link (www.facebook.com/your.username)",
       });
     }
 
+    // get final redirected facebook link if it's a /share/ link
+    let location = facebookLink
+    console.log("Original Facebook link: ", location);
+    if (location.includes("/share/")) {
+      const resp = await fetch(location, { redirect: "manual" });
+      if (resp.status >= 300 && resp.status < 400) {
+        location = resp.headers.get("location");
+        console.log("Redirected to: ", location);
+      }
+    }
+    console.log("Final Facebook link after redirects: ", location);
+    
     // Check if user already exists
     const existingUser = await Seller.findOne({ email });
     if (existingUser) {
@@ -190,9 +203,13 @@ export const signup = async (req, res) => {
     const userData = {
       colonyName,
       email,
-      facebookLink: facebookLink.slice(
-        facebookLink.indexOf("www.facebook.com/") + 17
-      ),
+      facebookLink: (() => {
+        const start = location.indexOf("www.facebook.com/") + 17;
+        const endQ = location.indexOf("?", start);
+        return endQ === -1
+          ? location.slice(start)
+          : location.slice(start, endQ);
+      })(),
       id: "attempt-" + Date.now().toString(),
     };
     userData.password = await bcrypt.hash(password, salt);
