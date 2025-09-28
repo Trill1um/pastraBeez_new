@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import bee from "../assets/new_bee.gif";
-import honeyRight from "../assets/honey-bg-right.svg";
-import honeyLeft from "../assets/honey-bg-left.svg";
+import honeyRight from "../assets/bg-comb-right.svg";
+import honeyLeft from "../assets/bg-comb-left.svg";
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,6 +45,7 @@ const bg=()=> {
             x,
             y,
             dir,
+            speed: Math.random() * 1.5 + speed
           },
         ]);
       }
@@ -53,7 +54,7 @@ const bg=()=> {
         if (bees.length<MAX) spawnBee();
       }, interval);
       return () => clearInterval(spawnRef.current);
-    }, [count, interval, screenW, screenH, bees.length]);
+    }, [count, interval, screenW, screenH, bees.length, speed]);
   
     // Animate bees
     useEffect(() => {
@@ -61,8 +62,8 @@ const bg=()=> {
         setBees((prev) => prev
           .map((bee) => ({
             ...bee,
-            x: bee.x + bee.dir.x * speed,
-            y: bee.y + bee.dir.y * speed,
+            x: bee.x + bee.dir.x * bee.speed,
+            y: bee.y + bee.dir.y * bee.speed,
           }))
           .filter((bee) =>
             bee.x > -120 && bee.x < screenW + 120 && bee.y > -120 && bee.y < screenH + 120
