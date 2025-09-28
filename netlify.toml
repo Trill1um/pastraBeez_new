@@ -16,7 +16,7 @@
   NODE_VERSION = "18"
   
   # Custom environment variables
-  VITE_API_PRODUCTION_URL = "https://pastrabeeznew-production.up.railway.app"
+  VITE_API_PRODUCTION_URL = "https://pastrabeez-new.onrender.com/"
 
 # Redirects for SPA routing
 [[redirects]]
