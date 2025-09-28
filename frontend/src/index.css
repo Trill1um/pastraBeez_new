@@ -422,7 +422,7 @@
 
 /* Product Price Typography */
 .item-price {
-  font-family: 'Fredoka One', cursive;
+  font-family: var(--font-fredoka);
   font-style: normal;
   font-size: 28px;
   font-weight: 600;
