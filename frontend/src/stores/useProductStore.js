@@ -50,20 +50,20 @@ export const useProductProcessor = create((set, get) => ({
     // Apply filters
     let filtered = rawProducts.filter(product => {
       // Category filter
-      if (filters.category !== null && product.category !== filters.category) return false;
+      if (filters.category !== null && product?.category !== filters.category) return false;
       
       // Stock filter
-      if (filters.inStock !== null && product.inStock !== filters.inStock) return false;
+      if (filters.inStock !== null && product?.inStock !== filters.inStock) return false;
       
       // isLimited filter
-      if (filters.isLimited !== null && product.isLimited !== filters.isLimited) return false;
+      if (filters.isLimited !== null && product?.isLimited !== filters.isLimited) return false;
       
       // Search filter
       if (filters.searchTerm) {
         const searchLower = filters.searchTerm.toLowerCase();
         const matchesSearch = 
-          product.name?.toLowerCase().includes(searchLower) ||
-          product.sellerId.colonyName?.toLowerCase().includes(searchLower);
+          product?.name?.toLowerCase().includes(searchLower) ||
+          (product?.sellerId && product.sellerId.colonyName && product.sellerId.colonyName.toLowerCase().includes(searchLower));
         if (!matchesSearch) return false;
       }
       
@@ -238,7 +238,7 @@ export function useUniqueProductCategories() {
 
   // Group products by category and shuffle each group
   const productsByCategory = availableCategories.map(category => {
-    const categoryProducts = rawProducts.filter(product => product.category === category);
+    const categoryProducts = rawProducts.filter(product => product?.category === category);
     // Shuffle the products in this category
     return categoryProducts.sort(() => Math.random() - 0.5);
   }).filter(categoryArray => categoryArray.length > 0); // Only keep categories that have products
