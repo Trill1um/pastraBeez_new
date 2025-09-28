@@ -36,7 +36,7 @@ const ProductCard = ({ product, isPreview = false }) => {
 
   //open messenger link in new tab
   const onBuy = () => {
-    window.open(product.sellerId.facebookLink, "_blank");
+    window.open("https://m.me/" + product.sellerId.facebookLink, "_blank");
   };
 
   return (
@@ -110,7 +110,7 @@ const ProductCard = ({ product, isPreview = false }) => {
             {/* Product Name */}
             <h3 className="max-w-[320px] item-name truncate">{product.name}</h3>
             <div className="flex items-center justify-between h-[2rem]">
-              <p className="bee-price max-w-[180px] truncate item-price">
+              <p className="max-w-[180px] truncate item-price">
                 P{" "}
                 {Number(product.price).toLocaleString("en-US", {
                   maximumFractionDigits: 2,
