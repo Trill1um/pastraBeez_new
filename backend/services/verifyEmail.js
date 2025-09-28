@@ -1,24 +1,13 @@
-import mailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { client } from "../lib/redis.js";
 
+import sgMail from "@sendgrid/mail";
+sgMail.setApiKey(process.env.SEND_API);
+
 dotenv.config();
 
-function setTransporter(user, pass) {
-  const transporter = mailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: user,
-      pass: pass,
-    },
-  });
-  return transporter;
-}
-
-export const sendVerificationEmail = async (userEmail, user=process.env.EMAIL_USER, pass=process.env.EMAIL_PASS) => {
+export const sendVerificationEmail = async (userEmail) => {
   try {
     console.log("Sending verification email to:", userEmail);
     const key = `verify_cooldown:${userEmail}`;
@@ -26,52 +15,50 @@ export const sendVerificationEmail = async (userEmail, user=process.env.EMAIL_US
     if (inCooldown) {
       throw new Error("Please wait before requesting another verification email.");
     }
-    
+
     const token = jwt.sign(
-      { data: userEmail,},
+      { data: userEmail },
       process.env.EMAIL_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
-    const link=process.env.VITE_SERVER_PRODUCTION_URL || process.env.VITE_SERVER_DEVELOPMENT_URL;
+    const link = process.env.VITE_SERVER_PRODUCTION_URL || process.env.VITE_SERVER_DEVELOPMENT_URL;
     const verificationLink = `${link}/verify?token=${token}&email=${userEmail}`;
-    const mailOptions = {
-      from: `"PastraBeez" <${process.env.EMAIL_USER}>`,
+    const html = `
+      <h1>Email Verification</h1>
+      <p>Click the button below to verify your email address:</p>
+      <a href="${verificationLink}" style="
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #f7b81a;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        cursor: pointer;
+        margin: 16px 0;
+      ">
+        Verify Email
+      </a>
+      <p style="color: #888; font-size: 14px;">This link will expire in 1 hour.</p>
+    `;
+    const msg = {
       to: userEmail,
+      from: process.env.EMAIL_USER,
       subject: "Verify Your Email for PastraBeez",
-      html: `
-        <h1>Email Verification</h1>
-        <p>Click the button below to verify your email address:</p>
-        <a href="${verificationLink}" style="
-          display: inline-block;
-          padding: 12px 24px;
-          background-color: #f7b81a;
-          color: #fff;
-          font-size: 16px;
-          font-weight: bold;
-          text-decoration: none;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-          cursor: pointer;
-          margin: 16px 0;
-        ">
-          Verify Email
-        </a>
-        <p style="color: #888; font-size: 14px;">This link will expire in 1 hour.</p>
-      `,
+      text: `Click the link to verify your email: ${verificationLink}`,
+      html,
     };
-    const transporter = setTransporter(user, pass);
-    await transporter.sendMail(mailOptions);
+    await sgMail.send(msg);
     await client.set(key, '1', 'EX', 60);
     console.log(`Verification email sent to ${userEmail}`);
   } catch (error) {
-    //try to use backup if primary fails
-    if (user === process.env.EMAIL_USER) {
-      console.error("Error sending verification email:", error);
-      await sendVerificationEmail(userEmail, process.env.EMAIL_USER_BACKUP, process.env.EMAIL_PASS_BACKUP);
-    } else {
-      console.error("Error sending backup verification email:", error);
-      throw new Error("Could not send verification email");
-    }
+    console.error("Error sending verification email via SendGrid, Deleting redis keys:", error);
+    await client.del(`verify_cooldown:${userEmail}`);
+    await client.del(`verifying:${userEmail}`);
+    await client.del(`temp:${userEmail}`);
+    throw new Error("Could not send verification email");
   }
 };
 
