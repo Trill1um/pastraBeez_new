@@ -81,12 +81,12 @@ function ScrollingCarousel({ className = "", products, location }) {
     </div>
   );
 }
-
-const HoneyCell = ({ className = "", product, location }) => {
+// w-70
+const HoneyCell = ({ className = "", product=[], location="" }) => {
   const navigate = useNavigate();
   return (
     <div
-      className={`w-20 lg:w-[548px] select-none flex items-center justify-center aspect-auto ${className}`}
+      className={`w-[228px] lg:w-[548px] select-none flex items-center justify-center aspect-auto ${className}`}
       style={{
         backgroundImage: `url("data:image/svg+xml,%3csvg%20width='563'%20height='488'%20viewBox='0%200%20563%20488'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M418.348%20481.095H144.117L7%20243.546L144.117%206H418.348L555.468%20243.546L418.348%20481.095Z'%20stroke='%23F7B81A'%20stroke-width='12'%20fill='none'/%3e%3c/svg%3e")`,
         backgroundSize: "contain",
@@ -94,52 +94,71 @@ const HoneyCell = ({ className = "", product, location }) => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div
-        className="w-9/10 group flex items-center justify-center relative aspect-square"
-        style={{
-          clipPath:
-            "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
-        }}
-      >
-        <img
-          src={product?.images[0] || imgHero}
-          alt={product?.name || "Product Image"}
-          className="lg:group-hover:opacity-0 lg:group-hover:pointer-events-none z-10 object-cover w-full transition-all duration-300 ease-out aspect-square"
+
+      { product && location? 
+        <div className="w-9/10 group flex items-center justify-center relative aspect-square"
           style={{
-            clipPath:
-              "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
+            clipPath: "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
           }}
-        />
-        <div
-          className="flex items-center justify-center absolute blur-sm w-full aspect-square -z-10 brightness-50 "
-          style={{
-            backgroundImage: `url(${product?.images[0] || imgHero})`,
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            clipPath:
-              "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
-          }}
-        />
-        <div className="flex flex-col text-white bee-title items-end  gap-4 justify-center absolute w-4/7">
-          <div className="flex flex-col items-start gap-2">
-            <h6 className="honey-cell-name bee-title-h4-desktop text-white text-start">
-              {product?.name || "Product Name"}
-            </h6>
-            <p className="honey-cell-desc bee-body-h6-desktop text-start">
-              {product?.description ||
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
-            </p>
+        >
+          {/* Cover */}
+          <img src={product?.images[0] || imgHero}
+            alt={product?.name || "Product Image"}
+            className="lg:group-hover:opacity-0 lg:group-hover:pointer-events-none z-10 object-cover w-full transition-all duration-300 ease-out aspect-square"
+            style={{
+              clipPath: "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
+            }}
+          />
+
+          {/* Background */}
+          <div className="flex items-center justify-center absolute blur-sm w-full aspect-square -z-10 brightness-50 "
+            style={{
+              backgroundImage: `url(${product?.images[0] || imgHero})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+              clipPath: "polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
+            }}
+          />
+
+          {/* Content */}
+          <div className="flex flex-col text-white bee-title items-end  gap-4 justify-center absolute w-4/7">
+            <div className="flex flex-col items-start gap-2">
+              <h6 className="honey-cell-name bee-title-h4-desktop text-white text-start">
+                {product?.name || "Product Name"}
+              </h6>
+              <p className="honey-cell-desc bee-body-h6-desktop text-start">
+                {product?.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
+              </p>
+            </div>
+            <button onClick={() => {navigate(`/product/${product?._id}`, { state:{ from: location }})}} className="btn-anim-transform flex-1 flex items-center w-fit justify-center px-8 py-2 rounded-[0.75rem] border-2">
+              <span className="item-button">Learn More</span>
+            </button>
           </div>
-          <button onClick={() => {navigate(`/product/${product?._id}`, { state:{ from: location }})}} className="btn-anim-transform flex-1 flex items-center w-fit justify-center px-8 py-2 rounded-[0.75rem] border-2">
-            <span className="item-button">Learn More</span>
-          </button>
+
         </div>
-      </div>
+      :
+        <div className="w-9/10 group flex items-center justify-center relative aspect-square"
+          style={{
+            clipPath:"polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)",
+          }}
+        >
+          <div style={{clipPath:"polygon(25.6% 6.2%, 74.3% 6.2%, 100% 49.9%, 74.3% 93.6%, 25.6% 93.6%, 0% 49.9%)"}} className="bg-yellow-300 w-full h-full"/>
+        </div>
+      }
     </div>
   );
 };
 
 const isProduction = import.meta.env.MODE === "production";
+
+  // const coordinates = [
+  //   "absolute left-[-675px] top-[-940px] bg-gray-700/50",
+  //   "absolute bg-red-400/50",
+  //   "absolute top-[-710px] bg-yellow-400/50",
+  //   "absolute left-[64px] top-[-6px] lg:left-[125px] lg:top-[-20px] bg-green-400/50",
+  //   "absolute left-[125px] top-[-480px] bg-blue-400/50",
+  //   "absolute left-[-675px] top-[-17px] bg-purple-400/50",
+  // ];
 
 const HomePage = () => {
   const location = useLocation();
@@ -153,14 +172,22 @@ const HomePage = () => {
     console.log("Unique: ", uniqueProducts);
   }),
     [];
+    // "absolute left-[-675px] top-[-940px] bg-gray-700/50",
   const coordinates = [
-    "absolute bg-red-400 ",
-    "absolute left-[125px] top-[-480px]",
-    "absolute top-[-710px]",
-    "absolute left-[125px] top-[-20px]",
-    "absolute left-[-675px] top-[-17px]",
-    "absolute left-[-675px] top-[-940px]",
+    "absolute top-[-490px] left-[-195px]",
+    "absolute top-[-394px] left-[-30px]",
+    "absolute top-[-105px] left-[-195px]",
+    "absolute top-[-9px] left-[-30px]",
+    "absolute top-[88px] left-[-195px]",
+    "absolute top-[377px] left-[-30px]",
   ];
+  const coordinatesEmpty = [
+    "absolute bottom-[-4px] left-[-30px]",
+    "absolute bottom-[93px] left-[-195px]",
+    "absolute bottom-[380px] left-[-30px]",
+    "absolute bottom-[-390px] left-[-30px]",
+    "absolute bottom-[-486px] left-[-195px]",
+  ]
   return (
     <>
       {isProduction ? (
@@ -214,8 +241,8 @@ const HomePage = () => {
 
           {/* Honeycomb Section */}
 
-          <div className="relative drop-shadow-2xl w-full flex py-100 lg:py-0 items-center justify-center h-[100px] lg:h-[1515px]">
-            <div className="bg-blue-300 relative flex flex-col items-center justify-center w-fit h-fit">
+          <div className="relative drop-shadow-2xl w-full flex pt-140 pb-200 lg:py-0 items-center justify-center h-fit lg:h-[1515px]">
+            <div className="bg-blue-300 lg:relative absolute flex flex-col items-center justify-center w-fit h-fit">
               {featuredProducts?.map((product, index) => {
                 return (
                   <HoneyCell
@@ -223,6 +250,16 @@ const HomePage = () => {
                     className={coordinates[index]}
                     product={product}
                     location={location}
+                  />
+                );
+              })}
+            </div>
+            <div className="lg:relative absolute flex flex-col items-center justify-center z-0 w-fit h-fit">
+              {Array.from({length: 5}, (_, index) => {
+                return (
+                  <HoneyCell
+                    key={`honey-cell-${Date.now()}-${index}`}
+                    className={coordinatesEmpty[index]}
                   />
                 );
               })}
@@ -277,10 +314,12 @@ const HomePage = () => {
             <div
               className="lg:top-[16%] lg:left-[11.3vw]
               w-4/5
+              sm:w-3/5
               lg:w-auto
               left-1/2 -translate-x-1/2
               lg:-translate-x-0
-              -top-2/7
+              -top-1/4
+              sm:-top-1/7
               absolute flex flex-col gap-8 items-center lg:items-start z-20"
             >
               <div className="flex text-center lg:text-left flex-col gap-4 text-gray-800">
@@ -300,7 +339,7 @@ const HomePage = () => {
                 Sell Now
               </button>
               <img
-                className="absolute w-20 lg:w-40 aspect-auto left-45 lg:left-45 rotate-10 lg:top-30 top-40 z-0 -scale-x-100"
+                className="absolute w-20 lg:w-40 aspect-auto -right-4 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-40 z-0 -scale-x-100"
                 src={bee}
                 alt=""
               />
@@ -315,11 +354,11 @@ const HomePage = () => {
               <img className="hidden lg:block absolute w-70 aspect-auto left-200 bottom-170 z-0 -scale-x-100" src={bee} alt="" />
               <img className="hidden lg:block absolute w-70 aspect-auto left-190 bottom-410 z-0 rotate-10 -scale-x-100" src={bee} alt="" />
 
-              <img className="absolute w-20 lg:w-70 aspect-auto lg:right-7 bottom-80 lg:bottom-140 z-0 block" src={bee} alt="" />
+              <img className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:bottom-140 z-0 block" src={bee} alt="" />
 
               <img className="absolute w-40 aspect-auto right-10 top-20 z-0 -scale-x-100" src={bee} alt="" />
               <img className="hidden lg:block absolute w-30 aspect-auto right-40 top-88 z-0" src={bee} alt="" />
-              <img className="-scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 lg:right-20 -top-55 rotate-15 lg:rotate-0 lg:top-180 z-0" src={bee} alt="" />
+              <img className="-scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-20 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-180 z-0" src={bee} alt="" />
             </div>
           </div>
         </div>
