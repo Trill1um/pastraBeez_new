@@ -32,6 +32,7 @@ const SellerProducts = ({ user }) => {
     Other: <OtherIcon className="text-amber-600 stroke-current w-5 h-5" />,
   };
 
+  console.log("User in SellerProducts:", user);
   const { sellerProducts, isLoading, error } = useSellerProducts(user?._id);
   const { deleteProductAsync, isDeleting, isCreating } = useProcessedProducts();
 

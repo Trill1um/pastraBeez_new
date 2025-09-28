@@ -288,7 +288,7 @@ export function useSellerProducts(sellerId) {
   
   // Filter products by seller
   const sellerProducts = rawProducts.filter(p => 
-    p.sellerId._id === sellerId
+    p?.sellerId?._id === sellerId
   );
   
   return {
