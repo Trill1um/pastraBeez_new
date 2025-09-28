@@ -38,7 +38,7 @@ const SellerProducts = ({ user }) => {
   // Update local products when filtered products change
   const handleEdit = (product) => {
     console.log("editihng: ", product);
-    navigate(`/myProduct/editing-${product._id}`);
+    navigate(`/myProduct/editing-${product?._id}`);
     // Add your edit logic here
   };
 
@@ -166,7 +166,7 @@ const SellerProducts = ({ user }) => {
               <tbody className="divide-y divide-amber-100">
                 {sellerProducts.map((product, index) => (
                   <tr
-                    key={product._id}
+                    key={product?._id}
                     className={`hover:bg-amber-50/50 transition-colors duration-150 ${
                       index % 2 === 0 ? "bg-white/50" : "bg-amber-25/25"
                     }`}
@@ -176,10 +176,10 @@ const SellerProducts = ({ user }) => {
                       <div className="w-8 h-8 xl:w-12 xl:h-12 rounded-lg overflow-hidden shadow-sm border border-amber-200 mx-auto">
                         <img
                           src={
-                            cloudify(product.images[0], "thumbnail", false) ||
+                            cloudify(product?.images[0], "thumbnail", false) ||
                             placeholder
                           }
-                          alt={product.name}
+                          alt={product?.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.src = "/placeholder-image.jpg";
@@ -191,21 +191,21 @@ const SellerProducts = ({ user }) => {
                     {/* Name */}
                     <td className="px-2 xl:px-4 py-3">
                       <div className="text-accent bee-title font-medium text-gray-900 text-xs xl:text-sm wrap-break-word ">
-                        {product.name}
+                        {product?.name}
                       </div>
                       {/* Show category and stock info on smaller screens */}
                       <div className="flex items-center h-fit lg:hidden xl:hidden text-xs text-gray-500 mt-1">
                         <span className="inline-flex items-center gap-1">
-                          {ICONS[product.category]}
-                          {product.category}
+                          {ICONS[product?.category]}
+                          {product?.category}
                         </span>
                         <span className="mx-2">•</span>
                         <span
                           className={
-                            product.inStock ? "text-green-600" : "text-red-600"
+                            product?.inStock ? "text-green-600" : "text-red-600"
                           }
                         >
-                          {product.inStock ? "In Stock" : "Out"}
+                          {product?.inStock ? "In Stock" : "Out"}
                         </span>
                       </div>
                     </td>
@@ -214,16 +214,16 @@ const SellerProducts = ({ user }) => {
                     <td className="px-2 xl:px-4 py-3 hidden lg:table-cell">
                       <span className="inline-flex items-center px-2 py-1 gap-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 truncate">
                         <span className="hidden xl:inline">
-                          {ICONS[product.category]}
+                          {ICONS[product?.category]}
                         </span>
-                        <span className="truncate">{product.category}</span>
+                        <span className="truncate">{product?.category}</span>
                       </span>
                     </td>
 
                     {/* Price */}
                     <td className="px-2 xl:px-4 py-3">
                       <span className="text-xs xl:text-sm text-primary font-semibold text-green-700 break-words max-w-[80px]">
-                        ${product.price?.toFixed(2) || "0.00"}
+                        ${product?.price?.toFixed(2) || "0.00"}
                       </span>
                     </td>
 
@@ -231,10 +231,10 @@ const SellerProducts = ({ user }) => {
                     <td className="px-2 xl:px-4 py-3 hidden xl:table-cell">
                       <span
                         className={`text-xs font-medium ${
-                          product.inStock ? "text-green-600" : "text-red-600"
+                          product?.inStock ? "text-green-600" : "text-red-600"
                         }`}
                       >
-                        {product.inStock ? "In Stock" : "Out of Stock"}
+                        {product?.inStock ? "In Stock" : "Out of Stock"}
                       </span>
                     </td>
 
@@ -242,18 +242,18 @@ const SellerProducts = ({ user }) => {
                     <td className="px-2 xl:px-4 py-3 hidden lg:table-cell">
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
-                          product.isLimited
+                          product?.isLimited
                             ? "bg-red-100 text-red-800 border-red-200"
                             : "bg-green-100 text-green-800 border-green-200"
                         }`}
                       >
                         <div
                           className={`w-2 h-2 rounded-full mr-1 ${
-                            product.isLimited ? "bg-red-500" : "bg-green-500"
+                            product?.isLimited ? "bg-red-500" : "bg-green-500"
                           }`}
                         ></div>
                         <span className="xl:inline truncate">
-                          {product.isLimited ? "Limited" : "Active"}
+                          {product?.isLimited ? "Limited" : "Active"}
                         </span>
                       </span>
                     </td>
@@ -269,7 +269,7 @@ const SellerProducts = ({ user }) => {
                           <span className="text-sm">{ICONS.edit}</span>
                         </button>
                         <button
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() => handleDelete(product?._id)}
                           className="p-1 btn-anim text-red-600 hover:text-red-800 hover:bg-red-100 rounded-md transition-colors duration-200"
                           title="Delete product"
                         >
@@ -300,7 +300,7 @@ const SellerProducts = ({ user }) => {
         <div className="md:hidden space-y-3">
           {sellerProducts.map((product, index) => (
             <div
-              key={product._id || product.id || index}
+              key={product?._id || product?.id || index}
               className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 p-4"
             >
               <div className="flex items-start gap-3">
@@ -311,10 +311,10 @@ const SellerProducts = ({ user }) => {
                 >
                   <img
                     src={
-                      cloudify(product.images[0], "thumbnail", false) ||
+                      cloudify(product?.images[0], "thumbnail", false) ||
                       placeholder
                     }
-                    alt={product.name}
+                    alt={product?.name}
                     className="aspect-square h-full object-cover"
                     onError={(e) => {
                       e.target.src = "/placeholder-image.jpg";
@@ -327,36 +327,36 @@ const SellerProducts = ({ user }) => {
                   <div className="flex justify-between items-start gap-2 sm:mb-0 mb-3">
                     <div className="flex-1 min-w-0">
                       <h3 className="text-primary bee-title font-semibold text-gray-900 text-sm leading-tight mb-1 truncate">
-                        {product.name}
+                        {product?.name}
                       </h3>
                       <div className="flex items-center gap-2 mb-1 min-w-0">
                         <span className="text-sm font-medium text-green-700 truncate max-w-1/2 flex-shrink-0">
-                          ${product.price?.toFixed(2) || "0.00"}
+                          ${product?.price?.toFixed(2) || "0.00"}
                         </span>
                         <span className="inline-flex items-center px-2 py-0.5 gap-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 truncate min-w-0">
                           <span className="flex-shrink-0">
-                            {ICONS[product.category]}
+                            {ICONS[product?.category]}
                           </span>
-                          <span className="truncate">{product.category}</span>
+                          <span className="truncate">{product?.category}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
                         <span
                           className={`font-medium flex-shrink-0 ${
-                            product.inStock ? "text-green-600" : "text-red-600"
+                            product?.inStock ? "text-green-600" : "text-red-600"
                           }`}
                         >
-                          {product.inStock ? "In Stock" : "Out"}
+                          {product?.inStock ? "In Stock" : "Out"}
                         </span>
                         <span className="text-gray-400">•</span>
                         <span
                           className={`font-medium flex-shrink-0 ${
-                            product.isLimited
+                            product?.isLimited
                               ? "text-red-600"
                               : "text-green-600"
                           }`}
                         >
-                          {product.isLimited ? "Limited" : "Active"}
+                          {product?.isLimited ? "Limited" : "Active"}
                         </span>
                       </div>
                     </div>
@@ -368,7 +368,7 @@ const SellerProducts = ({ user }) => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product._id)}
+                        onClick={() => handleDelete(product?._id)}
                         className="btn-anim px-3 py-1.5 text-xs border border-red-300 rounded-xl text-red-700 hover:bg-red-500 hover:text-white transition-colors"
                       >
                         Delete
@@ -383,7 +383,7 @@ const SellerProducts = ({ user }) => {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(product._id)}
+                      onClick={() => handleDelete(product?._id)}
                       className="btn-anim flex-1 px-3 py-2 text-sm border border-red-300 rounded-xl text-red-700 hover:bg-red-500 hover:text-white transition-colors"
                     >
                       Delete
