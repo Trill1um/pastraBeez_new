@@ -27,14 +27,14 @@ const ProductDetails = () => {
 
   const nextImage = () => {
     if (product?.images?.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+      setCurrentImageIndex((prev) => (prev + 1) % product?.images.length);
     }
   };
 
   const prevImage = () => {
     if (product?.images?.length > 0) {
       setCurrentImageIndex(
-        (prev) => (prev - 1 + product.images.length) % product.images.length
+        (prev) => (prev - 1 + product?.images.length) % product?.images.length
       );
     }
   };
@@ -42,22 +42,22 @@ const ProductDetails = () => {
   const handleShare = () => {
     if (product) {
       navigator.share?.({
-        title: product.name,
-        text: product.description,
+        title: product?.name,
+        text: product?.description,
         url: window.location.href,
       }) || alert("Product link copied to clipboard! 📋");
     }
   };
 
   const handleBuy = () => {
-    if (product && product.sellerId && product.sellerId.facebookLink) {
-      window.open("https://m.me/" + product.sellerId.facebookLink, "_blank");
+    if (product && product?.sellerId && product?.sellerId?.facebookLink) {
+      window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
     }
   };
 // cloudify(product.images?.[currentImageIndex] || '', "detail", false
   useEffect(() => {
     if (product?.images?.length > 0) {
-      product.images.forEach((img) => {
+      product?.images.forEach((img) => {
         const preloadImg = new window.Image();
         preloadImg.src = cloudify(img, "detail", false);
       });
@@ -131,13 +131,13 @@ const ProductDetails = () => {
               <div className="lg:w-1/2 h-full flex flex-col relative bg-amber-50/30 p-4 sm:p-8">
                 <div className="relative aspect-square lg:aspect-hidden lg:h-fit rounded-xl overflow-hidden bg-white shadow-md flex flex-col items-center">
                   <img
-                    src={product.images?.[currentImageIndex]}
-                    alt={product.name}
+                    src={product?.images?.[currentImageIndex]}
+                    alt={product?.name}
                     className="bee-grad  w-full aspect-square object-cover"
                   />
 
                   {/* Navigation Arrows */}
-                  {product.images?.length > 1 && (
+                  {product?.images?.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
@@ -155,9 +155,9 @@ const ProductDetails = () => {
                   )}
 
                   {/* Image Indicators */}
-                  {product.images?.length > 1 && (
+                  {product?.images?.length > 1 && (
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {product.images.map((_, index) => (
+                      {product?.images.map((_, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
@@ -173,10 +173,10 @@ const ProductDetails = () => {
                 </div>
 
                 {/* Thumbnail Row - Centered below main image with gap, outside aspect container but inside white card */}
-                {product.images?.length > 1 && (
+                {product?.images?.length > 1 && (
                   <div className="mt-6 flex justify-center w-full">
                     <div className="flex gap-3">
-                      {product.images.map((image, index) => (
+                      {product?.images.map((image, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
@@ -205,16 +205,16 @@ const ProductDetails = () => {
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="bee-tag bg-secondary text-sm font-medium px-3 py-1 rounded-full flex items-center gap-2">
-                        {product.sellerId.colonyName||"no Name"}
+                        {product?.sellerId?.colonyName||"no Name"}
                       </span>
                     </div>
 
                     <h1 className="bee-title text-accent text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-fredoka">
-                      {product.name}
+                      {product?.name}
                     </h1>
                     {/* Price */}
                     <div className="bee-price text-brand text-3xl sm:text-4xl font-bold mb-6 font-fredoka">
-                      &#8369; {product.price}
+                      &#8369; {product?.price}
                     </div>
                   </div>
 
@@ -222,13 +222,13 @@ const ProductDetails = () => {
                   <div className="flex items-center gap-2 mb-6">
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        product.inStock
+                        product?.inStock
                           ? "animate-pulse bg-inStock"
                           : "bg-noStock"
                       }`}
                     ></div>
                     <span className="bee-body text-brand font-semibold font-quicksand">
-                      {product.inStock ? `In stock` : "Out of stock"}
+                      {product?.inStock ? `In stock` : "Out of stock"}
                     </span>
                   </div>
 
@@ -256,19 +256,19 @@ const ProductDetails = () => {
                       About this Cell
                     </h3>
                     <p className="bee-body leading-relaxed text-maroon font-quicksand">
-                      {product.description}
+                      {product?.description}
                     </p>
                   </div>
 
                   {/* Additional Information - Only show if info exists */}
-                  {Array.isArray(product.additionalInfo) &&
-                    product.additionalInfo.length > 0 && (
+                  {Array.isArray(product?.additionalInfo) &&
+                    product?.additionalInfo.length > 0 && (
                       <div className="border-t border-orange/20 pt-8">
                         <h2 className="bee-title text-2xl font-bold mb-8 text-center text-blue font-fredoka">
                           🐝 More Sweet Details
                         </h2>
                         <div className="grid grid-cols-1 gap-6">
-                          {product.additionalInfo.map((info, index) => (
+                          {product?.additionalInfo.map((info, index) => (
                             <div
                               key={index}
                               className="p-6 rounded-xl transition-all duration-300 hover:scale-105 bg-amber-50"

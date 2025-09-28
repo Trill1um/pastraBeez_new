@@ -110,7 +110,7 @@ const HoneyCell = ({ className = "", product=[], location="" }) => {
             }}
           />
 
-          {/* Background */}
+          {/* Background Img */}
           <div className="flex items-center justify-center absolute blur-sm w-full aspect-square -z-10 brightness-50 "
             style={{
               backgroundImage: `url(${product?.images[0] || imgHero})`,
