@@ -32,7 +32,8 @@ export const sendVerificationEmail = async (userEmail, user=process.env.EMAIL_US
       process.env.EMAIL_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
-    const verificationLink = `http://localhost:5173/verify?token=${token}&email=${userEmail}`;
+    const link=process.env.VITE_SERVER_PRODUCTION_URL || process.env.VITE_SERVER_DEVELOPMENT_URL;
+    const verificationLink = `${link}/verify?token=${token}&email=${userEmail}`;
     const mailOptions = {
       from: `"PastraBeez" <${process.env.EMAIL_USER}>`,
       to: userEmail,

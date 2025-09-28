@@ -32,6 +32,8 @@ export const useUserStore = create((set, get) => ({
       return toast.error("Passwords do not match");
     }
     try {
+      console.log("Signing up...");
+      console.log("user: ",  email, password);
       const response = await axios.post(`/auth/signup`, {
         colonyName,
         email,
@@ -61,6 +63,7 @@ export const useUserStore = create((set, get) => ({
     set({ loading: true });
     try {
       console.log("logging in...");
+      console.log("user: ", email, password);
       const response = await axios.post(`/auth/login`, {
         email,
         password,
