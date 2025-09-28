@@ -36,7 +36,7 @@ const ProductCard = ({ product, isPreview = false }) => {
 
   //open messenger link in new tab
   const onBuy = () => {
-    window.open("https://m.me/" + product.sellerId.facebookLink, "_blank");
+    window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
   };
 
   return (
@@ -131,10 +131,10 @@ const ProductCard = ({ product, isPreview = false }) => {
               </div>
             </div>
             {/* Seller Name */}
-            {product.colonyName ||
-              (product.sellerId.colonyName && (
+            {product?.colonyName ||
+              (product?.sellerId?.colonyName && (
                 <p className="item-seller max-w-[300px] truncate">
-                  {product.sellerId.colonyName || product.colonyName}
+                  {product?.sellerId?.colonyName || product.colonyName}
                 </p>
               ))}
           </div>

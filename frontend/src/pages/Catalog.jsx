@@ -426,9 +426,6 @@ const ProductGrid = ({ products }) => {
             >
               {isLoading ? (
                 <div className="w-full min-h-[430px] flex items-end justify-center h-full bg-gray-500 rounded-[1.5rem]">
-                  <div className="rounded-t-[1.5rem] w-18/20 h-18/20 bg-gray-700 shadow-[4px_-6px_20px] shadow-gray-800">
-                    test
-                  </div>
                 </div>
               ) : (
                 <ProductCard product={product} />
