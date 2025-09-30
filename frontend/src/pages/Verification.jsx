@@ -36,7 +36,7 @@ const BANK = {
 };
 
 const VerificationPage = () => {
-  const verifyEmail = useUserStore((state) => state.checkVerifyEmail);
+  const verifyEmail = useUserStore((state) => state.checkCode);
   const isVerify = useUserStore((state) => state.isVerifying);
   const [messages, setMessages] = useState("");
   const [searchParams] = useSearchParams();

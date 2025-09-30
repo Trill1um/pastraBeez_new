@@ -1,61 +1,86 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import axios from "../lib/axios"; // Adjust the import path as necessary
-
+let _cooldownTimer = null;
 export const useUserStore = create((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
   tempEmail: null,
   isVerifying: false,
-  isOnCooldown: false,
-  isPolling: false,
-
-  cancelPolling: () => {
-    set({ isPolling: false });
-  },
+  coolDown: 0,
+  isCodeSent: false,
 
   setVerificationProgress: (progress) => {
     set({ isVerifying: progress });
   },
 
-  signUp: async (
-    colonyName,
-    email,
-    password,
-    confirmPassword,
-    facebookLink
-  ) => {
+  startCountDown: (seconds = 120) => {
+    // clear any existing timer
+    if (_cooldownTimer) {
+      clearInterval(_cooldownTimer);
+      _cooldownTimer = null;
+    }
+
+    if (!seconds || seconds <= 0) {
+      set({ coolDown: 0 });
+      return;
+    }
+
+    // initialize state immediately
+    set({ coolDown: seconds });
+
+    _cooldownTimer = setInterval(() => {
+      set((state) => {
+        if (state.coolDown <= 1) {
+          clearInterval(_cooldownTimer);
+          _cooldownTimer = null;
+          return { coolDown: 0 };
+        }
+        return { coolDown: state.coolDown - 1 };
+      });
+    }, 1000);
+  },
+
+  signUp: async (userData) => {
     set({ loading: true });
-    if (password !== confirmPassword) {
+    if (userData?.password !== userData?.confirmPassword) {
       set({ loading: false });
       return toast.error("Passwords do not match");
     }
+    if (userData?.acceptTerms !== true) {
+      set({ loading: false });
+      return toast.error("You must accept the terms and conditions to sign up.");
+    }
+    // safely extract fields from userData
+    const {
+      colonyName = "",
+      email = "",
+      password = "",
+      confirmPassword = "",
+      facebookLink = "",
+      role = "buyer",
+    } = userData || {};
+
     try {
       console.log("Signing up...");
-      console.log("user: ",  email, password);
+      console.log("user: ", email, password);
       const response = await axios.post(`/auth/signup`, {
         colonyName,
         email,
         password,
         facebookLink,
         confirmPassword,
+        role,
       });
-      console.log("Stored Temp to redis: ", response);
       set({ loading: false, isVerifying: true, tempEmail: email });
+      toast.success(response?.data?.message || "Sign up successful! Please verify your email. 🐝");
     } catch (error) {
       set({ loading: false });
-      toast.error(error.response?.data.message || "Sign up failed. Please try again later.");
-    }
-  },
-
-  debugVerification: async (email) => {
-    console.log("Debug verification for email:", email);
-    try {
-      const response = await axios.post(`/auth/debug-verify`, { email });
-      console.log("Debug verification response:", response.data);
-    } catch (error) {
-      console.error("Debug verification error:", error);
+      console.error("Sign up error:", error);
+      toast.error(
+        error.response?.data.message || "Sign up failed. Please try again later."
+      );
     }
   },
 
@@ -105,51 +130,6 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  polling: async () => {
-    try {
-      set({ loading: true, isPolling: true });
-      const maxAttempsts=60;
-      let pollingAttempts=0;
-      const email=get().tempEmail;
-      const intervalId = async () => {
-        if (pollingAttempts >= maxAttempsts || !get().isPolling) {
-          set({ loading: false });
-          toast.error("Verification timed out. Please try logging in again.");
-          clearInterval(intervalId);
-          return;
-        }
-        console.log("Polling for user verification...");
-        const response = await axios.post(`/auth/polling`, { email });
-        console.log("Polling response:", response);
-        if (response.data.verified) {
-          clearInterval(intervalId);
-          await get().login(response.data.credentials.email, response.data.credentials.password);
-          console.log("User verified, triggered logging in");
-        } else {
-          let interval;
-          switch(true) {
-            case (pollingAttempts <= 15):
-              interval = 5000; // 5 seconds
-              break;
-            case (pollingAttempts <= 30):
-              interval = 10000; // 10 seconds
-              break;
-            default:
-              interval = 30000; // 30 seconds
-          }
-          setTimeout(intervalId, interval);
-          pollingAttempts++;
-        }
-      }; // Poll every 5 seconds
-      intervalId();
-      set({ loading: false });
-    } catch(error) {
-      set({ loading: false, isPolling: false });
-      console.error(error);
-      toast.error(error.message || "Polling error");
-    }
-  },
-
   sendVerifyEmail: async () => {
     set({ loading: true });
     try {
@@ -165,22 +145,34 @@ export const useUserStore = create((set, get) => ({
       );
       
       toast.success("Email Verification Sent! Please verify your email. 🐝");
-      toast.success("Email Verification Sent! 🐝");
-      set({ loading: false, isOnCooldown: true });
-      await get().polling();
+      set({ loading: false, coolDown: 120, isCodeSent: true });
     } catch (error) {
       set({ loading: false });
       toast.error(
-        error.message || "Email verification failed. Please try again later."
+        error.response?.data.message || "Email verification failed. Please try again later."
       );
     }
   },
 
-  checkVerifyEmail: async (token, email) => {
+  cancelVerification: async (email) => {
+    try {
+      set({ loading: true });
+      await axios.post(`/auth/verify-cancel`, { email });
+      set({ loading: false, isVerifying: false, tempEmail: null, isCodeSent: false, coolDown: 0 });
+      toast.success("Verification cancelled");
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response?.data.message || "Failed to cancel verification");
+      throw error;
+    }
+  },
+
+  checkCode: async (code, email) => {
     set({ loading: true });
     try {
-      const response = await axios.post("/auth/verify-receive", {
-        token,
+      console.log("Checking verification code...", code, email);
+      const response = await axios.post("/auth/verify-code", {
+        code,
         email,
       });
 
@@ -190,6 +182,7 @@ export const useUserStore = create((set, get) => ({
       );
       toast.success("Email verified successfully! 🐝");
       set({ loading: false, isVerifying: false });
+      await get().checkAuth();
       return response.status;
     } catch (error) {
       set({ loading: false });

@@ -1,20 +1,35 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useUserStore } from "../stores/useUserStore.js";
+import Honeycell from "../assets/cell-auth.svg?react";
 import beeIcon from "../assets/bee.png";
+import honeyIcon from "../assets/honey.png";
+import cartIcon from "../assets/cart.png";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     colonyName: "",
     email: "",
     password: "",
     confirmPassword: "",
     facebookLink: "",
+    role: "buyer",
     acceptTerms: false,
+
   });
   const [errors, setErrors] = useState({});
+  const signUp = useUserStore((s) => s.signUp);
+  const login = useUserStore((s) => s.login);
+  const loading = useUserStore((s) => s.loading);
 
-  const { signUp, login, loading } = useUserStore();
+  const changeRole = () => {
+    setFormData((prev)=>({
+      ...prev,
+      role: formData.role==="buyer"?"seller":"buyer",
+      colonyName: "",
+      facebookLink: "",
+    }))
+  };
 
   // Toggle between login and signup
   const toggleMode = () => {
@@ -63,22 +78,27 @@ const AuthPage = () => {
     }
 
     if (!isLogin) {
-      if (!formData.colonyName) {
-        newErrors.colonyName = "Colony name is required";
-      }
-
+      // Confirm password for all signup roles
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = "Passwords do not match";
       }
 
-      if (!formData.facebookLink) {
-        newErrors.facebookLink = "Messenger link is required";
-      } else if (!formData.facebookLink.includes("www.facebook.com/")) {
-        newErrors.facebookLink = "Please provide a valid Facebook link (www.facebook.com/...)";
-      }
+      // Seller-only requirements
+      if (formData.role === "seller") {
+        if (!formData.colonyName) {
+          newErrors.colonyName = "Colony name is required";
+        }
 
-      if (!formData.acceptTerms) {
-        newErrors.acceptTerms = "Please accept the terms and conditions";
+        if (!formData.facebookLink) {
+          newErrors.facebookLink = "Messenger link is required";
+        } else if (!formData.facebookLink.includes("www.facebook.com/")) {
+          newErrors.facebookLink =
+            "Please provide a valid Facebook link (www.facebook.com/...)";
+        }
+
+        if (!formData.acceptTerms) {
+          newErrors.acceptTerms = "Please accept the terms and conditions";
+        }
       }
     }
     setErrors(newErrors);
@@ -96,13 +116,7 @@ const AuthPage = () => {
       login(formData.email, formData.password);
     } else {
       // Handle signup
-      signUp(
-        formData.colonyName,
-        formData.email,
-        formData.password,
-        formData.confirmPassword,
-        formData.facebookLink
-      )
+      signUp(formData);
     }
   };
 
@@ -121,7 +135,11 @@ const AuthPage = () => {
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
 
-      <div className={`${isDataModalVisible? "flex": "hidden"} fixed inset-0 bg-black/30 items-center justify-center z-50`}>
+      <div
+        className={`${
+          isDataModalVisible ? "flex" : "hidden"
+        } fixed inset-0 bg-black/30 items-center justify-center z-50`}
+      >
         <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative">
           <button
             onClick={() => setIsDataModalVisible(false)}
@@ -152,21 +170,38 @@ const AuthPage = () => {
           {/* Form Container */}
           <div className="card rounded-[50px] bg-white p-8 lg:p-16 shadow-xl max-w-2xl w-full">
             {/* Header Section */}
-            <div className="text-center mb-8">
-              <div
-                className="bg-center bg-cover bg-no-repeat h-[80px] w-[100px] mx-auto mb-4"
-                style={{ backgroundImage: `url('${beeIcon}')` }}
-              />
-              <h1 className="bee-title-h4-desktop mb-2">
-                {isLogin ? "Welcome Back to the Hive! 🍯" : "Join the Hive! 🐝"}
-              </h1>
-              <p className="bee-body-text-desktop text-secondary">
-                {isLogin
-                  ? "Sign in to access your sweet account"
-                  : "Register your colony and start selling honey products"}
-              </p>
+            <div className="text-center flex flex-col items-center gap-4 mb-8">
+              {isLogin ? (
+                <div
+                  className="bg-center bg-cover bg-no-repeat h-30 w-40 mx-auto"
+                  style={{ backgroundImage: `url('${beeIcon}')` }}
+                />
+              ) : (
+                <button
+                  className={`group btn-anim hover:scale-120 flex items-center gap-2 justify-center w-fit h-fit relative transition-all duration-300 ${
+                    formData.role === "seller" ? "rotate-360" : ""
+                  }`}
+                  onClick={changeRole}
+                >
+                  <Honeycell className="drop-shadow-sm group-hover:text-yellow-200 text-yellow-300 h-35 w-35" />
+                  <img className="absolute w-4/7 aspect-auto" src={formData.role==="seller"?honeyIcon: cartIcon} alt="honey" />
+                </button>
+              )}
+              <div>
+                <h1 className="bee-title-h4-desktop mb-2">
+                  {isLogin
+                    ? "Welcome Back to the Hive! 🍯"
+                    : "Join the Hive! 🐝"}
+                </h1>
+                <p className="bee-body-text-desktop text-secondary">
+                  {isLogin
+                    ? "Sign in to access your sweet account"
+                    : formData.role === "seller"
+                    ? "Register your colony and start selling honey products"
+                    : "Create a buyer account to start shopping"}
+                </p>
+              </div>
             </div>
-
             {/* Mode Toggle */}
             <div className="flex items-center justify-center mb-8">
               <div className="bg-gray-100 rounded-[25px] p-1 flex">
@@ -196,7 +231,7 @@ const AuthPage = () => {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Colony Name Field - Only for Signup */}
-              {!isLogin && (
+              {!isLogin && formData.role === "seller" && (
                 <div>
                   <label className="block bee-title-h6-desktop mb-2">
                     Colony Name *
@@ -290,7 +325,7 @@ const AuthPage = () => {
               )}
 
               {/* Messenger Link Field - Only for Signup */}
-              {!isLogin && (
+              {!isLogin && formData.role === "seller" && (
                 <div>
                   <label className="block bee-title-h6-desktop mb-2">
                     Facebook Profile Link *
@@ -307,8 +342,7 @@ const AuthPage = () => {
                     }`}
                   />
                   <p className="text-secondary bee-body-text-desktop text-sm mt-1">
-                    Note: Go to your Facebook (Web) Profile Page and copy the
-                    URL
+                    Note: Go to your Facebook (Web) Profile Page and copy the URL
                   </p>
                   {errors.facebookLink && (
                     <p className="text-accent bee-body-text-desktop text-sm mt-1">
@@ -381,7 +415,7 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={toggleMode}
-                    className="text-brand hover:text-accent font-medium transition-colors"
+                    className="btn-anim text-brand hover:text-accent font-medium transition-colors"
                   >
                     {isLogin ? "Register Colony" : "Sign In"}
                   </button>

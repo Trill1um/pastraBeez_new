@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Seller from "../models/Seller.js";
+import User from "../models/User.js";
 import Product from "../models/Products.js";
 
 const MONGO_URI = "mongodb+srv://menardtroyf:6EomjZkpojS9ATyW@cluster0.ix8bz8q.mongodb.net/theHive?retryWrites=true&w=majority&appName=Cluster0";
@@ -29,8 +29,8 @@ async function main() {
   await Product.deleteMany({});
   console.log("Cleared DummyData collection");
 
-  // Get sellers
-  const sellers = await Seller.find({});
+  // Get sellers only
+  const sellers = await User.find({ role: "seller" });
   if (sellers.length === 0) {
     console.error("No sellers found. Run peopleCreate.js first.");
     process.exit(1);

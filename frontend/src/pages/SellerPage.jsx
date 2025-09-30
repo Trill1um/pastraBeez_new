@@ -1,5 +1,5 @@
 import {
-  useSellerProducts,
+  useUserProducts,
   useProcessedProducts,
 } from "../stores/useProductStore";
 import cloudify from "../lib/cloudify.js";
@@ -33,7 +33,7 @@ const SellerProducts = ({ user }) => {
   };
 
   console.log("User in SellerProducts:", user);
-  const { sellerProducts, isLoading, error } = useSellerProducts(user?._id);
+  const { sellerProducts, isLoading, error } = useUserProducts(user?._id);
   const { deleteProductAsync, isDeleting, isCreating } = useProcessedProducts();
 
   // Update local products when filtered products change

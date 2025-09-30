@@ -283,7 +283,7 @@ export function useProductById(productId) {
   };
 }
 
-export function useSellerProducts(sellerId) {
+export function useUserProducts(sellerId) {
   const { rawProducts, isLoading, error } = useProcessedProducts();
   
   // Filter products by seller

@@ -3,8 +3,8 @@ import mongoose  from "mongoose";
 const productSchema = new mongoose.Schema({
     sellerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DummySeller',
-        required: true
+        ref: 'User',
+        required: [true, 'Seller ID is required']
     },
     name: {
         type: String,
@@ -40,6 +40,14 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Image URL is required']
     }],
+    rate_score: {
+      type: Number,
+      default: 0,
+    },
+    rate_count: {
+      type: Number,
+      default: 0,
+    },
     additionalInfo: [{
         title: {
             type: String,
@@ -52,7 +60,6 @@ const productSchema = new mongoose.Schema({
     }],
 },{timestamps: true});
 
-
-const Product = mongoose.model('DummyData', productSchema);
+const Product = mongoose.model('Cell', productSchema);
 
 export default Product;

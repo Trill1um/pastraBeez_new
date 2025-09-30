@@ -419,9 +419,9 @@ const ProductGrid = ({ products }) => {
     <>
       {products.length ? (
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {products.map((product) => (
+          {products.map((product, i) => (
             <div
-              key={product?._id}
+              key={"product_card-" + product?._id + "-" + i}
               className="will-change-transform group bg-amber-400 rounded-[1.5rem]"
             >
               {isLoading ? (

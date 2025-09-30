@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { client } from "../lib/redis.js";
 import sgMail from "@sendgrid/mail";
+import { tempUser } from "../models/User.js";
 
 dotenv.config();
 
@@ -15,65 +15,71 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
       throw new Error("Please wait before requesting another verification email.");
     }
 
-    const token = jwt.sign(
-      { data: userEmail },
-      process.env.EMAIL_TOKEN_SECRET,
-      { expiresIn: "1h" }
-    );
-    const link = process.env.VITE_SERVER_PRODUCTION_URL || process.env.VITE_SERVER_DEVELOPMENT_URL;
-    const verificationLink = `${link}/verify?token=${token}&email=${userEmail}`;
+    // Get the temp user document which should contain the verification code
+    const user = await tempUser.findOne({ email: userEmail }).lean();
+    if (!user) {
+      throw new Error("Verification period expired for this email, please sign up again.");
+    }
+
+    const code = user.code;
     const html = `
-      <h1>Email Verification</h1>
-      <p>Click the button below to verify your email address:</p>
-      <a href="${verificationLink}" style="
-        display: inline-block;
-        padding: 12px 24px;
-        background-color: #f7b81a;
-        color: #fff;
-        font-size: 16px;
-        font-weight: bold;
-        text-decoration: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        cursor: pointer;
-        margin: 16px 0;
-      ">
-        Verify Email
-      </a>
-      <p style="color: #888; font-size: 14px;">This link will expire in 1 hour.</p>
+      <div style="font-family: Arial, sans-serif; color: #222; padding: 24px;">
+        <h2 style="color: #333;">Your PastraBeez verification code</h2>
+        <p style="font-size:16px; color:#555;">Use the code below to verify your email address. It will expire in 20 minutes.</p>
+        <div style="margin:24px 0; display:flex; align-items:center; justify-content:center;">
+          <div style="font-size:28px; letter-spacing:6px; font-weight:700; background:#f7f2e6; padding:16px 28px; border-radius:8px; border:1px solid #f0d9a6;">${code}</div>
+        </div>
+        <p style="color:#888; font-size:12px;">If you did not request this code, please ignore this email.</p>
+      </div>
     `;
+
     const msg = {
       to: userEmail,
       from: sender,
-      subject: "Verify Your Email for PastraBeez",
-      text: `Click the link to verify your email: ${verificationLink}`,
+      subject: "Your PastraBeez verification code",
+      text: `Your verification code is: ${code}`,
       html,
     };
     await sgMail.send(msg);
-    await client.set(key, '1', 'EX', 60);
+    await client.set(key, '1', 'EX', 60 * 2);
     console.log(`Verification email sent to ${userEmail} from ${sender}`);
   } catch (error) {
-    if (sender === process.env.EMAIL_USER) {
-      console.error("Error sending verification email via SendGrid with primary sender, retrying with backup:", error);
+    if (api_key === process.env.SEND_API) {
       // Try backup sender
       return await sendVerificationEmail(userEmail, process.env.EMAIL_USER_BACKUP, process.env.SEND_API_BACKUP);
-    } else {
+    } else { 
       console.error("Error sending verification email via SendGrid with backup sender, Deleting redis keys:", error);
       await client.del(`verify_cooldown:${userEmail}`);
       await client.del(`verifying:${userEmail}`);
-      await client.del(`temp:${userEmail}`);
-      throw new Error("Could not send verification email");
+      throw new Error(error);
     }
   }
 };
 
-export const verifyEmailToken = (token, userEmail) => {
+export const verifyCode = async (code, userEmail) => {
   try {
-    const decoded = jwt.verify(token, process.env.EMAIL_TOKEN_SECRET);
-    console.log("Compare: ", decoded.data, " with ", userEmail);
-    return decoded.data === userEmail;
+    // Lookup the pending temp user by email
+    const user = await tempUser.findOne({ email: userEmail });
+    if (!user) {
+      console.log(`No pending verification found for email: ${userEmail}`);
+      return false;
+    }
+
+    // Compare provided code with stored code
+    console.log("\nVerifying code:", code, "\nagainst stored code:", user.code);
+    const matches = (String(user.code).length===6)?String(user.code) === String(code): false;
+    console.log("\nCode match result:", matches);
+    if (!matches) {
+      console.log(`Verification code mismatch for ${userEmail}`);
+      return false;
+    }
+
+    // Optionally: remove the tempUser entry after successful verification
+    // await tempUser.deleteOne({ _id: user._id });
+
+    return true;
   } catch (error) {
-    console.error("Invalid or expired email verification token: ", error);
+    console.error("Error verifying email code:", error);
     return false;
   }
 };

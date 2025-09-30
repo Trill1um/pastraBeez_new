@@ -10,7 +10,6 @@ const SellerPage = lazy(() => import("./pages/SellerPage"));
 const AuthenticationPage = lazy(() => import("./pages/AuthenticationPage"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AboutPage = lazy(() => import("./pages/AboutUs"));
-const VerificationPage = lazy(() => import("./pages/Verification"));
 import BeeLoadingScreen from "./components/BeeLoadingScreen";
 import BeeNavigating from "./components/BeeNavigating";
 import NavBar from "./components/NavBar";
@@ -25,9 +24,15 @@ const PublicOnlyRoute = ({ children, user }) => {
   return user ? <Navigate to="/SellerPage" /> : children;
 };
 
+const SellerOnlyRoute = ({ children, user }) => {
+  return user?.role === 'seller' ? children : <Navigate to="/catalog" replace />;
+}
+
 function App() {
-  const { checkAuth, checkingAuth, user } =
-    useUserStore();
+  const checkAuth = useUserStore((s) => s.checkAuth);
+  const checkingAuth = useUserStore((s) => s.checkingAuth);
+  const user = useUserStore((s) => s.user);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -50,7 +55,9 @@ function App() {
               path="/SellerPage"
               element={
                 <ProtectedRoute user={user}>
-                  <SellerPage user={user} />
+                  <SellerOnlyRoute user={user}>
+                    <SellerPage user={user} />
+                  </SellerOnlyRoute>
                 </ProtectedRoute>
               }
             />
@@ -58,7 +65,9 @@ function App() {
               path="/myProduct/:id"
               element={
                 <ProtectedRoute user={user}>
-                  <CreationPage user={user} />
+                  <SellerOnlyRoute user={user}>
+                    <CreationPage user={user} />
+                  </SellerOnlyRoute>
                 </ProtectedRoute>
               }
             />
@@ -70,12 +79,6 @@ function App() {
                 <PublicOnlyRoute user={user}>
                   <AuthenticationPage />
                 </PublicOnlyRoute>
-              }
-            />
-            <Route
-              path="/verify"
-              element={
-                <VerificationPage />
               }
             />
 
