@@ -4,6 +4,7 @@ import {
   useCreateProduct,
   useUpdateProduct,
   useDeleteProduct,
+  useRateProduct,
 } from '../lib/query';
 
 export const useProductProcessor = create((set, get) => ({
@@ -143,7 +144,6 @@ export const useProductProcessor = create((set, get) => ({
       searchTerm: '',
       isLimited: null,
     },
-
   }),
   
   resetSort: () => set({
@@ -205,6 +205,7 @@ export function useFeaturedProducts() {
   // Evreryday I'm shuffling
   const shuffled = [...rawProducts].sort(() => Math.random() - 0.5);
   const featuredProducts = shuffled.slice(0, maxProducts);
+  console.log("Featured products STORE:", featuredProducts);
   return {
     featuredProducts,
     isFeaturedLoading: isLoading,
@@ -296,4 +297,14 @@ export function useUserProducts(sellerId) {
     isLoading,
     error,
   };
+}
+
+export function useRateOneProduct(productId, rate) {
+  try {
+    const rateMutation = useRateProduct();
+    rateMutation.mutate({ productId, rating: rate });
+    console.log("Product rated:", productId, rate);
+  } catch (error) {
+    console.error("Error rating product:", error);
+  }
 }

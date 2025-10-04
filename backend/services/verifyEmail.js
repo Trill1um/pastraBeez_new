@@ -2,8 +2,15 @@ import dotenv from "dotenv";
 import { client } from "../lib/redis.js";
 import sgMail from "@sendgrid/mail";
 import { tempUser } from "../models/User.js";
-
+import crypto from "crypto";
 dotenv.config();
+
+const codeGeneration = () => {
+  const digits = 6;
+  const max = 10 ** digits;
+  const n = crypto.randomInt(0, max);
+  return String(n).padStart(digits, "0");
+};
 
 export const sendVerificationEmail = async (userEmail, sender = process.env.EMAIL_USER, api_key=process.env.SEND_API) => {
   try {
@@ -16,12 +23,20 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
     }
 
     // Get the temp user document which should contain the verification code
-    const user = await tempUser.findOne({ email: userEmail }).lean();
+    const user = await tempUser.findOne({ email: userEmail });
     if (!user) {
       throw new Error("Verification period expired for this email, please sign up again.");
     }
-
-    const code = user.code;
+    console.log("Found temp user for verification:", user);
+    const code = codeGeneration();
+    user.code = code;
+    try {
+      await user.save();
+      
+    } catch (error) {
+      console.error("Error saving verification code to temp user:", error);
+      throw error;
+    }
     const html = `
       <div style="font-family: Arial, sans-serif; color: #222; padding: 24px;">
         <h2 style="color: #333;">Your PastraBeez verification code</h2>
@@ -40,7 +55,12 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
       text: `Your verification code is: ${code}`,
       html,
     };
-    await sgMail.send(msg);
+    try {
+      await sgMail.send(msg);
+    } catch (error) {
+      console.error("Error sending email via SendGrid:", error);
+      throw error;
+    }
     await client.set(key, '1', 'EX', 60 * 2);
     console.log(`Verification email sent to ${userEmail} from ${sender}`);
   } catch (error) {

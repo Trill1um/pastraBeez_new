@@ -1,6 +1,4 @@
 import cloudify from "../lib/cloudify";
-import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 //  Assets
 import accessoryIcon from "../assets/accessory.svg";
@@ -8,7 +6,7 @@ import burgerIcon from "../assets/burger.svg";
 import drinksIcon from "../assets/drinks.svg";
 import hoodieIcon from "../assets/hoodie.svg";
 import otherIcon from "../assets/other.svg";
-import heartIcon from "../assets/icon-heart.svg";
+import Star from "../assets/star.svg?react";
 import bannerBg from "../assets/banner-bg.svg";
 import placeholder from "../assets/placeholder.png";
 
@@ -23,32 +21,22 @@ const ProductCard = ({ product, isPreview = false }) => {
       Clothes: hoodieIcon,
       Other: otherIcon,
     };
-    return iconMap[category] || heartIcon;
+    return iconMap[category]
   };
-  const [showOverlay, setShowOverlay] = useState(false);
   const onViewDetails = () => {
-    if (isPreview) {
-      setShowOverlay(true);
-    } else {
+    if (!isPreview) {
       navigate(`/product/${product._id ? product._id : "preview"}`);
     }
   };
 
   //open messenger link in new tab
   const onBuy = () => {
-    window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
+    if (!isPreview) window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
   };
 
   return (
     <>
-      <div className=" flex flex-col rounded-[1.5rem] h-full min-h-[20vh] w-full 
-
-    transition-all duration-300 ease-out
-    group-hover:-translate-y-6 -rotate-x-3
-    
-    "
-    // hover:shadow-xl 
-      // transition-all duration-300 hover:shadow-xl hover:-translate-y-2
+      <div className=" flex flex-col rounded-[1.5rem] h-full min-h-[20vh] w-full transition-all duration-300 ease-out group-hover:-translate-y-6 -rotate-x-3"
       >
         {/* Image Section */}
         <div className="flex flex-col rounded-t-[1.5rem] overflow-hidden h-[200px] w-full relative">
@@ -107,11 +95,14 @@ const ProductCard = ({ product, isPreview = false }) => {
         <div className="bg-neutral-50 flex-1 flex flex-col gap-[2rem] p-[1.5rem] h-full rounded-b-[1.5rem]">
           {/* Product Info */}
           <div className="flex flex-col gap-2 overflow-hidden">
+            
             {/* Product Name */}
             <h3 className="max-w-[320px] item-name truncate">{product.name}</h3>
+
+            {/* Price and Category */}
             <div className="flex items-center justify-between h-[2rem]">
               <p className="max-w-[180px] truncate item-price">
-                P{" "}
+                &#8369; {" "}
                 {Number(product.price).toLocaleString("en-US", {
                   maximumFractionDigits: 2,
                   useGrouping: false,
@@ -130,13 +121,21 @@ const ProductCard = ({ product, isPreview = false }) => {
                 </p>
               </div>
             </div>
+            
             {/* Seller Name */}
-            {product?.colonyName ||
-              (product?.sellerId?.colonyName && (
-                <p className="item-seller max-w-[300px] truncate">
-                  {product?.sellerId?.colonyName || product.colonyName}
-                </p>
-              ))}
+            <p className="item-seller max-w-[300px] truncate">
+              {product?.sellerId?.colonyName || product.colonyName || "Unknown Seller"}
+            </p>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2">
+              <span className="item-rating">
+                {product.rate_count > 0
+                  ? product.rate_score || 0
+                  : "No ratings yet"}
+              </span>
+              <Star className={`${product?.userRated?"text-[#ffdd00]": "text-transparent"} w-5 h-5`} />
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -163,11 +162,6 @@ const ProductCard = ({ product, isPreview = false }) => {
           </div>
         </div>
       </div>
-
-      {/* Overlay for product preview
-      {showOverlay && (
-        <div>no overlay</div>
-      )} */}
     </>
   );
 };

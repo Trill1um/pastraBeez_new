@@ -1,21 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from './axios';
-import toast from 'react-hot-toast';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "./axios";
+import toast from "react-hot-toast";
 
 // ============ QUERY KEYS ============
 export const productQueryKeys = {
-  all: ['products'],
+  all: ["products"],
 };
 
 // ============ API FUNCTIONS ============
 const fetchAllProducts = async () => {
-  const response = await axios.get('/products');
+  const response = await axios.get("/products");
   console.log("All products fetched:", response.data);
   return response.data;
 };
 
 const createProduct = async (productData) => {
-  const response = await axios.post('/products/create-my-product', productData);
+  const response = await axios.post("/products/create-my-product", productData);
   console.log("Product created:", response.data);
   toast.success(response.data.message);
   return response.data;
@@ -35,13 +35,24 @@ const deleteProduct = async (productId) => {
   return response.data;
 };
 
+const rateProduct = async ({ productId, rating }) => {
+  const response = await axios.put(`/products/rate/${productId}`, { rating });
+  console.log("Product rated:", response.data);
+  return response.data;
+};
+
+const unRateProduct = async ({ productId }) => {
+  const response = await axios.delete(`/products/rate:${productId}`);
+  console.log("Product removed rating:", response.data);
+  return response.data;
+};
+
 // ============ QUERY HOOKS ============
 export function useAllProducts() {
   return useQuery({
     queryKey: productQueryKeys.all,
     queryFn: fetchAllProducts,
-    staleTime: Infinity, // Re-cache on every reload
-    refetchOnWindowFocus: true,
+    staleTime: Infinity,
     onError: (error) => {
       console.error("Error fetching all products:", error);
       toast.error("Failed to fetch products");
@@ -52,13 +63,13 @@ export function useAllProducts() {
 // ============ MUTATION HOOKS ============
 export function useCreateProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
       // Invalidate all products cache
-      queryClient.invalidateQueries({ 
-        queryKey: productQueryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: productQueryKeys.all,
       });
     },
     onError: (error) => {
@@ -70,15 +81,15 @@ export function useCreateProduct() {
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: updateProduct,
     onSuccess: () => {
       // Invalidate all products cache to refetch fresh data
-      queryClient.invalidateQueries({ 
-        queryKey: productQueryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: productQueryKeys.all,
       });
-      
+
       toast.success("Product updated successfully!");
     },
     onError: (error) => {
@@ -90,15 +101,15 @@ export function useUpdateProduct() {
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
       // Invalidate all products cache to refetch fresh data
-      queryClient.invalidateQueries({ 
-        queryKey: productQueryKeys.all 
+      queryClient.invalidateQueries({
+        queryKey: productQueryKeys.all,
       });
-      
+
       toast.success("Product deleted successfully!");
     },
     onError: (error) => {
@@ -108,26 +119,48 @@ export function useDeleteProduct() {
   });
 }
 
+export function useRateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: rateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: productQueryKeys.all,
+      });
+    },
+    onError: (error) => {
+      console.error("Error rating product:", error);
+      toast.error(error.response?.data?.message || "Failed to rate product");
+    },
+  });
+}
+
+export function useUnRateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: unRateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: productQueryKeys.all,
+      });
+    },
+    onError: (error) => {
+      console.error("Error removing rating of a  product:", error);
+      toast.error(error.response?.data?.message || "Failed to rate product");
+    },
+  });
+}
+
 // ============ UTILITY FUNCTIONS ============
 export function useInvalidateProducts() {
   const queryClient = useQueryClient();
-  
+
   return {
     invalidateAll: () => {
       queryClient.invalidateQueries({ queryKey: productQueryKeys.all });
     },
     refetchAll: () => {
       queryClient.refetchQueries({ queryKey: productQueryKeys.all });
-    }
+    },
   };
 }
-
-        // showFilters={showFilters}
-        // filters={filters}
-        // sort={sort}
-        // labels={labels}
-        // onFilterChange={handleFilterChange}
-        // onSortByChange={handleSortByChange}
-        // onToggleSortOrder={toggleSortOrder}
-        // onResetFilters={handleResetFilters}
-        // productCount={products.length}

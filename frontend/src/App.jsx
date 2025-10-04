@@ -1,7 +1,8 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useUserStore } from "./stores/useUserStore";
-import { useEffect, Suspense, lazy } from "react";
+import { useUserStore } from "./stores/useUserStore.js";
+import { useEffect, lazy } from "react";
+import { useInvalidateProducts } from "./lib/query";
 
 import Catalog from "./pages/Catalog";
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -11,9 +12,9 @@ const AuthenticationPage = lazy(() => import("./pages/AuthenticationPage"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const AboutPage = lazy(() => import("./pages/AboutUs"));
 import BeeLoadingScreen from "./components/BeeLoadingScreen";
-import BeeNavigating from "./components/BeeNavigating";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { BeeBackground } from "./components/Background.jsx";
 
 // Separate components for clarity
 const ProtectedRoute = ({ children, user }) => {
@@ -32,6 +33,8 @@ function App() {
   const checkAuth = useUserStore((s) => s.checkAuth);
   const checkingAuth = useUserStore((s) => s.checkingAuth);
   const user = useUserStore((s) => s.user);
+  const { invalidateAll } = useInvalidateProducts();
+  useUserStore.getState().setInvalidateAll(invalidateAll);
 
   useEffect(() => {
     checkAuth();
@@ -41,9 +44,8 @@ function App() {
     <div className="App-Box">
       {<BeeLoadingScreen isLoading={checkingAuth} />}
       <NavBar user={user} />
+      <BeeBackground />
       <div className="App">
-        {/* add suspense fallback */}
-        <Suspense fallback={<BeeNavigating />}>
           <Routes>
             {/* Always accessible */}
             <Route path="/product/:id" element={<ProductDetails />} />
@@ -85,7 +87,6 @@ function App() {
             {/* Catch all */}
             <Route path="*" element={<HomePage />} />
           </Routes>
-        </Suspense>
       </div>
       <Footer />
       <Toaster />

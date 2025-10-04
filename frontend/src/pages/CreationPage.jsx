@@ -300,13 +300,11 @@ const CreationPage = ({user}) => {
     });
   };
 
-  // Handle image upload (placeholder)
   const handleImageUpload = () => {
-    // Create a file input element
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
-    fileInput.multiple = true; // Allow multiple files since you support up to 5 images
+    fileInput.multiple = true; 
 
     // Handle file selectionh
     fileInput.onchange = async (event) => {
@@ -722,26 +720,28 @@ const CreationPage = ({user}) => {
                     )}
 
                     {/* Add Image Button - Always visible */}
-                    <button
-                      onClick={handleImageUpload}
-                      disabled={formData.images.length >= 5}
-                      className={`btn-anim flex-shrink-0 btn-add px-4 sm:px-6 py-3 sm:py-4 min-h-[60px] sm:min-h-[100px] w-fit sm:w-auto ${
-                        formData.images.length >= 5
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:scale-105"
-                      }`}
-                    >
-                      <img
-                        src={plusIcon}
-                        alt="Add"
-                        className="w-5 sm:w-6 h-5 sm:h-6 opacity-40"
-                      />
-                      <span className="bee-body-text-desktop text-xs sm:text-sm lg:text-base ml-2">
-                        {formData.images.length === 0
-                          ? "Add Images"
-                          : "Add More"}
-                      </span>
-                    </button>
+                    {formData.images.length<5 &&
+                      <button
+                        onClick={handleImageUpload}
+                        disabled={formData.images.length >= 5}
+                        className={`btn-anim flex-shrink-0 btn-add px-4 sm:px-6 py-3 sm:py-4 min-h-[60px] sm:min-h-[100px] w-fit sm:w-auto ${
+                          formData.images.length >= 5
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:scale-105"
+                        }`}
+                      >
+                        <img
+                          src={plusIcon}
+                          alt="Add"
+                          className="w-5 sm:w-6 h-5 sm:h-6 opacity-40"
+                        />
+                        <span className="bee-body-text-desktop text-xs sm:text-sm lg:text-base ml-2">
+                          {formData.images.length === 0
+                            ? "Add Images"
+                            : "Add More"}
+                        </span>
+                      </button>
+                    }
                   </div>
                 </div>
 

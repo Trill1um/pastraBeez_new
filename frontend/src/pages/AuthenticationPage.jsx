@@ -23,14 +23,14 @@ const AuthPage = () => {
   const loading = useUserStore((s) => s.loading);
 
   const changeRole = () => {
-    setFormData((prev)=>({
+    const currentRole = formData.role || "buyer"; // fallback to buyer if empty
+    setFormData((prev) => ({
       ...prev,
-      role: formData.role==="buyer"?"seller":"buyer",
+      role: currentRole === "buyer" ? "seller" : "buyer",
       colonyName: "",
       facebookLink: "",
-    }))
+    }));
   };
-
   // Toggle between login and signup
   const toggleMode = () => {
     setIsLogin(!isLogin);
@@ -113,10 +113,11 @@ const AuthPage = () => {
 
     if (isLogin) {
       // Handle login
-      login(formData.email, formData.password);
+      await login(formData.email, formData.password);
     } else {
       // Handle signup
-      signUp(formData);
+      console.log("formData: ", formData);
+      await signUp(formData);
     }
   };
 
@@ -173,7 +174,7 @@ const AuthPage = () => {
             <div className="text-center flex flex-col items-center gap-4 mb-8">
               {isLogin ? (
                 <div
-                  className="bg-center bg-cover bg-no-repeat h-30 w-40 mx-auto"
+                  className="bg-center bg-cover bg-no-repeat h-35 w-40 mx-auto"
                   style={{ backgroundImage: `url('${beeIcon}')` }}
                 />
               ) : (
@@ -204,28 +205,27 @@ const AuthPage = () => {
             </div>
             {/* Mode Toggle */}
             <div className="flex items-center justify-center mb-8">
-              <div className="bg-gray-100 rounded-[25px] p-1 flex">
-                <button
-                  onClick={() => !isLogin && toggleMode()}
-                  className={`px-6 py-2 rounded-[20px] transition-all duration-300 bee-body-text-desktop font-medium ${
-                    isLogin
-                      ? "bg-brand text-primary shadow-md"
-                      : "text-secondary hover:text-primary"
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => isLogin && toggleMode()}
-                  className={`px-6 py-2 rounded-[20px] transition-all duration-300 bee-body-text-desktop font-medium ${
-                    !isLogin
-                      ? "bg-brand text-primary shadow-md"
-                      : "text-secondary hover:text-primary"
-                  }`}
-                >
-                  Sign Up
-                </button>
-              </div>
+              <button onClick={() => {toggleMode()}} className="bg-gray-100 h-12 py-1 px-1 items-center justify-items-center cursor-pointer transition-all duration-300 ease-in rounded-[25px] flex">
+                <div className={`flex relative h-full`}>
+                  <div className={`${!isLogin? "translate-x-1/1":""} bg-brand duration-400 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] shadow-md absolute transition-all  z-0 px-6 h-full w-1/2 rounded-[20px]`} />
+                  <div className={`flex transition-all duration-400 justify-center items-center px-6 z-1 h-full bg-transparent bee-body-text-desktop ${
+                      isLogin
+                        ? "text-primary"
+                        : "text-secondary hover:text-primary"
+                    }`}
+                  >
+                    Sign In
+                  </div>
+                  <div className={`flex transition-all duration-400 justify-center items-center px-6 z-1 h-full bg-transparentbee-body-text-desktop font-medium ${
+                      !isLogin
+                        ? "text-primary"
+                        : "text-secondary hover:text-primary"
+                    }`}
+                  >
+                    Sign Up
+                  </div>
+                </div>
+              </button>
             </div>
 
             {/* Form */}
@@ -362,7 +362,7 @@ const AuthPage = () => {
                     onChange={(e) =>
                       handleInputChange("acceptTerms", e.target.checked)
                     }
-                    className="mt-1 w-4 h-4 text-brand border-2 border-secondary rounded focus:ring-brand focus:ring-2"
+                    className="mt-1 w-4 h-4 focus-visible:ring-blue-800 focus-visible:ring-1 btn-anim text-brand border-2 border-secondary"
                   />
                   <label
                     htmlFor="acceptTerms"
@@ -390,7 +390,7 @@ const AuthPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-anim btn-primary w-full px-8 py-4 rounded-[15px] bee-button-desktop border-2 border-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-anim focus-visible:ring-amber-600 focus-visible:ring-2 btn-primary w-full px-8 py-4 rounded-[15px] bee-button-desktop border-2 border-dark disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">

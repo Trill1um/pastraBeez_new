@@ -1,4 +1,5 @@
 import Product from "../models/Products.js";
+import P_S from "../models/P_S.js";
 import cloudinary from "../lib/cloudinary.js";
 
 // Function to get all products
@@ -20,13 +21,37 @@ export const getProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
+    console.log("Fetching all products. Authenticated user:", req?.user?.colonyName || "None");  
     const products = await Product.find({}).populate(
       "sellerId",
       "colonyName facebookLink"
     );
+
+    // If user is authenticated, check which products they've rated
+    let productsWithRatingFlag = products;
+    if (req.user) {
+      // Get all user's ratings for these products
+      const userRatings = await P_S.find({ 
+        userId: req.user._id,
+      });
+      console.log("User ratings found:", userRatings);
+
+      const ratedProductIds = new Set(userRatings.map(rating => rating.productId.toString()));
+
+      productsWithRatingFlag = products.map(product => ({
+        ...product.toObject(),
+        userRated: ratedProductIds.has(product._id.toString())
+      }));
+    } else {
+      productsWithRatingFlag = products.map(product => ({
+        ...product.toObject(),
+        userRated: false
+      }));
+    }
+
     res
       .status(200)
-      .json({ products, message: "Products fetched successfully" });
+      .json({ products: productsWithRatingFlag, message: "Products fetched successfully" });
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -245,6 +270,85 @@ export const deleteMyProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const rateProduct = async(req, res) => {
+  try {
+    const productId = req.params?.id;
+    const rating  = req.body?.rating;
+    const user = req.user;
+    if (!productId || !rating) {
+      return res.status(400).json({ message: "Product ID and rating are required" });
+    }
+    
+    // Validate rating range (assuming 1-5 stars)
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5" });
+    }
+    
+    // Check if product exists
+    const product = await Product.findOne({ _id: productId });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Prevent sellers from rating their own products
+    if (user?._id.toString() === product?.sellerId?._id.toString()) {
+      return res.status(400).json({ message: "Sellers cannot rate their own products" });
+    }
+    
+    const rate_result = await P_S.findOneAndUpdate(
+      { productId: productId, userId: user._id },
+      { $set: { rating: rating } },
+      { new: false, upsert: true, runValidators: true, includeResultMetadata: true }
+    );
+
+    // If the rating was not changed, skip recalculating average
+    if (rate_result && rate_result?.lastErrorObject?.updatedExisting && rate_result?.value?.rating==rating) {
+      return res.status(200).json({ message: "Rating unchanged" });
+    }
+
+    const ratings = await P_S.find({ productId: productId });
+    const sumRatings = ratings.reduce((sum, r) => sum + r.rating, 0);
+    const averageRating = ratings.length > 0 ? sumRatings / ratings.length : 0;
+
+    product.rate_score = Math.round(averageRating * 10) / 10; // Round to 1 decimal place
+    product.rate_count = ratings.length;
+    await product.save(); 
+
+    res.status(200).json({ message: "Product rated successfully" });
+  } catch (error) {
+    console.error("Error rating product:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error });
+  }
+}
+
+export const deleteRating = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const user = req.user;
+
+    if (!productId) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+    if (!user) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const deletedRating = await P_S.findOneAndDelete({
+      productId,
+      userId: user._id,
+    });
+
+    if (!deletedRating) {
+      return res.status(404).json({ message: "Rating not found" });
+    }
+
+    res.status(200).json({ message: "Rating deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting rating:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

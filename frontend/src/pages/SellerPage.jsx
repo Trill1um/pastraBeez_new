@@ -51,7 +51,7 @@ const SellerProducts = ({ user }) => {
   };
 
   const confirmDelete = () => {
-    console.log("Confirming delete")
+    console.log("Confirming delete");
     if (confirmDeleteId) {
       deleteProductAsync(confirmDeleteId);
       setConfirmDeleteId(null);
@@ -59,6 +59,7 @@ const SellerProducts = ({ user }) => {
   };
 
   const cancelDelete = () => {
+    console.log("Canceling delete: ", confirmDeleteId);
     setConfirmDeleteId(null);
   };
 
@@ -123,15 +124,15 @@ const SellerProducts = ({ user }) => {
             </div>
           </div>
         </div>
-        {confirmDeleteId ? (
+        {confirmDeleteId && 
           <ConfirmOverlay
             message={
               "Are you sure you want to remove this honey cell from your catalog?"
             }
-            accept={{fn: confirmDelete, msg: "Yes, Remove"}}
-            decline={{fn: cancelDelete, mmsg: "Cancel"}}
+            accept={{ fn: confirmDelete, msg: "Yes, Remove" }}
+            decline={{ fn: cancelDelete, mmsg: "Cancel" }}
           />
-        ) : null}
+        }
         {/* Table - Desktop & Tablet */}
         <div
           className={` hidden md:block bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-amber-200 overflow-hidden`}
@@ -224,7 +225,7 @@ const SellerProducts = ({ user }) => {
                     {/* Price */}
                     <td className="px-2 xl:px-4 py-3">
                       <span className="text-xs xl:text-sm text-primary font-semibold text-green-700 break-words max-w-[80px]">
-                        ${product?.price?.toFixed(2) || "0.00"}
+                        &#8369; {product?.price?.toFixed(2) || "0.00"}
                       </span>
                     </td>
 

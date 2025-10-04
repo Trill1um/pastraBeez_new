@@ -1,10 +1,129 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import logo from "../assets/Pastra.svg"; // Adjust the path as necessary
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
 import Notice from "./Notice";
 import { useLocation } from "react-router-dom";
 import Honeycell from "../assets/honey-cell.svg?react";
+import toast from "react-hot-toast";
+
+const CodeInput = () => {
+  const isCodeSent = useUserStore((s) => s.isCodeSent);
+  const digits=6;
+  const [values, setValues] = useState(Array(digits).fill(""));
+  const [index, setIndex] = useState(0);
+  const inputsRef = useRef([]);
+  const verification = useUserStore((s) => s.checkCode);
+  const email = useUserStore((s) => s.tempEmail);
+  const onComplete = useCallback(async (code) => {
+    if (verification) await verification(code, email);
+  }, [verification, email]);
+
+  useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
+
+  useEffect(() => {
+    const code = values.join("");
+    if (code.length === digits && !values.includes("")) {
+      console.log("Code complete:", code);
+      Promise.resolve().then(() => onComplete(code)).catch(() => {
+        toast.success("Tip: select a digit to change and press a number instead of deleting it.");
+      });
+    }
+  }, [values, onComplete]);
+
+  const handleKeyDown = (e, idx) => {
+    const next = [...values];
+    let currIndex=index;
+    if (e.key === "Backspace") {
+      if (values[currIndex - 1]) {
+        next[currIndex - 1] = "";
+        currIndex--;
+        inputsRef.current[currIndex]?.focus();
+      } else if (values[idx]) {
+        next[idx] = "";
+        inputsRef.current[idx - 1]?.focus();
+      } else {
+        inputsRef.current[currIndex - 1]?.focus();
+      }
+      setValues(next);
+    } else if (e.key === "ArrowLeft") {
+      inputsRef.current[Math.max(0, idx - 1)]?.focus();
+    } else if (e.key === "ArrowRight") {
+      inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
+    } else if (e.key >= "0" && e.key <= "9") {
+      if (next[idx]) {
+        next[idx] = e.key;
+        inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
+      } else if (currIndex < digits) {
+        console.log("Changed value")
+        next[currIndex] = e.key;
+        currIndex ++;
+        inputsRef.current[Math.min(digits - 1, currIndex)]?.focus();
+      }
+      setValues(next);
+    }
+    setIndex(currIndex);
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData)
+      .getData("text")
+      .trim();
+    const chars = text
+      .split("")
+      .filter((c) => /[0-9]/.test(c))
+      .slice(0, digits);
+    const next = [...values];
+    for (let i = 0; i < digits; i++) {
+      if (chars[i]) {
+        next[i] = chars[i];
+      } else {
+        next[i] = "";
+      }
+    }
+    setValues(next);
+    setIndex(chars.length);
+  };
+
+  return (
+    isCodeSent &&
+    <div className="flex flex-col items-center gap-2">
+      {email && (
+        <p className="text-xs text-amber-700">
+          A code was sent to <strong>{email}</strong>
+        </p>
+      )}
+      <div className="flex gap-2 my-2">
+        {Array.from({ length: digits }).map((_, i) => (
+          <input
+            key={"code-input-" + i}
+            ref={(el) => (inputsRef.current[i] = el)}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            className="w-12 h-12 text-center text-xl font-bold rounded-xl bg-amber-50 border-2 border-amber-200 focus:border-amber-400 focus:outline-none shadow-sm"
+            value={values[i]}
+            onChange={() => {}}
+            onKeyDown={(e) => handleKeyDown(e, i)}
+            onPaste={handlePaste}
+            aria-label={`Code digit ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Timer = () => {
+  const coolDown = useUserStore((s) => s.coolDown);
+  console.log(coolDown);
+  return (
+    coolDown>0 ? <div>({coolDown})</div> : null
+  );
+}
 
 const ProfileSection = ({ user }) => {
   const { logout } = useUserStore();
@@ -115,11 +234,8 @@ const NavBar = ({ user }) => {
   const setVerificationProgress = useUserStore(
     (s) => s.setVerificationProgress
   );
-  const sendVerifyEmail = useUserStore((s) => s.sendVerifyEmail);
-  const checkCode = useUserStore((s) => s.checkCode);
   const tempEmail = useUserStore((s) => s.tempEmail);
-  const isCodeSent = useUserStore((s) => s.isCodeSent);
-  const coolDown = useUserStore((s) => s.coolDown);
+  const sendVerifyEmail = useUserStore((s) => s.sendVerifyEmail);
   const startCountDown = useUserStore((s) => s.startCountDown);
   const cancelVerification = useUserStore((s) => s.cancelVerification);
   const isLoading = useUserStore((s) => s.loading);
@@ -153,18 +269,17 @@ const NavBar = ({ user }) => {
               "Email verification required, sending verification email...Check you're spam..."
             }
             accept={{
-              fn: () => {
-                sendVerifyEmail();
-                startCountDown();
+              fn: async() => {
+                const status = await sendVerifyEmail();
+                if ((status-200)<100) startCountDown();
               },
               msg: "Resend",
+
+              time: <Timer/>
             }}
+            addon = {<CodeInput/>}
             decline={{ fn: cancelVerify, msg: "Cancel" }}
             isCritical={true}
-            verification={checkCode}
-            email={tempEmail}
-            isCodeSent={isCodeSent}
-            coolDown={coolDown}
           />
         ) //Setup a timer
       }

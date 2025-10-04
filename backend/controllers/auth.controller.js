@@ -7,18 +7,10 @@ import {
 } from "../services/verifyEmail.js";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-import crypto from "crypto";
 
 dotenv.config();
 
 const isProduction = process.env.NODE_ENV === "production";
-
-const codeGeneration = (digits = 6) => {
-  // secure numeric OTP, padded to `digits` length
-  const max = 10 ** digits;
-  const n = crypto.randomInt(0, max);
-  return String(n).padStart(digits, "0");
-};
 
 //Config: Production = secure-true, sameSite-none; Development = secure-false, sameSite-Strict
 const cookieConfiguration = {
@@ -127,6 +119,7 @@ export const signup = async (req, res) => {
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
     }
+    let location=facebookLink;
     if (role==="seller") {
       if (!colonyName) {
         return res.status(400).json({ message: "Colony name is required for sellers" });
@@ -144,7 +137,6 @@ export const signup = async (req, res) => {
       }
 
       // get final redirected facebook link if it's a /share/ link
-      let location = facebookLink
       console.log("Original Facebook link: ", location);
       if (location.includes("/share/")) {
         const resp = await fetch(location, { redirect: "manual" });
@@ -193,9 +185,13 @@ export const signup = async (req, res) => {
         role,
       }
     }
-
     // Create temp user data
-    await tempUser.create({...user, code: codeGeneration(6) });
+    try {
+      await tempUser.create(user);
+    } catch (error) {
+      console.error("Error creating temp user:", error);
+      throw error;
+    }
 
     await client.set(`verifying:${user.email}`, "true", "EX", 60 * 20); // 20 minutes
     console.log("Finished creating temp user, proceed to send verification email");
@@ -297,7 +293,6 @@ export const verifySend = async (req, res) => {
     await sendVerificationEmail(userEmail);
     return res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
-    console.error("Error sending verification email:", error);
     return res
       .status(500)
       .json({ message: error?.message || "Internal server error" });
