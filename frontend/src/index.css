@@ -263,6 +263,51 @@
   line-height: var(--leading-normal);
 }
 
+.bee-body-h1 {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: clamp(32px, 6vw, 49px); /* 49px */
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.5%;
+}
+
+.bee-body-h2 {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: clamp(28px, 5.5vw, 43px); /* 43px */
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.5%;
+}
+
+.bee-body-h3 {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: clamp(24px, 5vw, 32px); /* 32px */
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.5%;
+}
+
+.bee-body-h4 {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: clamp(20px, 4.5vw, 28px); /* 28px */
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.5%;
+}
+
+.bee-body-h5 {
+  font-family: var(--font-quicksand);
+  font-style: normal;
+  font-size: clamp(18px, 4vw, 25px); /* 25px */
+  font-weight: 400;
+  line-height: 130%;
+  letter-spacing: -0.5%;
+}
+
 .bee-body-h6 {
   font-family: var(--font-quicksand);
   font-style: normal;

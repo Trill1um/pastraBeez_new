@@ -10,7 +10,8 @@ import honey from "../assets/bg-drip.svg";
 import imgHero from "../assets/placeholder.png";
 import bg_honeycomb from "../assets/bg-comb.svg";
 import bg_honey_mobile from "../assets/bg-drip-mobile.svg";
-import bee from "../assets/new_bee.gif";
+import bee from "../assets/bee-anim.mp4";
+import beeMP4 from "../assets/bee.webm";
 import bg_comb_mobile from "../assets/bg-comb-mobile.svg";
 import HomeBg from "../components/HomeBg";
 import hive from "../assets/bee-hive.webp";
@@ -285,8 +286,8 @@ const HomePage = () => {
             </button>
           </div>
           <div className="flex h-full w-1/2 z-0 items-center justify-center relative">
-            <div className="h-4/3 bg-yellow-200 absolute z-0 rounded-full aspect-square"/>
-            <div className="h-1/1 bg-yellow-400 absolute z-0 rounded-full aspect-square"/>
+            <div className="h-4/3 bg-yellow-200 absolute z-0 rounded-full aspect-square" />
+            <div className="h-1/1 bg-yellow-400 absolute z-0 rounded-full aspect-square" />
             <img className="relative h-full" src={hive} alt="bee hive z-1" />
           </div>
         </div>
@@ -415,12 +416,22 @@ const HomePage = () => {
           >
             Sell Now
           </button>
-          <img
-            className="absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100"
-            src={bee}
-            alt=""
-          />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className={`
+              absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100
+              
+              max-w-full h-auto pointer-events-none`}
+            onError={(e) => console.log('Video error:', e)}
+          >
+            <source src={bee} type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
         </div>
+        <div />
 
         {/* Main BG Image */}
         <div className="relative w-full aspect-auto">
