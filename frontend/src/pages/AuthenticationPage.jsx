@@ -116,12 +116,14 @@ const AuthPage = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
+    console.log("Submit button pressed")
     e.preventDefault();
 
     if (!validateForm()) return;
 
     // Show confirmation dialog before proceeding
-    setConfirm(true);
+    if (!isLogin)setConfirm(true);
+    else handleConfirmedSubmit();
   };
 
   // Handle confirmed submission
