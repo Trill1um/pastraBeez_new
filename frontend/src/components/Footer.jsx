@@ -48,8 +48,7 @@ const Footer = () => {
                   About us
                 </h3>
                 <p className="bee-footer-body text-sm sm:text-base">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-                  vulputate libero et velit interdum, ac aliquet odio mattis.
+                  Welcome to our website! We’re dedicated to providing quality products and excellent service that bring satisfaction to our customers. Our goal is to deliver innovation, reliability, and value in everything we do.
                 </p>
               </div>
 
