@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 const CodeInput = () => {
   const isCodeSent = useUserStore((s) => s.isCodeSent);
   const digits=6;
-  const [values, setValues] = useState(Array(digits).fill(""));
+  const [values, setValues] = useState(Array(digits).fill(" "));
   const inputsRef = useRef([]);
   const verification = useUserStore((s) => s.checkCode);
   const email = useUserStore((s) => s.tempEmail);
@@ -23,113 +23,84 @@ const CodeInput = () => {
   }, []);
 
   useEffect(() => {
-    const code = values.join("");
-    if (code.length === digits && !values.includes("")) {
+    const code = values.join("").trim();
+    if (code.length === digits && !values.includes(" ")) {
       Promise.resolve().then(() => onComplete(code)).catch(() => {
         toast.success("Tip: select a digit to change and press a number instead of deleting it.");
       });
     }
   }, [values, onComplete]);
 
+  // Only for desktop
   const handleKeyDown = (e, idx) => {
-    const next = [...values];
-    
-    if (e.key === "Backspace") {
-      if (values[idx]) {
-        // Clear current field and stay
-        next[idx] = "";
-        setValues(next);
-      } else if (idx > 0) {
-        // Move to previous field and clear it
-        next[idx - 1] = "";
-        setValues(next);
-        setTimeout(() => inputsRef.current[idx - 1]?.focus(), 10);
-      }
-    } else if (e.key === "ArrowLeft" && idx > 0) {
-      setTimeout(() => inputsRef.current[idx - 1]?.focus(), 10);
-    } else if (e.key === "ArrowRight" && idx < digits - 1) {
-      setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
-    } else if (e.key >= "0" && e.key <= "9") {
-      next[idx] = e.key;
-      setValues(next);
-      if (idx < digits - 1) {
-        setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
-      }
+    if (e.key === "ArrowLeft") {
+      inputsRef.current[Math.max(0, idx - 1)]?.focus();
+    } else if (e.key === "ArrowRight") {
+      inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
     }
   };
 
   const handleChange = (e, idx) => {
     const value = e.target.value;
-    
-    // Handle pasted content (mobile often triggers onChange with full string)
+    const next = [...values];
     if (value.length > 1) {
       const chars = value
         .split("")
         .filter((c) => /[0-9]/.test(c))
         .slice(0, digits);
-      const next = [...values];
-      
-      // Fill from current position
-      for (let i = 0; i < digits; i++) {
-        if (chars[i]) {
-          next[i] = chars[i];
-        }
-      }
+      chars.forEach((c, i) => {
+        next[Math.min(digits - 1, i)] = c;
+      });
       setValues(next);
-      
-      // Focus the next empty field or the last filled field
-      const nextEmptyIndex = next.findIndex(val => val === "");
-      const focusIndex = nextEmptyIndex === -1 ? Math.min(digits - 1, chars.length - 1) : nextEmptyIndex;
-      setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
+      inputsRef.current[Math.min(digits -1, chars.length )]?.focus();
       return;
-    }
-    
-    // Handle single digit input
-    if (/^[0-9]$/.test(value)) {
-      const next = [...values];
-      next[idx] = value;
-      setValues(next);
-      if (idx < digits - 1) {
-        setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
+    } else {
+      if (value === "") {
+        next[idx] = " ";
+        if (values[idx - 1]) {
+          inputsRef.current[idx-1]?.focus();
+        }
+        setValues(next);
+      } else if (/[0-9]/.test(value)) {
+        if (next[idx]) {
+          next[idx] = value;
+          inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
+        } else if (idx < digits) {
+          next[idx] = value;
+          inputsRef.current[Math.min(digits - 1, idx+1)]?.focus();
+        }
+        setValues(next);
       }
     }
+      
+// else if (e.target.value === "ArrowLeft") {
+//         console.log("Pressed left")
+//         inputsRef.current[Math.max(0, idx - 1)]?.focus();
+//       } else if (e.target.value === "ArrowRight") {
+//         inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
+
+    
+    // // Handle single digit input
+    // if (/^[0-9]$/.test(value)) {
+    //   const next = [...values];
+    //   next[idx] = value;
+    //   setValues(next);
+    //   if (idx < digits - 1) {
+    //     setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
+    //   }
+    // }
   };
 
   const handleFocus = (idx) => {
-    // Mobile devices might need this for better UX
     if (values[idx]) {
-      // Select the content if there's already a value
       setTimeout(() => {
         inputsRef.current[idx]?.select();
       }, 10);
     }
   };
 
+  // Mobile only
   const handlePaste = (e) => {
-    e.preventDefault();
-    const text = (e.clipboardData || window.clipboardData)
-      .getData("text")
-      .trim();
-    const chars = text
-      .split("")
-      .filter((c) => /[0-9]/.test(c))
-      .slice(0, digits);
-    const next = [...values];
-    for (let i = 0; i < digits; i++) {
-      if (chars[i]) {
-        next[i] = chars[i];
-      } else {
-        next[i] = "";
-      }
-    }
-    setValues(next);
-    // Focus the next empty field or the last filled field
-    const nextEmptyIndex = next.findIndex(val => val === "");
-    const focusIndex = nextEmptyIndex === -1 ? digits - 1 : nextEmptyIndex;
-    setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
-  };
-
-  const handleContainerPaste = (e) => {
     e.preventDefault();
     const text = (e.clipboardData || window.clipboardData)
       .getData("text")
@@ -163,7 +134,7 @@ const CodeInput = () => {
       )}
       <div 
         className="flex gap-2 my-2"
-        onPaste={handleContainerPaste}
+        onPaste={handlePaste}
       >
         {Array.from({ length: digits }).map((_, i) => (
           <input
@@ -176,9 +147,9 @@ const CodeInput = () => {
             className="w-12 h-12 text-center text-xl font-bold rounded-xl bg-amber-50 border-2 border-amber-200 focus:border-amber-400 focus:outline-none shadow-sm"
             value={values[i]}
             onChange={(e) => handleChange(e, i)}
-            onKeyDown={(e) => handleKeyDown(e, i)}
             onFocus={() => handleFocus(i)}
             onPaste={handlePaste}
+            onKeyDown={(e) => {handleKeyDown(e, i)}}
             aria-label={`Code digit ${i + 1}`}
             autoComplete={i === 0 ? "one-time-code" : "off"}
             autoCapitalize="none"
