@@ -5,7 +5,7 @@ import {
 import cloudify from "../lib/cloudify.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import ConfirmOverlay from "../components/Notice.jsx";
+import BeeOverlay from "../components/Notice.jsx";
 
 // Assets
 import PlusIcon from "../assets/plus-sign.svg?react";
@@ -120,7 +120,7 @@ const SellerProducts = ({ user }) => {
           </div>
         </div>
         {confirmDeleteId && 
-          <ConfirmOverlay
+          <BeeOverlay
             message={
               "Are you sure you want to remove this honey cell from your catalog?"
             }

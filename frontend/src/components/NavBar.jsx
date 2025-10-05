@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import logo from "../assets/Pastra.svg"; // Adjust the path as necessary
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
-import Notice from "./Notice";
+import BeeOverlay from "./Notice";
 import { useLocation } from "react-router-dom";
 import Honeycell from "../assets/honey-cell.svg?react";
 import toast from "react-hot-toast";
@@ -258,7 +258,7 @@ const NavBar = ({ user }) => {
     <div className="bg-yellow-300 relative z-40 shadow-lg w-full">
       {
         isVerifying && (
-          <Notice
+          <BeeOverlay
             style={`${isLoading ? "pointer-events-none opacity-70" : ""}`}
             message={
               "Email verification required, sending verification email...Check you're spam..."

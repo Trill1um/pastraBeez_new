@@ -7,7 +7,7 @@ import honeyIcon from "../assets/honey.png";
 import cartIcon from "../assets/cart.png";
 import Hide from "../assets/hide.svg?react"
 import Show from "../assets/show.svg?react"
-import Notice from "../components/Notice"
+import BeeOverlay from "../components/Notice"
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -151,7 +151,7 @@ const AuthPage = () => {
         <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-orange-200/25 rounded-full blur-lg animate-pulse delay-2000"></div>
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
-      {confirm && <Notice 
+      {confirm && <BeeOverlay 
         message={"Is the information you've put in correct?" } 
         accept={{fn: handleConfirmedSubmit, msg: "Yes, I'm sure"}}
         decline={{fn: ()=>setConfirm(false), msg: "No, go back"}}
