@@ -68,8 +68,6 @@ export const useUserStore = create((set, get) => ({
     } = userData || {};
 
     try {
-      console.log("Signing up...");
-      console.log("user: ", email, password);
       const response = await axios.post(`/auth/signup`, {
         colonyName,
         email,
@@ -78,7 +76,6 @@ export const useUserStore = create((set, get) => ({
         confirmPassword,
         role,
       });
-      console.log("Sign up response: ", response);
       set({ loading: false, isVerifying: true, tempEmail: email });
       toast.success(response?.data?.message || "Sign up successful! Please verify your email. 🐝");
     } catch (error) {
@@ -93,8 +90,6 @@ export const useUserStore = create((set, get) => ({
   login: async (email, password) => {
     set({ loading: true });
     try {
-      console.log("logging in...");
-      console.log("user: ", email, password);
       const response = await axios.post(`/auth/login`, {
         email,
         password,
@@ -133,7 +128,6 @@ export const useUserStore = create((set, get) => ({
         throw new Error(`Please wait ${get().coolDown} seconds before requesting a new code.`);
       }
 
-      console.log("Sending Verification Email...");
       const response = await axios.post(`/auth/verify-send`, {userEmail});
       
       toast.success("Email Verification Sent! Please verify your email. 🐝");
@@ -164,23 +158,17 @@ export const useUserStore = create((set, get) => ({
   checkCode: async (code, email) => {
     set({ loading: true });
     try {
-      console.log("Checking verification code...", code, email);
       const response = await axios.post("/auth/verify-code", {
         code,
         email,
       });
 
-      console.log(
-        "Check email verification response data from user ",
-        response
-      );
       toast.success("Email verified successfully! 🐝");
       set({ loading: false, isVerifying: false });
       await get().checkAuth();
       return response.status;
     } catch (error) {
       set({ loading: false });
-      console.log("From Store Error: ", error);
       toast.error(
         error.response?.data.message ||
           "Email verification failed. Please try again later."
@@ -192,9 +180,7 @@ export const useUserStore = create((set, get) => ({
   checkAuth: async () => {
     set({ checkingAuth: true });
     try {
-      console.log("Checking authentication status...");
       const response = await axios.get(`/auth/profile`);
-      console.log("Authenticated user:", response.data);
       set({ isVerifying: false, user: response.data, checkingAuth: false });
       if (get().invalidateProducts) {
         get().invalidateProducts();
@@ -205,11 +191,8 @@ export const useUserStore = create((set, get) => ({
   },
 
   handleAuthFailure: () => {
-    console.log("🔥 Auth failure detected, clearing user session");
     const currentUser = get().user;
-    console.log("🔥 Handling auth failure for user:", currentUser);
     if (currentUser) {
-      console.log("🚨 Auth failure detected, clearing user session");
       set({ user: null, loading: false, checkingAuth: false });
   
       toast.error("Session expired. Please log in again.");
@@ -228,9 +211,8 @@ export const useUserStore = create((set, get) => ({
 if (typeof window !== "undefined") {
   // Set up event listener when module loads
   window.addEventListener("auth-failed", () => {
-    console.log("🔥 Auth-failed event received");
+    // console.log("🔥 Auth-failed event received");
     useUserStore.getState().handleAuthFailure();
   });
-
-  console.log("✅ Auth-failed event listener registered");
+  // console.log("✅ Auth-failed event listener registered");
 }

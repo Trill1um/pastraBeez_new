@@ -21,7 +21,7 @@ export const getProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    console.log("Fetching all products. Authenticated user:", req?.user?.colonyName || "None");  
+    // console.log("Fetching all products. Authenticated user:", req?.user?.colonyName || "None");  
     const products = await Product.find({}).populate(
       "sellerId",
       "colonyName facebookLink"
@@ -34,7 +34,7 @@ export const getAllProducts = async (req, res) => {
       const userRatings = await P_S.find({ 
         userId: req.user._id,
       });
-      console.log("User ratings found:", userRatings);
+      // console.log("User ratings found:", userRatings);
 
       const ratedProductIds = new Set(userRatings.map(rating => rating.productId.toString()));
 

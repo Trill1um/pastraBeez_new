@@ -26,7 +26,6 @@ const CodeInput = () => {
   useEffect(() => {
     const code = values.join("");
     if (code.length === digits && !values.includes("")) {
-      console.log("Code complete:", code);
       Promise.resolve().then(() => onComplete(code)).catch(() => {
         toast.success("Tip: select a digit to change and press a number instead of deleting it.");
       });
@@ -57,7 +56,6 @@ const CodeInput = () => {
         next[idx] = e.key;
         inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
       } else if (currIndex < digits) {
-        console.log("Changed value")
         next[currIndex] = e.key;
         currIndex ++;
         inputsRef.current[Math.min(digits - 1, currIndex)]?.focus();
@@ -244,7 +242,6 @@ const NavBar = ({ user }) => {
   useEffect(() => {
     const send = async () => {
       if (isVerifying) {
-        console.log("Sending verification email...");
         await sendVerifyEmail();
         startCountDown();
       }
@@ -255,7 +252,6 @@ const NavBar = ({ user }) => {
   const cancelVerify = () => {
     setVerificationProgress(false);
     cancelVerification(tempEmail);
-    console.log("Verification cancelled");
   };
 
   return (

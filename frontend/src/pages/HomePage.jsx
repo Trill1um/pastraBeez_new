@@ -84,7 +84,6 @@ function ScrollingCarousel({ className = "", products, location }) {
 
 const HoneyCell = ({ className = "", product = [], location = "" }) => {
   const navigate = useNavigate();
-  console.log("product:", product);
   return (
     <div
       className={`w-[228px] sm:w-[387px] xl:w-[548px] select-none flex items-center justify-center aspect-auto ${className}`}
@@ -177,8 +176,6 @@ const HomePage = () => {
   const navigate = useNavigate();
   const uniqueProducts = useUniqueProductCategories().uniqueProducts;
   const featuredProducts = useFeaturedProducts().featuredProducts;
-
-  console.log("featuredProducts:", featuredProducts);
 
   const coordinates = [
     `
@@ -280,7 +277,7 @@ const HomePage = () => {
                 care, by students, for students
               </p>
             </div>
-            <button className="flex btn-anim btn-primary active:scale-95 gap-2.5 items-center justify-center px-8 py-4 text-center rounded shadow-md">
+            <button onClick={()=>navigate("/catalog")} className="flex btn-anim btn-primary active:scale-95 gap-2.5 items-center justify-center px-8 py-4 text-center rounded shadow-md">
               View Hive
             </button>
           </div>
@@ -342,7 +339,7 @@ const HomePage = () => {
       </div>
 
       {/* Carousel Section */}
-      {uniqueProducts.length && (
+      {uniqueProducts.length>=3 && (
         <div className="box-border content-stretch flex flex-col items-center justify-start relative w-full">
           {/* Background */}
 
@@ -413,7 +410,7 @@ const HomePage = () => {
           >
             Sell Now
           </button>
-          <FlyingBee style={`absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100 max-w-full h-auto pointer-events-none`} />
+          <FlyingBee style={`absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100 max-w-full h-auto`} />
         </div>
         <div />
 

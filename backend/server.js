@@ -31,7 +31,7 @@ app.use(cookieParser());
 
 // Debug middleware to log all requests
 app.use((req, res, next) => {
-  console.log(`🚀 ${req.method} ${req.url}`);
+  // console.log(`🚀 ${req.method} ${req.url}`);
   next();
 });
 
@@ -40,6 +40,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
 app.listen(PORT, () => {
-  console.log("Server is running on port ", PORT);
+  // console.log("Server is running on port ", PORT);
   connectDB();
 });

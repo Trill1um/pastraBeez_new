@@ -32,15 +32,12 @@ const SellerProducts = ({ user }) => {
     Other: <OtherIcon className="text-amber-600 stroke-current w-5 h-5" />,
   };
 
-  console.log("User in SellerProducts:", user);
   const { sellerProducts, isLoading, error } = useUserProducts(user?._id);
   const { deleteProductAsync, isDeleting, isCreating } = useProcessedProducts();
 
   // Update local products when filtered products change
   const handleEdit = (product) => {
-    console.log("editihng: ", product);
     navigate(`/myProduct/editing-${product?._id}`);
-    // Add your edit logic here
   };
 
   // Bee-themed confirmation overlay state
@@ -51,7 +48,6 @@ const SellerProducts = ({ user }) => {
   };
 
   const confirmDelete = () => {
-    console.log("Confirming delete");
     if (confirmDeleteId) {
       deleteProductAsync(confirmDeleteId);
       setConfirmDeleteId(null);
@@ -59,7 +55,6 @@ const SellerProducts = ({ user }) => {
   };
 
   const cancelDelete = () => {
-    console.log("Canceling delete: ", confirmDeleteId);
     setConfirmDeleteId(null);
   };
 

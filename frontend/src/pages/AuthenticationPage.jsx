@@ -133,7 +133,6 @@ const AuthPage = () => {
       await login(formData.email, formData.password);
     } else {
       // Handle signup
-      console.log("formData: ", formData);
       await signUp(formData);
     }
   };

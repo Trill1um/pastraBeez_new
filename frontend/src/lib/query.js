@@ -10,40 +10,40 @@ export const productQueryKeys = {
 // ============ API FUNCTIONS ============
 const fetchAllProducts = async () => {
   const response = await axios.get("/products");
-  console.log("All products fetched:", response.data);
+  // console.log("All products fetched:", response.data);
   return response.data;
 };
 
 const createProduct = async (productData) => {
   const response = await axios.post("/products/create-my-product", productData);
-  console.log("Product created:", response.data);
+  // console.log("Product created:", response.data);
   toast.success(response.data.message);
   return response.data;
 };
 
 const updateProduct = async ({ productId, productData }) => {
-  console.log("Updating product with ID:", productId, "Data:", productData);
+  // console.log("Updating product with ID:", productId, "Data:", productData);
   const response = await axios.put(`/products/${productId}`, productData);
-  console.log("Product updated:", response.data);
+  // console.log("Product updated:", response.data);
   return response.data;
 };
 
 const deleteProduct = async (productId) => {
-  console.log("Deleting product with ID:", productId);
+  // console.log("Deleting product with ID:", productId);
   const response = await axios.delete(`/products/${productId}`);
-  console.log("Product deleted:", productId);
+  // console.log("Product deleted:", productId);
   return response.data;
 };
 
 const rateProduct = async ({ productId, rating }) => {
   const response = await axios.put(`/products/rate/${productId}`, { rating });
-  console.log("Product rated:", response.data);
+  // console.log("Product rated:", response.data);
   return response.data;
 };
 
 const unRateProduct = async ({ productId }) => {
   const response = await axios.delete(`/products/rate:${productId}`);
-  console.log("Product removed rating:", response.data);
+  // console.log("Product removed rating:", response.data);
   return response.data;
 };
 

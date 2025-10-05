@@ -66,7 +66,6 @@ productSchema.pre('findOneAndDelete', async function() {
         if (productId) {
             const P_S = mongoose.model('P_S');
             const deleteResult = await P_S.deleteMany({ productId: productId });
-            console.log(`Cascade delete: Removed ${deleteResult.deletedCount} rating(s) for product ${productId}`);
         }
     } catch (error) {
         console.error('Error in cascade delete middleware:', error);

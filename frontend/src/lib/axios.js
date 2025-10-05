@@ -33,9 +33,9 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.request.use(
   (config) => {
     if (import.meta.env.MODE === "development") {
-      console.log(
-        `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
-      );
+      // console.log(
+      //   `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
+      // );
     }
     return config;
   },
@@ -49,7 +49,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => {
     if (import.meta.env.MODE === "development") {
-      console.log(`✅ API Response: ${response.status} ${response.config.url}`);
+      // console.log(`✅ API Response: ${response.status} ${response.config.url}`);
     }
     return response;
   },
@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(
     // Case: refresh token doesn't exist then skip
     if (originalRequest.url?.includes("/auth/refresh-token")) {
       if (error.response?.status === 401) {
-        console.log("❌ Refresh token expired, redirecting to login");
+        // console.log("❌ Refresh token expired, redirecting to login");
         window.dispatchEvent(new Event("auth-failed"));
       }
       return Promise.reject(error);
@@ -89,13 +89,13 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("🔄 Access token expired, trying to refresh...");
+        // console.log("🔄 Access token expired, trying to refresh...");
         await axiosInstance.post("/auth/refresh-token");
-        console.log("✅ Token refreshed successfully");
+        // console.log("✅ Token refreshed successfully");
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.log("❌ Token refresh failed, redirecting to login");
+        // console.log("❌ Token refresh failed, redirecting to login");
         processQueue(refreshError);
         window.dispatchEvent(new Event("auth-failed"));
         return Promise.reject(refreshError);

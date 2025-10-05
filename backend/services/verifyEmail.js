@@ -15,7 +15,7 @@ const codeGeneration = () => {
 export const sendVerificationEmail = async (userEmail, sender = process.env.EMAIL_USER, api_key=process.env.SEND_API) => {
   try {
     sgMail.setApiKey(api_key);
-    console.log("Sending verification email to:", userEmail, "from:", sender);
+    // console.log("Sending verification email to:", userEmail, "from:", sender);
     const key = `verify_cooldown:${userEmail}`;
     const inCooldown = await client.exists(key);
     if (inCooldown) {
@@ -27,7 +27,7 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
     if (!user) {
       throw new Error("Verification period expired for this email, please sign up again.");
     }
-    console.log("Found temp user for verification:", user);
+    // console.log("Found temp user for verification:", user);
     const code = codeGeneration();
     user.code = code;
     try {
@@ -62,7 +62,7 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
       throw error;
     }
     await client.set(key, '1', 'EX', 60 * 2);
-    console.log(`Verification email sent to ${userEmail} from ${sender}`);
+    // console.log(`Verification email sent to ${userEmail} from ${sender}`);
   } catch (error) {
     if (api_key === process.env.SEND_API) {
       // Try backup sender
@@ -81,22 +81,16 @@ export const verifyCode = async (code, userEmail) => {
     // Lookup the pending temp user by email
     const user = await tempUser.findOne({ email: userEmail });
     if (!user) {
-      console.log(`No pending verification found for email: ${userEmail}`);
       return false;
     }
 
     // Compare provided code with stored code
-    console.log("\nVerifying code:", code, "\nagainst stored code:", user.code);
     const matches = (String(user.code).length===6)?String(user.code) === String(code): false;
-    console.log("\nCode match result:", matches);
     if (!matches) {
-      console.log(`Verification code mismatch for ${userEmail}`);
       return false;
     }
 
-    // Optionally: remove the tempUser entry after successful verification
-    // await tempUser.deleteOne({ _id: user._id });
-
+    await tempUser.deleteOne({ _id: user._id });
     return true;
   } catch (error) {
     console.error("Error verifying email code:", error);

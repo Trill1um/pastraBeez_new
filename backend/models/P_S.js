@@ -49,7 +49,7 @@ p_sSchema.pre('findOneAndDelete', async function() {
                 rate_count: totalRatings
             });
             
-            console.log(`Rating deleted: Updated product ${productId} - new average: ${averageRating}, count: ${totalRatings}`);
+            // console.log(`Rating deleted: Updated product ${productId} - new average: ${averageRating}, count: ${totalRatings}`);
         }
     } catch (error) {
         console.error('Error in rating delete middleware:', error);

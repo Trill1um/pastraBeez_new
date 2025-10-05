@@ -57,7 +57,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
 
 export const login = async (req, res) => {
   try {
-    console.log("Login route activated: ", req.body);
+    // console.log("Login route activated: ", req.body);
     const { email, password } = req.body;
 
     // Validate input
@@ -77,7 +77,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
     const isValidPassword = await user?.comparePassword(password);
     if (!user || !isValidPassword) {
-      console.log("Invalid login attempt for email:", email, isValidPassword);
+      // console.log("Invalid login attempt for email:", email, isValidPassword);
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
@@ -91,7 +91,7 @@ export const login = async (req, res) => {
     // Clean up temp and cooldown tokens
     await client.del(`verify_cooldown:${email}`);
 
-    console.log("User authenticated successfully:", user);
+    // console.log("User authenticated successfully:", user);
     return res.status(200).json({
       user,
       message: "Login successful",
@@ -106,7 +106,7 @@ export const signup = async (req, res) => {
   const { colonyName, email, password, facebookLink, confirmPassword, role } =
     req.body;
   try {
-    console.log("ChecK: ", req.body)
+    // console.log("ChecK: ", req.body)
     // Validate input
     if (!email || !password) {
       return res.status(400).json({ message: "Missing credentials detected" });
@@ -137,16 +137,15 @@ export const signup = async (req, res) => {
       }
 
       // get final redirected facebook link if it's a /share/ link
-      console.log("Original Facebook link: ", location);
+      // console.log("Original Facebook link: ", location);
       if (location.includes("/share/")) {
         const resp = await fetch(location, { redirect: "manual" });
         if (resp.status >= 300 && resp.status < 400) {
           location = resp.headers.get("location");
-          console.log("Redirected to: ", location);
+          // console.log("Redirected to: ", location);
         }
       }
-      console.log("Final Facebook link after redirects: ", location);
-
+      // console.log("Final Facebook link after redirects: ", location);
     }
 
     // Check if user already exists
@@ -194,7 +193,7 @@ export const signup = async (req, res) => {
     }
 
     await client.set(`verifying:${user.email}`, "true", "EX", 60 * 20); // 20 minutes
-    console.log("Finished creating temp user, proceed to send verification email");
+    // console.log("Finished creating temp user, proceed to send verification email");
     res.status(201).json({ message: "User created, please verify your email" });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -240,7 +239,7 @@ export const verifyReceive = async (req, res) => {
         .status(410)
         .json({ message: "Invalid or expired Verification URL" });
     }
-    console.log("Check Code Result: ", isValid)
+    // console.log("Check Code Result: ", isValid)
 
     // Check if user already exists
     const check = await User.findOne({ email });
@@ -277,7 +276,7 @@ export const verifyReceive = async (req, res) => {
 
     // Clean up temp and cooldown tokens
 
-    console.log("Finish verifying successful");
+    // console.log("Finish verifying successful");
     return res.status(200).json({ message: "Email verification successful" });
   } catch (error) {
     return res.status(500).json({ message: error.response?.data.message || "Internal server error" });
@@ -301,7 +300,7 @@ export const verifySend = async (req, res) => {
 
 export const cancelVerification = async (req, res) => {
   try {
-    console.log("Cancelation started")
+    // console.log("Cancelation started")
     const { email } = req.body;
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
@@ -350,7 +349,7 @@ export const refreshToken = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   try {
-    console.log("getProfile route activated");
+    // console.log("getProfile route activated");
     res.json(req.user);
   } catch (error) {
     console.error("Error getting profile:", error);

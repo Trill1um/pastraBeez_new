@@ -34,7 +34,7 @@ export const protectRoute = async (req, res, next) => {
 
 export const sellerRoute = async (req, res, next) => {
   try {
-    console.log("Seller route accessed by user:", req.user?.colonyName);
+    // console.log("Seller route accessed by user:", req.user?.colonyName);
     if (req.user.role !== "seller") {
       return res.status(403).json({ message: "Forbidden - Sellers Only" });
     }
@@ -47,7 +47,7 @@ export const sellerRoute = async (req, res, next) => {
 
 export const buyerRoute = async (req, res, next) => {
   try {
-    console.log("Buyer route accessed by user:", req.user?.colonyName);
+    // console.log("Buyer route accessed by user:", req.user?.colonyName);
     const token = req.cookies.accessToken;
     if (!token) {
       throw new Error("No Access Token Provided");
