@@ -64,7 +64,7 @@ productSchema.pre('findOneAndDelete', async function() {
     try {
         const productId = this.getQuery()._id;
         if (productId) {
-            const P_S = mongoose.model('P_S');
+            const P_S = mongoose.connection.models['P_S'] || mongoose.model('P_S');
             const deleteResult = await P_S.deleteMany({ productId: productId });
         }
     } catch (error) {
