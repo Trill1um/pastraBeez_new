@@ -7,11 +7,9 @@ const BeeOverlay = ({
   addon = null,
 }) => {
   const onDecline = () => {
-    console.log(accept.time)
-    let input;
-    if (isCritical)
-      input = confirm("Are you sure? Cancelled processes will not be saved.");
-    if (!input) return;
+    let shouldCancel;
+    if (isCritical) shouldCancel = confirm("Are you sure? Cancelled processes will not be saved.");
+    if (isCritical && !shouldCancel) return;
     decline.fn();
   };
   return (

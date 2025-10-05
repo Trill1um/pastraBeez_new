@@ -10,11 +10,10 @@ import honey from "../assets/bg-drip.svg";
 import imgHero from "../assets/placeholder.png";
 import bg_honeycomb from "../assets/bg-comb.svg";
 import bg_honey_mobile from "../assets/bg-drip-mobile.svg";
-import bee from "../assets/bee-anim.mp4";
-import beeMP4 from "../assets/bee.webm";
 import bg_comb_mobile from "../assets/bg-comb-mobile.svg";
 import HomeBg from "../components/HomeBg";
 import hive from "../assets/bee-hive.webp";
+import { FlyingBee } from "../components/FlyingBee";
 
 function ScrollingCarousel({ className = "", products, location }) {
   const [translateX, setTranslateX] = useState(0);
@@ -386,8 +385,6 @@ const HomePage = () => {
       )}
 
       <div className="w-full mt-[128px] lg:mt-0 z-20 relative">
-        {/* left-[170px] */}
-        {/* top-[290px]  */}
         {/* CTA Section */}
         <div
           className="lg:top-[16%] lg:left-[11.3vw]
@@ -416,20 +413,7 @@ const HomePage = () => {
           >
             Sell Now
           </button>
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className={`
-              absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100
-              
-              max-w-full h-auto pointer-events-none`}
-            onError={(e) => console.log('Video error:', e)}
-          >
-            <source src={bee} type="video/webm" />
-            Your browser does not support the video tag.
-          </video>
+          <FlyingBee style={`absolute w-20 lg:w-40 aspect-auto left-2/3 lg:right-0 lg:left-45 rotate-10 lg:top-30 top-9/10 z-0 -scale-x-100 max-w-full h-auto pointer-events-none`} />
         </div>
         <div />
 
@@ -445,44 +429,13 @@ const HomePage = () => {
             className="lg:hidden relative block max-w-none w-full  h-full z-10 object-cover"
             src={bg_comb_mobile}
           />
-
-          <img
-            className="absolute lg:block hidden left-10 top-1/3 z-0"
-            src={bee}
-            alt=""
-          />
-          <img
-            className="hidden lg:block absolute w-70 aspect-auto left-4/9 top-2/5 z-0 -scale-x-100"
-            src={bee}
-            alt=""
-          />
-          <img
-            className="hidden lg:block absolute w-70 aspect-auto left-1/2 -top-1/10 z-0 rotate-10 -scale-x-100"
-            src={bee}
-            alt=""
-          />
-
-          <img
-            className="absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:-top-1/10 z-0 block"
-            src={bee}
-            alt=""
-          />
-
-          <img
-            className="absolute w-40 aspect-auto top-1/4 right-1/5 lg:right-10 lg:top-8/19 z-0 -scale-x-100 "
-            src={bee}
-            alt=""
-          />
-          <img
-            className="hidden lg:block absolute w-30 aspect-auto left-4/5 top-2/11 z-0"
-            src={bee}
-            alt=""
-          />
-          <img
-            className="-scale-x-100 lg:scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-1/1000 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-1/2 z-0"
-            src={bee}
-            alt=""
-          />
+          <FlyingBee style={"absolute lg:block w-70 hidden left-10 top-1/3 z-0"} />
+          <FlyingBee style={"hidden lg:block absolute w-70 aspect-auto left-4/9 top-2/5 z-0 -scale-x-100"} />
+          <FlyingBee style={"hidden lg:block absolute w-70 aspect-auto left-1/2 -top-1/10 z-0 rotate-10 -scale-x-100"} />
+          <FlyingBee style={"absolute w-20 sm:w-40 lg:w-70 aspect-auto lg:right-7  left-1/12 top-5 lg:-top-1/10 z-0 block"} />
+          <FlyingBee style={"absolute w-40 aspect-auto top-1/4 right-1/5 lg:right-10 lg:top-8/19 z-0 -scale-x-100 "} />
+          <FlyingBee style={"hidden lg:block absolute w-30 aspect-auto left-4/5 top-2/11 z-0"} />
+          <FlyingBee style={"-scale-x-100 lg:scale-x-100 absolute w-30 lg:w-60 aspect-auto right-15 sm:right-3/8 lg:right-1/1000 -top-55 rotate-15 lg:rotate-0 sm:-top-60 lg:top-1/2 z-0"} />
         </div>
       </div>
     </div>

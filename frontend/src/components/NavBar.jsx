@@ -119,7 +119,6 @@ const CodeInput = () => {
 
 const Timer = () => {
   const coolDown = useUserStore((s) => s.coolDown);
-  console.log(coolDown);
   return (
     coolDown>0 ? <div>({coolDown})</div> : null
   );

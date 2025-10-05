@@ -34,11 +34,14 @@ function App() {
   const checkingAuth = useUserStore((s) => s.checkingAuth);
   const user = useUserStore((s) => s.user);
   const { invalidateAll } = useInvalidateProducts();
-  useUserStore.getState().setInvalidateAll(invalidateAll);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    useUserStore.getState().setInvalidateAll(invalidateAll);
+  }, [invalidateAll]);
 
   return (
     <div className="App-Box">

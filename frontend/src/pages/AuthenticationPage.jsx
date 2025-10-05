@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useUserStore } from "../stores/useUserStore.js";
+import { toast } from "react-hot-toast";
 import Honeycell from "../assets/cell-auth.svg?react";
 import beeIcon from "../assets/bee.png";
 import honeyIcon from "../assets/honey.png";
 import cartIcon from "../assets/cart.png";
+import Hide from "../assets/hide.svg?react"
+import Show from "../assets/show.svg?react"
+import Notice from "../components/Notice"
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,7 +21,9 @@ const AuthPage = () => {
     acceptTerms: false,
 
   });
+  const [confirm, setConfirm] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState([0, 0]);
   const signUp = useUserStore((s) => s.signUp);
   const login = useUserStore((s) => s.login);
   const loading = useUserStore((s) => s.loading);
@@ -43,6 +49,9 @@ const AuthPage = () => {
       acceptTerms: false,
     });
     setErrors({});
+    if (isLogin) {
+      toast.success("Click the honeycomb to switch between seller and buyer!");
+    }
   };
 
   // Handle input changes
@@ -111,6 +120,14 @@ const AuthPage = () => {
 
     if (!validateForm()) return;
 
+    // Show confirmation dialog before proceeding
+    setConfirm(true);
+  };
+
+  // Handle confirmed submission
+  const handleConfirmedSubmit = async () => {
+    setConfirm(false);
+    
     if (isLogin) {
       // Handle login
       await login(formData.email, formData.password);
@@ -135,7 +152,11 @@ const AuthPage = () => {
         <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-orange-200/25 rounded-full blur-lg animate-pulse delay-2000"></div>
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
-
+      {confirm && <Notice 
+        message={"Is the information you've put in correct?" } 
+        accept={{fn: handleConfirmedSubmit, msg: "Yes, I'm sure"}}
+        decline={{fn: ()=>setConfirm(false), msg: "No, go back"}}
+      />}
       <div
         className={`${
           isDataModalVisible ? "flex" : "hidden"
@@ -281,17 +302,31 @@ const AuthPage = () => {
                 <label className="block bee-title-h6-desktop mb-2">
                   Password *
                 </label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  placeholder="Enter your password"
-                  className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                    errors.password ? "border-accent" : ""
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword[0] ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    placeholder="Enter your password"
+                    className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
+                      errors.password ? "border-accent" : ""
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    tabIndex="-1"
+                    onClick={() => setShowPassword(prev => [prev[0]?0:1, prev[1]])}
+                    className=" absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+                  >
+                    {showPassword[0] ? (
+                      <Hide className="btn-anim w-5 h-5"/>
+                    ) : (
+                      <Show className="btn-anim w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-accent bee-body-text-desktop text-sm mt-1">
                     {errors.password}
@@ -305,17 +340,31 @@ const AuthPage = () => {
                   <label className="block bee-title-h6-desktop mb-2">
                     Confirm Password *
                   </label>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    placeholder="Confirm your password"
-                    className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.confirmPassword ? "border-accent" : ""
-                    }`}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword[1] ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        handleInputChange("confirmPassword", e.target.value)
+                      }
+                      placeholder="Confirm your password"
+                      className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
+                        errors.confirmPassword ? "border-accent" : ""
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      tabIndex="-1"
+                      onClick={() => setShowPassword(prev => [prev[0], prev[1]?0:1])}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+                    >
+                      {showPassword[1] ? (
+                        <Hide className="btn-anim w-5 h-5"/>
+                      ) : (
+                        <Show className="btn-anim w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="text-accent bee-body-text-desktop text-sm mt-1">
                       {errors.confirmPassword}

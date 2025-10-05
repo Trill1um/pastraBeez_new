@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import bee from "../assets/new_bee.gif";
+import bee from "../assets/flying_bee.webp";
 import honeyRight from "../assets/bg-comb-right.svg";
 import honeyLeft from "../assets/bg-comb-left.svg";
 
@@ -19,7 +19,7 @@ const directions = [
 ];
 const MAX=20;
 const bg=()=> {
-  const FlyingBees = ({ count = 3, interval = 1200, speed = 2 }) => {
+  const FlyingBees = ({ count = 3, interval = 1200, speed = 1 }) => {
     const [bees, setBees] = useState([]);
     const animationRef = useRef();
     const spawnRef = useRef();
@@ -82,7 +82,7 @@ const bg=()=> {
             key={beeObj.id}
             src={bee}
             alt="bee"
-            className="fixed pointer-events-none z-0 w-20 opacity-80 blur-xs aspect-auto transition-transform duration-200"
+            className="fixed pointer-events-none z-0 w-10 opacity-80 blur-xs aspect-auto transition-transform duration-200"
             style={{
               left: beeObj.x,
               top: beeObj.y,
@@ -98,7 +98,7 @@ const bg=()=> {
     <div className="min-h-screen min-w-screen w-full z-0 fixed">
       <img src={honeyRight} alt="" className="blur opacity-80 right-0 w-1/2 absolute z-0 -top-100 flex" />
       <img src={honeyLeft} alt="" className="blur opacity-80 -left-50 w-3/5 z-0 absolute -top-100 flex" />
-      <FlyingBees count={1} interval={3000} speed={0.5} />
+      <FlyingBees count={1} interval={3000} speed={0.3} />
     </div>
   )
 }
