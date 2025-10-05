@@ -11,7 +11,6 @@ const CodeInput = () => {
   const isCodeSent = useUserStore((s) => s.isCodeSent);
   const digits=6;
   const [values, setValues] = useState(Array(digits).fill(""));
-  const [index, setIndex] = useState(0);
   const inputsRef = useRef([]);
   const verification = useUserStore((s) => s.checkCode);
   const email = useUserStore((s) => s.tempEmail);
@@ -34,35 +33,51 @@ const CodeInput = () => {
 
   const handleKeyDown = (e, idx) => {
     const next = [...values];
-    let currIndex=index;
+    
     if (e.key === "Backspace") {
-      if (values[currIndex - 1]) {
-        next[currIndex - 1] = "";
-        currIndex--;
-        inputsRef.current[currIndex]?.focus();
-      } else if (values[idx]) {
+      if (values[idx]) {
+        // Clear current field and stay
         next[idx] = "";
-        inputsRef.current[idx - 1]?.focus();
-      } else {
-        inputsRef.current[currIndex - 1]?.focus();
+        setValues(next);
+      } else if (idx > 0) {
+        // Move to previous field and clear it
+        next[idx - 1] = "";
+        setValues(next);
+        setTimeout(() => inputsRef.current[idx - 1]?.focus(), 10);
       }
-      setValues(next);
-    } else if (e.key === "ArrowLeft") {
-      inputsRef.current[Math.max(0, idx - 1)]?.focus();
-    } else if (e.key === "ArrowRight") {
-      inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
+    } else if (e.key === "ArrowLeft" && idx > 0) {
+      setTimeout(() => inputsRef.current[idx - 1]?.focus(), 10);
+    } else if (e.key === "ArrowRight" && idx < digits - 1) {
+      setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
     } else if (e.key >= "0" && e.key <= "9") {
-      if (next[idx]) {
-        next[idx] = e.key;
-        inputsRef.current[Math.min(digits - 1, idx + 1)]?.focus();
-      } else if (currIndex < digits) {
-        next[currIndex] = e.key;
-        currIndex ++;
-        inputsRef.current[Math.min(digits - 1, currIndex)]?.focus();
-      }
+      next[idx] = e.key;
       setValues(next);
+      if (idx < digits - 1) {
+        setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
+      }
     }
-    setIndex(currIndex);
+  };
+
+  const handleChange = (e, idx) => {
+    const value = e.target.value;
+    if (/^[0-9]$/.test(value)) {
+      const next = [...values];
+      next[idx] = value;
+      setValues(next);
+      if (idx < digits - 1) {
+        setTimeout(() => inputsRef.current[idx + 1]?.focus(), 10);
+      }
+    }
+  };
+
+  const handleFocus = (idx) => {
+    // Mobile devices might need this for better UX
+    if (values[idx]) {
+      // Select the content if there's already a value
+      setTimeout(() => {
+        inputsRef.current[idx]?.select();
+      }, 10);
+    }
   };
 
   const handlePaste = (e) => {
@@ -83,7 +98,10 @@ const CodeInput = () => {
       }
     }
     setValues(next);
-    setIndex(chars.length);
+    // Focus the next empty field or the last filled field
+    const nextEmptyIndex = next.findIndex(val => val === "");
+    const focusIndex = nextEmptyIndex === -1 ? digits - 1 : nextEmptyIndex;
+    setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
   };
 
   return (
@@ -101,11 +119,13 @@ const CodeInput = () => {
             ref={(el) => (inputsRef.current[i] = el)}
             type="text"
             inputMode="numeric"
+            pattern="[0-9]*"
             maxLength={1}
             className="w-12 h-12 text-center text-xl font-bold rounded-xl bg-amber-50 border-2 border-amber-200 focus:border-amber-400 focus:outline-none shadow-sm"
             value={values[i]}
-            onChange={() => {}}
+            onChange={(e) => handleChange(e, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
+            onFocus={() => handleFocus(i)}
             onPaste={handlePaste}
             aria-label={`Code digit ${i + 1}`}
           />
