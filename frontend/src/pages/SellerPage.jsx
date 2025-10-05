@@ -328,7 +328,7 @@ const SellerProducts = ({ user }) => {
                       </h3>
                       <div className="flex items-center gap-2 mb-1 min-w-0">
                         <span className="text-sm font-medium text-green-700 truncate max-w-1/2 flex-shrink-0">
-                          ${product?.price?.toFixed(2) || "0.00"}
+                          &#8369; {product?.price?.toFixed(2) || "0.00"}
                         </span>
                         <span className="inline-flex items-center px-2 py-0.5 gap-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200 truncate min-w-0">
                           <span className="flex-shrink-0">

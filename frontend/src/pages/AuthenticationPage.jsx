@@ -151,8 +151,8 @@ const AuthPage = () => {
         <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-orange-200/25 rounded-full blur-lg animate-pulse delay-2000"></div>
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
-      {confirm && <BeeOverlay 
-        message={"Is the information you've put in correct?" } 
+      {confirm && !isLogin && <BeeOverlay 
+        message={`You are creating a ${formData.role==="seller"?"SELLER":"BUYER"} account. Is the information you've put in correct?` } 
         accept={{fn: handleConfirmedSubmit, msg: "Yes, I'm sure"}}
         decline={{fn: ()=>setConfirm(false), msg: "No, go back"}}
       />}
@@ -217,10 +217,16 @@ const AuthPage = () => {
                 <p className="bee-body-text-desktop text-secondary">
                   {isLogin
                     ? "Sign in to access your sweet account"
-                    : formData.role === "seller"
+                    : (formData.role === "seller"
                     ? "Register your colony and start selling honey products"
-                    : "Create a buyer account to start shopping"}
+                    : "Create a buyer account to start shopping.")
+                  }
                 </p>
+                {!isLogin && 
+                <p className="bee-body-text-desktop text-secondary">
+                  Click the honeycomb to switch between seller and buyer!
+                </p>
+                }
               </div>
             </div>
             {/* Mode Toggle */}
