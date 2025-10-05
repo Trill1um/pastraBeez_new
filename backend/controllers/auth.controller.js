@@ -234,12 +234,11 @@ export const verifyReceive = async (req, res) => {
     // Verify token
     const isValid = await verifyCode(code, email);
 
-    if (!isValid) {
+    if (!isValid?.success) {
       return res
         .status(410)
-        .json({ message: "Invalid or expired Verification URL" });
+        .json({ message: isValid.message || "Invalid or expired Verification URL" });
     }
-    // console.log("Check Code Result: ", isValid)
 
     // Check if user already exists
     const check = await User.findOne({ email });
@@ -289,7 +288,11 @@ export const verifySend = async (req, res) => {
     if (!userEmail) {
       return res.status(400).json({ message: "Email is required" });
     }
-    await sendVerificationEmail(userEmail);
+    const response = await sendVerificationEmail(userEmail);
+    if (!response.success) {
+      console.error("Error sending verification email:", response.error);
+      return res.status(400).json({ message: response.message || "Failed to send verification email" });
+    }
     return res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
     return res

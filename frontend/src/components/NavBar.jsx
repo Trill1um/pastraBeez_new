@@ -60,6 +60,31 @@ const CodeInput = () => {
 
   const handleChange = (e, idx) => {
     const value = e.target.value;
+    
+    // Handle pasted content (mobile often triggers onChange with full string)
+    if (value.length > 1) {
+      const chars = value
+        .split("")
+        .filter((c) => /[0-9]/.test(c))
+        .slice(0, digits);
+      const next = [...values];
+      
+      // Fill from current position
+      for (let i = 0; i < digits; i++) {
+        if (chars[i]) {
+          next[i] = chars[i];
+        }
+      }
+      setValues(next);
+      
+      // Focus the next empty field or the last filled field
+      const nextEmptyIndex = next.findIndex(val => val === "");
+      const focusIndex = nextEmptyIndex === -1 ? Math.min(digits - 1, chars.length - 1) : nextEmptyIndex;
+      setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
+      return;
+    }
+    
+    // Handle single digit input
     if (/^[0-9]$/.test(value)) {
       const next = [...values];
       next[idx] = value;
@@ -104,6 +129,30 @@ const CodeInput = () => {
     setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
   };
 
+  const handleContainerPaste = (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData)
+      .getData("text")
+      .trim();
+    const chars = text
+      .split("")
+      .filter((c) => /[0-9]/.test(c))
+      .slice(0, digits);
+    const next = [...values];
+    for (let i = 0; i < digits; i++) {
+      if (chars[i]) {
+        next[i] = chars[i];
+      } else {
+        next[i] = "";
+      }
+    }
+    setValues(next);
+    // Focus the next empty field or the last filled field
+    const nextEmptyIndex = next.findIndex(val => val === "");
+    const focusIndex = nextEmptyIndex === -1 ? digits - 1 : nextEmptyIndex;
+    setTimeout(() => inputsRef.current[focusIndex]?.focus(), 10);
+  };
+
   return (
     isCodeSent &&
     <div className="flex flex-col items-center gap-2">
@@ -112,7 +161,10 @@ const CodeInput = () => {
           A code was sent to <strong>{email}</strong>
         </p>
       )}
-      <div className="flex gap-2 my-2">
+      <div 
+        className="flex gap-2 my-2"
+        onPaste={handleContainerPaste}
+      >
         {Array.from({ length: digits }).map((_, i) => (
           <input
             key={"code-input-" + i}
@@ -120,7 +172,7 @@ const CodeInput = () => {
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
-            maxLength={1}
+            maxLength={digits} // Allow more characters to catch paste
             className="w-12 h-12 text-center text-xl font-bold rounded-xl bg-amber-50 border-2 border-amber-200 focus:border-amber-400 focus:outline-none shadow-sm"
             value={values[i]}
             onChange={(e) => handleChange(e, i)}
@@ -128,6 +180,10 @@ const CodeInput = () => {
             onFocus={() => handleFocus(i)}
             onPaste={handlePaste}
             aria-label={`Code digit ${i + 1}`}
+            autoComplete={i === 0 ? "one-time-code" : "off"}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck="false"
           />
         ))}
       </div>

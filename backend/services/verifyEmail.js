@@ -12,31 +12,30 @@ const codeGeneration = () => {
   return String(n).padStart(digits, "0");
 };
 
-export const sendVerificationEmail = async (userEmail, sender = process.env.EMAIL_USER, api_key=process.env.SEND_API) => {
+export const sendVerificationEmail = async (userEmail, sender = process.env.EMAIL_USER, api_key=process.env.SEND_API, isRetry = false) => {
+  let user = null;
+  const key = `verify_cooldown:${userEmail}`;
+  
   try {
     sgMail.setApiKey(api_key);
     // console.log("Sending verification email to:", userEmail, "from:", sender);
-    const key = `verify_cooldown:${userEmail}`;
+    
+    // Check rate limiting first
     const inCooldown = await client.exists(key);
     if (inCooldown) {
       throw new Error("Please wait before requesting another verification email.");
     }
 
     // Get the temp user document which should contain the verification code
-    const user = await tempUser.findOne({ email: userEmail });
+    user = await tempUser.findOne({ email: userEmail });
     if (!user) {
       throw new Error("Verification period expired for this email, please sign up again.");
     }
     // console.log("Found temp user for verification:", user);
     const code = codeGeneration();
     user.code = code;
-    try {
-      await user.save();
-      
-    } catch (error) {
-      console.error("Error saving verification code to temp user:", error);
-      throw error;
-    }
+    
+    await user.save();
     const html = `
       <div style="font-family: Arial, sans-serif; color: #222; padding: 24px;">
         <h2 style="color: #333;">Your PastraBeez verification code</h2>
@@ -55,45 +54,89 @@ export const sendVerificationEmail = async (userEmail, sender = process.env.EMAI
       text: `Your verification code is: ${code}`,
       html,
     };
-    try {
-      await sgMail.send(msg);
-    } catch (error) {
-      console.error("Error sending email via SendGrid:", error);
-      throw error;
-    }
-    await client.set(key, '1', 'EX', 60 * 2);
-    // console.log(`Verification email sent to ${userEmail} from ${sender}`);
+    
+    await sgMail.send(msg);
+    
+    // Set cooldown after successful send using setex for better performance
+    await client.setex(key, 60 * 2, '1');
+    
+    console.log(`Verification email sent successfully to ${userEmail}`);
+    return { success: true, message: "Verification email sent successfully" };
   } catch (error) {
-    if (api_key === process.env.SEND_API) {
-      // Try backup sender
-      return await sendVerificationEmail(userEmail, process.env.EMAIL_USER_BACKUP, process.env.SEND_API_BACKUP);
-    } else { 
-      console.error("Error sending verification email via SendGrid with backup sender, Deleting redis keys:", error);
-      await client.del(`verify_cooldown:${userEmail}`);
-      await client.del(`verifying:${userEmail}`);
-      throw new Error(error);
+    console.error("Error in sendVerificationEmail:", error.message);
+
+    // Try backup sender only once to prevent infinite recursion
+    if (!isRetry && api_key === process.env.SEND_API && process.env.SEND_API_BACKUP) {
+      console.log("Trying backup email service...");
+      return await sendVerificationEmail(userEmail, process.env.EMAIL_USER_BACKUP, process.env.SEND_API_BACKUP, true);
     }
+
+    // Clean up Redis keys on failure
+    try {
+      await client.del(key);
+      await client.del(`verifying:${userEmail}`);
+    } catch (redisError) {
+      console.error("Error cleaning up Redis keys:", redisError.message);
+    }
+
+    // Return structured error instead of throwing to prevent memory leaks
+    return { 
+      success: false, 
+      message: error.message || "Failed to send verification email",
+      error: error.message 
+    };
   }
 };
 
 export const verifyCode = async (code, userEmail) => {
+  let user = null;
+  
   try {
+    // Input validation
+    if (!code || !userEmail) {
+      return { success: false, message: "Code and email are required" };
+    }
+
+    // Normalize inputs
+    const normalizedCode = String(code).trim();
+    const normalizedEmail = String(userEmail).toLowerCase().trim();
+
     // Lookup the pending temp user by email
-    const user = await tempUser.findOne({ email: userEmail });
+    user = await tempUser.findOne({ email: normalizedEmail });
     if (!user) {
-      return false;
+      return { success: false, message: "Verification session not found or expired" };
     }
 
-    // Compare provided code with stored code
-    const matches = (String(user.code).length===6)?String(user.code) === String(code): false;
+    // Validate code format and compare
+    const storedCode = String(user.code || '');
+    const matches = storedCode.length === 6 && storedCode === normalizedCode;
+    
     if (!matches) {
-      return false;
+      return { success: false, message: "Invalid verification code" };
     }
 
-    await tempUser.deleteOne({ _id: user._id });
-    return true;
+    // Clean up Redis keys
+    try {
+      await client.del(`verify_cooldown:${normalizedEmail}`);
+      await client.del(`verifying:${normalizedEmail}`);
+    } catch (redisError) {
+      console.error("Error cleaning up Redis keys after verification:", redisError.message);
+    }
+
+    return { success: true, message: "Email verified successfully" };
+
   } catch (error) {
-    console.error("Error verifying email code:", error);
-    return false;
+    console.error("Error verifying email code:", error.message);
+    
+    // Clean up on error
+    if (user) {
+      try {
+        await tempUser.deleteOne({ _id: user._id });
+      } catch (cleanupError) {
+        console.error("Error cleaning up temp user:", cleanupError.message);
+      }
+    }
+
+    return { success: false, message: "Verification failed due to server error" };
   }
 };
