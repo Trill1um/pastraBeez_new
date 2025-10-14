@@ -3,12 +3,12 @@ import mongoose  from "mongoose";
 const p_sSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'DummySeller',
         required: true
     },
     productId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cell',
+        ref: 'DummyData',
         required: true
     },
     rating: {
@@ -30,7 +30,7 @@ p_sSchema.pre('findOneAndDelete', async function() {
             const productId = ratingToDelete.productId;
             
             // Import Product model (avoid circular dependency)
-            const Product = mongoose.model('Cell');
+            const Product = mongoose.model('DummyData');
             
             // Get all remaining ratings for this product (excluding the one being deleted)
             const remainingRatings = await this.model.find({ 
