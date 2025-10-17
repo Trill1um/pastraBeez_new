@@ -779,7 +779,7 @@ const CreationPage = ({user}) => {
                         className={`w-[70px] sm:w-[84px] h-[36px] sm:h-[42px] rounded-[20px] sm:rounded-[23px] p-1 ${
                           formData.isLimited && formData.inStock
                             ? "bg-brand"
-                            : "bg-gray"
+                            : "bg-gray-400"
                         } ${
                           !formData.inStock
                             ? "opacity-50 cursor-not-allowed"
@@ -813,7 +813,7 @@ const CreationPage = ({user}) => {
                           handleInputChange("inStock", !formData.inStock)
                         }
                         className={`btn-anim w-[70px] sm:w-[84px] h-[36px] sm:h-[42px] rounded-[20px] sm:rounded-[23px] p-1 ${
-                          formData.inStock ? "bg-brand" : "bg-gray"
+                          formData.inStock ? "bg-brand" : "bg-gray-400"
                         }`}
                       >
                         <div
