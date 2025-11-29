@@ -106,7 +106,7 @@ export const signup = async (req, res) => {
   const { colonyName, email, password, facebookLink, confirmPassword, role } =
     req.body;
   try {
-    // console.log("ChecK: ", req.body)
+    console.log("ChecK: ", req.body)
     // Validate input
     if (!email || !password) {
       return res.status(400).json({ message: "Missing credentials detected" });
@@ -137,7 +137,7 @@ export const signup = async (req, res) => {
       }
 
       // get final redirected facebook link if it's a /share/ link
-      // console.log("Original Facebook link: ", location);
+      console.log("Original Facebook link: ", location);
       if (location.includes("/share/")) {
         const resp = await fetch(location, { redirect: "manual" });
         if (resp.status >= 300 && resp.status < 400) {
@@ -145,7 +145,7 @@ export const signup = async (req, res) => {
           // console.log("Redirected to: ", location);
         }
       }
-      // console.log("Final Facebook link after redirects: ", location);
+      console.log("Final Facebook link after redirects: ", location);
     }
 
     // Check if user already exists
@@ -193,11 +193,11 @@ export const signup = async (req, res) => {
     }
 
     await client.set(`verifying:${user.email}`, "true", "EX", 60 * 20); // 20 minutes
-    // console.log("Finished creating temp user, proceed to send verification email");
+    console.log("Finished creating temp user, proceed to send verification email");
     res.status(201).json({ message: "User created, please verify your email" });
   } catch (error) {
     console.error("Error creating user:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({error: error ,message: "Internal server error" });
   }
 };
 

@@ -102,6 +102,7 @@ export const useUserStore = create((set, get) => ({
       toast.success("Welcome to the hive! 🍯");
       await get().checkAuth();
     } catch (error) {
+      console.error("Login error:", error);
       set({ loading: false });
       toast.error(
         error.response?.data.message || "Login failed. Please try again later."
