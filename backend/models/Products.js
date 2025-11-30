@@ -3,7 +3,7 @@ import mongoose  from "mongoose";
 const productSchema = new mongoose.Schema({
     sellerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DummySeller',
+        ref: 'user',
         required: [true, 'Seller ID is required']
     },
     name: {
@@ -72,6 +72,6 @@ productSchema.pre('findOneAndDelete', async function() {
     }
 });
 
-const Product = mongoose.model('DummyData', productSchema);
+const Product = mongoose.model('cell', productSchema);
 
 export default Product;

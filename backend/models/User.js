@@ -68,7 +68,7 @@ userSchema.methods.comparePassword = async function (password) {
   return hashed;
 };
 
-const User = mongoose.model("DummySeller", userSchema);
+const User = mongoose.model("user", userSchema);
 const tempUser=mongoose.model("tempUser", userSchema);
 
 tempUser.collection.createIndex( { "createdAt": 1 }, { expireAfterSeconds: 60 * 20 } ); // 20 minutes
