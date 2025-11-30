@@ -84,6 +84,9 @@ export const useUserStore = create((set, get) => ({
       toast.error(
         error.response?.data.message || "Sign up failed. Please try again later."
       );
+      toast.error(
+        error, {autoClose: 10000}
+      )
     }
   },
 
@@ -107,6 +110,9 @@ export const useUserStore = create((set, get) => ({
       toast.error(
         error.response?.data.message || "Login failed. Please try again later."
       );
+      toast.error(
+        error, {autoClose: 10000}
+      )
     }
   },
 
