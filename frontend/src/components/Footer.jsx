@@ -5,10 +5,14 @@ import Telegram from "../assets/telegram.svg?react";
 import Mail from "../assets/mail.svg?react";
 import Messenger from "../assets/messenger.svg?react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useUserStore } from "../stores/useUserStore";
 
 const Footer = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const errors = useUserStore((state) => state.errors);
+  const [showErrors, setShowErrors] = useState(false);
   return (
     <div>
     {!location.pathname.includes("verify") &&
@@ -134,6 +138,16 @@ const Footer = () => {
           <p className="bee-footer-body text-center lg:text-right w-full text-xs sm:text-sm lg:text-base">
             All rights reserved © Copyright
           </p>
+          {/* Error Reveal Button and Error List */}
+          <div className="w-full flex flex-col items-center mt-4 gap-2">
+            <button
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
+              onClick={() => setShowErrors((v) => !v)}
+              type="button"
+            >
+              {showErrors ? "Hide Errors" : `Show Errors (${errors.length})`}
+            </button>
+          </div>
         </div>
       </div>
     }

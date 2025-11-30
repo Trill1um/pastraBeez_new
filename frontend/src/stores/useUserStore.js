@@ -12,6 +12,7 @@ export const useUserStore = create((set, get) => ({
   coolDown: 0,
   isCodeSent: false,
   invalidateProducts: null, 
+  errors: [],
 
   setInvalidateAll: (fn) => {
     set({ invalidateProducts: fn });
@@ -52,11 +53,15 @@ export const useUserStore = create((set, get) => ({
     set({ loading: true });
     if (userData?.password !== userData?.confirmPassword) {
       set({ loading: false });
-      return toast.error("Passwords do not match");
+      const err = new Error("Passwords do not match");
+      set((state) => ({ errors: [...state.errors, err] }));
+      return toast.error(err.message);
     }
     if (userData?.acceptTerms !== true) {
       set({ loading: false });
-      return toast.error("You must accept the terms and conditions to sign up.");
+      const err = new Error("You must accept the terms and conditions to sign up.");
+      set((state) => ({ errors: [...state.errors, err] }));
+      return toast.error(err.message);
     }
     const {
       colonyName = "",
@@ -80,13 +85,11 @@ export const useUserStore = create((set, get) => ({
       toast.success(response?.data?.message || "Sign up successful! Please verify your email. 🐝");
     } catch (error) {
       set({ loading: false });
+      set((state) => ({ errors: [...state.errors, error] }));
       console.error("Sign up error:", error);
       toast.error(
         error.response?.data.message || "Sign up failed. Please try again later."
       );
-      toast.error(
-        error, {autoClose: 10000}
-      )
     }
   },
 
@@ -107,12 +110,10 @@ export const useUserStore = create((set, get) => ({
     } catch (error) {
       console.error("Login error:", error);
       set({ loading: false });
+      set((state) => ({ errors: [...state.errors, error] }));
       toast.error(
         error.response?.data.message || "Login failed. Please try again later."
       );
-      toast.error(
-        error, {autoClose: 10000}
-      )
     }
   },
 
@@ -122,6 +123,7 @@ export const useUserStore = create((set, get) => ({
       set({ user: null, isinValidateProducts: null });
       toast.success("Logged out successfully");
     } catch (error) {
+      set((state) => ({ errors: [...state.errors, error] }));
       console.error(error);
       toast.error("Logout failed");
     }
@@ -132,7 +134,9 @@ export const useUserStore = create((set, get) => ({
     try {
       const userEmail = get().tempEmail;
       if (get().coolDown) {
-        throw new Error(`Please wait ${get().coolDown} seconds before requesting a new code.`);
+        const err = new Error(`Please wait ${get().coolDown} seconds before requesting a new code.`);
+        set((state) => ({ errors: [...state.errors, err] }));
+        throw err;
       }
 
       const response = await axios.post(`/auth/verify-send`, {userEmail});
@@ -143,6 +147,7 @@ export const useUserStore = create((set, get) => ({
     } catch (error) {
       console.error("Error sending: ", error);
       set({ loading: false});
+      set((state) => ({ errors: [...state.errors, error] }));
       toast.error(
         error.response?.data.message || error.message || "Email verification failed. Please try again later."
       );
@@ -157,6 +162,7 @@ export const useUserStore = create((set, get) => ({
       toast.success("Verification cancelled");
     } catch (error) {
       set({ loading: false });
+      set((state) => ({ errors: [...state.errors, error] }));
       toast.error(error.response?.data.message || "Failed to cancel verification");
       throw error;
     }
@@ -176,6 +182,7 @@ export const useUserStore = create((set, get) => ({
       return response.status;
     } catch (error) {
       set({ loading: false });
+      set((state) => ({ errors: [...state.errors, error] }));
       toast.error(
         error.response?.data.message ||
           "Email verification failed. Please try again later."
