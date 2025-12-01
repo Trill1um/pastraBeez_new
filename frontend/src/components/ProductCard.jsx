@@ -31,7 +31,7 @@ const ProductCard = ({ product, isPreview = false }) => {
 
   //open messenger link in new tab
   const onBuy = () => {
-    if (!isPreview) window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
+    if (!isPreview) window.open("https://www.facebook.com/" + product?.sellerId?.facebookLink, "_blank");
   };
 
   return (
