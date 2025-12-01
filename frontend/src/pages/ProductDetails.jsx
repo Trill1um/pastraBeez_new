@@ -93,7 +93,7 @@ const ProductDetails = () => {
 
   const handleBuy = () => {
     if (product && product?.sellerId && product?.sellerId?.facebookLink) {
-      window.open("https://m.me/" + product?.sellerId?.facebookLink, "_blank");
+      window.open("https://www.facebook.com/" + product?.sellerId?.facebookLink, "_blank");
     }
   };
 

@@ -145,6 +145,23 @@ export const signup = async (req, res) => {
           // console.log("Redirected to: ", location);
         }
       }
+
+      location = (() => {
+          const start = location.indexOf("www.facebook.com/") + 17;
+          const endQ = location.indexOf("?", start);
+          if (endQ===-1) {
+            return location.slice(start);
+          }
+          let base = location.slice(start, endQ);
+          const query = location.slice(endQ + 1);
+          const params = new URLSearchParams(query);
+          const id = params.get("id");
+          if (id) {
+            base += `?id=${id}`;
+          }
+          return base;
+      })();
+
       console.log("Final Facebook link after redirects: ", location);
     }
 
@@ -168,14 +185,7 @@ export const signup = async (req, res) => {
         email,
         password,
         role,
-        facebookLink: (() => {
-          const start = location.indexOf("www.facebook.com/") + 17;
-          const endQ = location.indexOf("?", start);
-          return endQ === -1
-            ? location.slice(start)
-            : location.slice(start, endQ);
-        }
-        )(),
+        facebookLink: location,
       };
     } else {
       user = {
