@@ -50,7 +50,10 @@ const AuthPage = () => {
     });
     setErrors({});
     if (isLogin) {
-      toast.success("Click the honeycomb to switch between seller and buyer!");
+      toast.success(
+        "Click the honeycomb to switch between seller and buyer!",
+        { duration: 3000 }
+      );
     }
   };
 
@@ -154,6 +157,7 @@ const AuthPage = () => {
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
       {confirm && !isLogin && <BeeOverlay 
+        style="font-bold"
         message={`You are creating a ${formData.role==="seller"?"SELLER":"BUYER"} account. Is the information you've put in correct?` } 
         accept={{fn: handleConfirmedSubmit, msg: "Yes, I'm sure"}}
         decline={{fn: ()=>setConfirm(false), msg: "No, go back"}}
@@ -216,7 +220,7 @@ const AuthPage = () => {
                     ? "Welcome Back to the Hive! 🍯"
                     : "Join the Hive! 🐝"}
                 </h1>
-                <p className="bee-body-text-desktop text-secondary">
+                <p className="text-accent font-bold">
                   {isLogin
                     ? "Sign in to access your sweet account"
                     : (formData.role === "seller"
@@ -225,7 +229,7 @@ const AuthPage = () => {
                   }
                 </p>
                 {!isLogin && 
-                <p className="bee-body-text-desktop text-secondary">
+                <p className="text-accent font-bold">
                   Click the honeycomb to switch between seller and buyer!
                 </p>
                 }
