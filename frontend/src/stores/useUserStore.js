@@ -114,9 +114,6 @@ export const useUserStore = create((set, get) => ({
       toast.error(
         error.response?.data.message || "Login failed. Please try again later."
       );
-      toast.error(
-        error, {duration: 8000}
-      )
     }
   },
 
@@ -166,9 +163,6 @@ export const useUserStore = create((set, get) => ({
     } catch (error) {
       set({ loading: false });
       set((state) => ({ errors: [...state.errors, error] }));
-      toast.error(
-        error, {duration: 8000}
-      )
       toast.error(error.response?.data.message || "Failed to cancel verification");
       throw error;
     }
