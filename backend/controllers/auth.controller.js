@@ -103,6 +103,11 @@ export const login = async (req, res) => {
 };
 
 export const signup = async (req, res) => {
+  console.log("Signup route activated");
+  console.log("Signup route activated");
+  console.log("Signup route activated");
+  console.log("Signup route activated");
+  console.log("Signup route activated");
   const { colonyName, email, password, facebookLink, confirmPassword, role } =
     req.body;
   try {
