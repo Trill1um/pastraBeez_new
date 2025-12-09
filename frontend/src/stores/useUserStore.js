@@ -13,6 +13,16 @@ export const useUserStore = create((set, get) => ({
   isCodeSent: false,
   invalidateProducts: null, 
   errors: [],
+  logs: [],
+
+  addLog: (message, data = {}) => {
+    const timestamp = new Date().toISOString();
+    const logEntry = { timestamp, message, data };
+    console.log(`[LOG] ${message}`, data);
+    set((state) => ({ 
+      logs: [...state.logs, logEntry].slice(-50) // Keep last 50 logs
+    }));
+  },
 
   setInvalidateAll: (fn) => {
     set({ invalidateProducts: fn });
@@ -50,14 +60,18 @@ export const useUserStore = create((set, get) => ({
   },
 
   signUp: async (userData) => {
+    get().addLog("Starting signup process", { role: userData?.role, hasEmail: !!userData?.email });
     set({ loading: true });
+    
     if (userData?.password !== userData?.confirmPassword) {
+      get().addLog("Password mismatch validation failed");
       set({ loading: false });
       const err = new Error("Passwords do not match");
       set((state) => ({ errors: [...state.errors, err] }));
       return toast.error(err.message);
     }
     if (userData?.acceptTerms !== true) {
+      get().addLog("Terms not accepted");
       set({ loading: false });
       const err = new Error("You must accept the terms and conditions to sign up.");
       set((state) => ({ errors: [...state.errors, err] }));
@@ -73,6 +87,9 @@ export const useUserStore = create((set, get) => ({
     } = userData || {};
 
     try {
+      get().addLog("Sending signup request to backend", { email, role, hasFacebookLink: !!facebookLink });
+      const startTime = Date.now();
+      
       const response = await axios.post(`/auth/signup`, {
         colonyName,
         email,
@@ -81,15 +98,32 @@ export const useUserStore = create((set, get) => ({
         confirmPassword,
         role,
       });
+      
+      const duration = Date.now() - startTime;
+      get().addLog(`Backend response received in ${duration}ms`, { status: response.status });
+      
       set({ loading: false, isVerifying: true, tempEmail: email });
       toast.success(response?.data?.message || "Sign up successful! Please verify your email. 🐝");
     } catch (error) {
+      const duration = error.config?.__startTime ? Date.now() - error.config.__startTime : 'unknown';
+      get().addLog(`Signup error after ${duration}ms`, {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        isTimeout: error.code === 'ECONNABORTED',
+        backendMessage: error.response?.data?.message
+      });
+      
       set({ loading: false });
       set((state) => ({ errors: [...state.errors, error] }));
-      console.error("Sign up error:", error);
-      toast.error(
-        error.response?.data.message || "Sign up failed. Please try again later."
-      );
+      
+      if (error.code === 'ECONNABORTED') {
+        toast.error("Request timed out. Please check your internet connection and try again.");
+      } else {
+        toast.error(
+          error.response?.data.message || "Sign up failed. Please try again later."
+        );
+      }
     }
   },
 

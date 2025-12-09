@@ -12,7 +12,9 @@ const Footer = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const errors = useUserStore((state) => state.errors);
+  const logs = useUserStore((state) => state.logs);
   const [showErrors, setShowErrors] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
   return (
     <div>
     {!location.pathname.includes("verify") &&
@@ -140,13 +142,22 @@ const Footer = () => {
           </p>
           {/* Error Reveal Button and Error List */}
           <div className="w-full flex flex-col items-center mt-4 gap-2">
-            <button
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
-              onClick={() => setShowErrors((v) => !v)}
-              type="button"
-            >
-              {showErrors ? "Hide Errors" : `Show Errors (${errors.length})`}
-            </button>
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
+                onClick={() => setShowErrors((v) => !v)}
+                type="button"
+              >
+                {showErrors ? "Hide Errors" : `Show Errors (${errors.length})`}
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs sm:text-sm"
+                onClick={() => setShowLogs((v) => !v)}
+                type="button"
+              >
+                {showLogs ? "Hide Logs" : `Show Logs (${logs.length})`}
+              </button>
+            </div>
             {showErrors && errors.length > 0 && (
               <div className="max-h-48 overflow-y-auto w-full bg-red-100 border border-red-400 rounded p-4 mt-2">
                 <ul className="list-disc list-inside text-xs sm:text-sm text-red-800">
@@ -156,6 +167,24 @@ const Footer = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+            {showLogs && logs.length > 0 && (
+              <div className="max-h-64 overflow-y-auto w-full bg-blue-50 border border-blue-400 rounded p-4 mt-2">
+                <div className="text-xs sm:text-sm text-blue-900 space-y-2">
+                  {logs.map((log, index) => (
+                    <div key={index} className="border-b border-blue-200 pb-2">
+                      <div className="font-semibold text-blue-700">
+                        {new Date(log.timestamp).toLocaleTimeString()} - {log.message}
+                      </div>
+                      {Object.keys(log.data).length > 0 && (
+                        <pre className="text-xs mt-1 bg-blue-100 p-2 rounded overflow-x-auto">
+                          {JSON.stringify(log.data, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

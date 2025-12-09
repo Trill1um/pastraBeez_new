@@ -32,11 +32,10 @@ const processQueue = (error, token = null) => {
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    if (import.meta.env.MODE === "development") {
-      // console.log(
-      //   `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
-      // );
-    }
+    config.__startTime = Date.now();
+    console.log(
+      `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
+    );
     return config;
   },
   (error) => {
@@ -104,12 +103,16 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (import.meta.env.MODE === "development") {
-      console.error(
-        `❌ API Error: ${error.response?.status} ${error.config?.url}`,
-        error.response?.data.message || error.response?.data 
-      );
-    }
+    const duration = error.config?.__startTime ? Date.now() - error.config.__startTime : 'unknown';
+    console.error(
+      `❌ API Error: ${error.response?.status || error.code} ${error.config?.url} (${duration}ms)`,
+      {
+        message: error.message,
+        code: error.code,
+        isTimeout: error.code === 'ECONNABORTED',
+        responseData: error.response?.data?.message || error.response?.data
+      }
+    );
     return Promise.reject(error);
   }
 );
