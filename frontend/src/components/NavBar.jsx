@@ -206,6 +206,10 @@ const ProfileSection = ({ user }) => {
         // Handle logout
         logout();
         break;
+      case "delete":
+        // Handle account deletion
+        deleteAccount();
+        break;
       default:
         break;
     }
@@ -252,6 +256,13 @@ const ProfileSection = ({ user }) => {
                 className="btn-anim w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-150 font-medium"
               >
                 Log Out
+              </button>
+              <hr className="my-1 border-gray-200" />
+              <button
+                onClick={() => handleMenuItemClick("delete")}
+                className="btn-anim w-full text-left px-4 py-3 text-red-700 hover:bg-red-100 transition-colors duration-150 font-medium"
+              >
+                Delete Account
               </button>
             </div>
           </div>
