@@ -222,13 +222,22 @@ export const signup = async (req, res) => {
 export const deleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
-    const deletedUser = await User.findByIdAndDelete(userId);
+    
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      // Remove refresh token from Redis
+      await client.del(`refreshToken:${decoded.userId}`);
+    }
         
+    const deletedUser = await User.findByIdAndDelete(userId);
     if (!deletedUser) {
         return res.status(404).json({ message: "User not found" });
     }
 
-    // Clear cookies with same options used to set them
     res.clearCookie("accessToken", cookieConfiguration);
     res.clearCookie("refreshToken", cookieConfiguration);
     res.status(200).json({ message: "Account deleted successfully" });
