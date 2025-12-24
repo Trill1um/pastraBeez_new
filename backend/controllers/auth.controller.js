@@ -351,8 +351,8 @@ export const refreshToken = async (req, res) => {
     // Check if the refresh token exists in Redis
     const storedToken = await client.get(`refreshToken:${userId}`);
     if (storedToken !== refreshToken) {
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
+      res.clearCookie("accessToken", cookieConfiguration);
+      res.clearCookie("refreshToken", cookieConfiguration);
       return res.status(403).json({ message: "Invalid refresh token" });
     }
 
