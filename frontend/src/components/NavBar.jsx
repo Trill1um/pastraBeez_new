@@ -170,7 +170,7 @@ const Timer = () => {
 }
 
 const ProfileSection = ({ user }) => {
-  const { logout } = useUserStore();
+  const { logout, deleteAccount } = useUserStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
