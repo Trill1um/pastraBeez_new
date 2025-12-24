@@ -1,6 +1,6 @@
 import { client } from "../lib/redis.js";
 import { User, tempUser } from "../models/User.js";
-import Product from "../models/Product.js";
+import Product from "../models/Products.js";
 import P_S from "../models/P_S.js";
 import jwt from "jsonwebtoken";
 import {
