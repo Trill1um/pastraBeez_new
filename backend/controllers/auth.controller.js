@@ -230,8 +230,9 @@ export const logout = async (req, res) => {
     }
 
     // Clear cookies
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken",cookieConfiguration);
+    res.clearCookie("refreshToken",cookieConfiguration);
+    
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Error logging out:", error);
