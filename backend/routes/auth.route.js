@@ -20,6 +20,7 @@ router.post("/refresh-token", refreshToken);
 router.get("/profile", protectRoute, getProfile);
 router.post("/verify-send", verifySend);
 router.post("/verify-code", verifyReceive);
+router.delete("/delete", protectRoute, deleteAccount);
 router.post("/verify-cancel", cancelVerification);
 
 export default router;
