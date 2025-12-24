@@ -274,7 +274,7 @@ const AuthPage = () => {
                     onChange={(e) =>
                       handleInputChange("colonyName", e.target.value)
                     }
-                    placeholder="This is what sellers see you as"
+                    placeholder="Business/Company Name"
                     className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
                       errors.colonyName ? "border-accent" : ""
                     }`}
