@@ -162,7 +162,25 @@ export const useUserStore = create((set, get) => ({
       toast.error("Logout failed");
     }
   },
-
+  
+  deleteAccount: async () => {
+    try {
+      await axios.delete(`/auth/delete`);
+      set({ user: null, isinValidateProducts: null });
+      toast.success("Account deleted successfully");
+      
+      await get().checkAuth();
+      // Force invalidate products
+      if (get().invalidateProducts) {
+        await get().invalidateProducts();
+      }
+    } catch (error) {
+      set((state) => ({ errors: [...state.errors, error] }));
+      console.error(error);
+      toast.error("Account deletion failed");
+    }
+  },
+  
   sendVerifyEmail: async () => {
     set({ loading: true });
     try {
