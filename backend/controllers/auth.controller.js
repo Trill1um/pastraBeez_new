@@ -1,5 +1,7 @@
 import { client } from "../lib/redis.js";
 import { User, tempUser } from "../models/User.js";
+import Product from "../models/Product.js";
+import P_S from "../models/P_S.js";
 import jwt from "jsonwebtoken";
 import {
   sendVerificationEmail,
@@ -237,6 +239,8 @@ export const deleteAccount = async (req, res) => {
     if (!deletedUser) {
         return res.status(404).json({ message: "User not found" });
     }
+    await Product.deleteMany({ userId: userId });
+    await P_S.deleteMany({ userId: userId });
 
     res.clearCookie("accessToken", cookieConfiguration);
     res.clearCookie("refreshToken", cookieConfiguration);
