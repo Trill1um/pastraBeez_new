@@ -219,6 +219,21 @@ export const signup = async (req, res) => {
   }
 };
 
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await User.delete(userId);
+
+    // Clear cookies with same options used to set them
+    res.clearCookie("accessToken", cookieConfiguration);
+    res.clearCookie("refreshToken", cookieConfiguration);
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
