@@ -9,6 +9,7 @@ import {
   verifyReceive,
   verifySend,
   cancelVerification,
+  deleteAccount,
 } from '../controllers/auth.controller.js';
 
 const router = express.Router();
