@@ -222,7 +222,11 @@ export const signup = async (req, res) => {
 export const deleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
-    await User.delete(userId);
+    const deletedUser = await User.findByIdAndDelete(userId);
+        
+    if (!deletedUser) {
+        return res.status(404).json({ message: "User not found" });
+    }
 
     // Clear cookies with same options used to set them
     res.clearCookie("accessToken", cookieConfiguration);
