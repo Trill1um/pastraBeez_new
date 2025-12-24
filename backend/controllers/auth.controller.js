@@ -17,6 +17,8 @@ const cookieConfiguration = {
   httpOnly: true,
   secure: isProduction,
   sameSite: isProduction ? "None" : "Strict",
+  maxAge: 3600000,
+  partitioned: true,
 };
 
 const genSetAccessToken = (res, userId) => {
@@ -57,6 +59,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
 
 export const login = async (req, res) => {
   try {
+    console.log("isProduction: ", isProduction);
     // console.log("Login route activated: ", req.body);
     const { email, password } = req.body;
 
