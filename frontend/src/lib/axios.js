@@ -51,7 +51,7 @@ axiosInstance.interceptors.response.use(
     if (import.meta.env.MODE === "development") {
       console.log(`✅ API Response: ${response.status} ${response.config.url}`);
     }
-    toast.success(`Time: ${(Date.now() - response.config?.__startTime)||-1}ms or ${(Date.now() - response.config?.__startTime)/1000||-1}s | ${response.status||-1} ${response.config?.url||-1}`, { duration: 30000 });
+    toast.success(`Time: ${(Date.now() - response.config?.__startTime)||-1}ms or ${((Date.now() - response.config?.__startTime)/1000)||-1}s | ${response.status||-1} ${response.config?.url||-1}`, { duration: 30000 });
     return response;
   },
   async (error) => {
