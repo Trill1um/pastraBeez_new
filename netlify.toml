@@ -9,7 +9,7 @@
   publish = "dist"
   
   # Ignore builds if these files haven't changed
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- frontend/"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
 [build.environment]
   # Node.js version to use
