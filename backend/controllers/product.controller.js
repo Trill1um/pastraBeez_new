@@ -84,6 +84,7 @@ export const createMyProduct = async (req, res) => {
     });
 
     // Handle image upload
+    let cloudinaryTime=Date.now();
     try {
       const uploadPromises = images.map((image) =>
         cloudinary.uploader.upload(image.base64, { folder: "bee-products" })
@@ -93,7 +94,9 @@ export const createMyProduct = async (req, res) => {
       console.error("Error uploading images to Cloudinary:", error);
       return res.status(500).json({ message: "Image upload failed" });
     }
-    
+    cloudinaryTime-=Date.now();
+
+    let productTime=Date.now();
     // Create new product
     const product = await Product.create({
       sellerId: req.user.id,
@@ -109,8 +112,8 @@ export const createMyProduct = async (req, res) => {
         .map((response) => response.secure_url) || [],
       additionalInfo,
     });
-    
-    res.status(201).json({ product, message: "Product created successfully" });
+    productTime-=Date.now();
+    res.status(201).json({ times:{cloudinaryTime, productTime}, product, message: "Product created successfully" });
   } catch (error) {
     console.error("Error creating product:", error);
     res.status(500).json({ message: "Internal Server Error" });
