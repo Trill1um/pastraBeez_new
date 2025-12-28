@@ -36,6 +36,7 @@ axiosInstance.interceptors.request.use(
     console.log(
       `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
     );
+    config.metadata = { startTime: performance.now() };
     return config;
   },
   (error) => {
@@ -48,8 +49,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => {
     if (import.meta.env.MODE === "development") {
-      // console.log(`✅ API Response: ${response.status} ${response.config.url}`);
+      console.log(`✅ API Response: ${response.status} ${response.config.url}`);
     }
+    toast.success(`Time: ${(Date.now() - response.config.__startTime)}ms`, { duration: 10000 });
     return response;
   },
   async (error) => {
@@ -113,6 +115,7 @@ axiosInstance.interceptors.response.use(
         responseData: error.response?.data?.message || error.response?.data
       }
     );
+    toast.error(`Time: ${duration}ms`, { duration: 10000 });
     return Promise.reject(error);
   }
 );
