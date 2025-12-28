@@ -239,8 +239,8 @@ export const deleteAccount = async (req, res) => {
     if (!deletedUser) {
         return res.status(404).json({ message: "User not found" });
     }
-    await Product.deleteMany({ sellerId: new mongoose.Types.ObjectId(userId) });
-    await P_S.deleteMany({ userId: new mongoose.Types.ObjectId(userId) });
+    await Product.deleteMany({ sellerId: deletedUser._id });
+    await P_S.deleteMany({ userId: deletedUser._id });
 
     res.clearCookie("accessToken", cookieConfiguration);
     res.clearCookie("refreshToken", cookieConfiguration);
