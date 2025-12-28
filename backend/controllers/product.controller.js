@@ -114,7 +114,7 @@ export const createMyProduct = async (req, res) => {
       additionalInfo,
     });
     productTime-=Date.now();
-    res.status(201).json({ times:{cloudinaryTime, productTime, {currTime: cDate.now()-curr}}, product, message: "Product created successfully" });
+    res.status(201).json({ times:{cloudinaryTime, productTime, currTime: Date.now()-curr}, product, message: "Product created successfully" });
   } catch (error) {
     console.error("Error creating product:", error);
     res.status(500).json({ message: "Internal Server Error" });
