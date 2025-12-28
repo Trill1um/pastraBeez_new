@@ -95,13 +95,11 @@ function App() {
     <Toaster>
           {(t) => (
             <ToastBar toast={t}>
-              {({ message }) => (
-                <>
+              {({ icon, message }) => (
+                <div style={{cursor: "pointer"}} onClick={() => toast.dismiss(t.id)}>
+                  {icon}
                   {message}
-                  {t.type !== 'loading' && (
-                    <button onClick={() => toast.dismiss(t.id)}>X</button>
-                  )}
-                </>
+                </div>
               )}
             </ToastBar>
           )}
