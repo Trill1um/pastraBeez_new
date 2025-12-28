@@ -97,8 +97,7 @@ function App() {
             <ToastBar toast={t}>
               {({ icon, message }) => (
                 <div style={{cursor: "pointer"}} onClick={() => toast.dismiss(t.id)}>
-                  {icon}
-                  {message}
+                  {icon} {message}
                 </div>
               )}
             </ToastBar>
