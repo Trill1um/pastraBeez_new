@@ -19,9 +19,7 @@ const createProduct = async (productData) => {
   const response = await axios.post("/products/create-my-product", productData);
   // console.log("Product created:", response.data);
   response.time=Date.now()-now;
-  toast.success(response.data.message);
-  toast.success(`Time: ${response.time}ms`, {autoClose: 100000});
-  toast.success(`Time: ${response.time}ms`, { duration: 10000 })
+  toast.success(response.data.message);  
   console.log(response);
   return response.data;
 };
@@ -67,6 +65,7 @@ export function useAllProducts() {
 
 // ============ MUTATION HOOKS ============
 export function useCreateProduct() {
+  let curr=Date.now();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,6 +81,8 @@ export function useCreateProduct() {
       toast.error(error.response?.data?.message || "Failed to create product");
     },
   });
+  toast.success(`Time: ${Date.now()-curr}ms`, { duration: 10000 })
+  toast.success(`Time: ${(Date.now()-curr)/60}s`, { duration: 15000 })
 }
 
 export function useUpdateProduct() {
