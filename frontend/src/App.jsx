@@ -92,7 +92,14 @@ function App() {
           </Routes>
       </div>
       <Footer />
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          onClick: (t) => toast.dismiss(t.id), 
+          style: {
+            cursor: 'pointer',
+          },
+        }}
+    />
     </div>
   );
 }
