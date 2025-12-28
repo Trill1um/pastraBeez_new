@@ -20,7 +20,7 @@ const createProduct = async (productData) => {
   // console.log("Product created:", response.data);
   response.time=Date.now()-now;
   toast.success(response.data.message);
-  toast.success(response.time);
+  toast.success(`Time: ${response.time}ms`, {duration: 10000});
   console.log(response);
   return response.data;
 };
