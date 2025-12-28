@@ -21,6 +21,7 @@ const createProduct = async (productData) => {
   response.time=Date.now()-now;
   toast.success(response.data.message);
   toast.success(`Time: ${response.time}ms`, {duration: 10000});
+  alert(`$Time: {response.time/60}s`);
   console.log(response);
   return response.data;
 };
