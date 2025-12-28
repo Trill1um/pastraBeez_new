@@ -94,7 +94,7 @@ function App() {
       <Footer />
       <Toaster
         toastOptions={{
-          onClick: (t) => toast.dismiss(t.id), 
+          onClick: () => toast.dismiss(), 
           style: {
             cursor: 'pointer',
           },
