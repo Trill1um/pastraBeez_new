@@ -1,5 +1,5 @@
 import { Route, Routes, Navigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster, ToastBar } from "react-hot-toast";
 import { useUserStore } from "./stores/useUserStore.js";
 import { useEffect, lazy } from "react";
 import { useInvalidateProducts } from "./lib/query";
@@ -92,14 +92,20 @@ function App() {
           </Routes>
       </div>
       <Footer />
-      <Toaster
-        toastOptions={{
-          onClick: () => toast.dismiss(), 
-          style: {
-            cursor: 'pointer',
-          },
-        }}
-    />
+    <Toaster>
+          {(t) => (
+            <ToastBar toast={t}>
+              {({ message }) => (
+                <>
+                  {message}
+                  {t.type !== 'loading' && (
+                    <button onClick={() => toast.dismiss(t.id)}>X</button>
+                  )}
+                </>
+              )}
+            </ToastBar>
+          )}
+        </Toaster>
     </div>
   );
 }
