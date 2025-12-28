@@ -52,7 +52,7 @@ axiosInstance.interceptors.response.use(
     if (import.meta.env.MODE === "development") {
       console.log(`✅ API Response: ${response.status} ${response.config.url}`);
     }
-    toast.success(`Time: ${(Date.now() - response.config.__startTime)}ms | ${response.status} ${response.config.url}`, { duration: 30000 });
+    toast.success(`Time: ${(Date.now() - response.config?.__startTime)}ms or${(Date.now() - response.config?.__startTime)/1000}s | ${response.status} ${response.config?.url}`, { duration: 30000 });
     return response;
   },
   async (error) => {
@@ -116,7 +116,7 @@ axiosInstance.interceptors.response.use(
         responseData: error.response?.data?.message || error.response?.data
       }
     );
-    toast.error(`Time: ${duration}ms | ${error.response?.status} ${error.config?.url}`, { duration: 30000 });
+    toast.error(`Time: ${duration}ms or ${duration/1000}s | ${error.response?.status|| error.code} ${error.config?.url}`, { duration: 30000 });
     return Promise.reject(error);
   }
 );
