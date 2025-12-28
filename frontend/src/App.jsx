@@ -96,8 +96,18 @@ function App() {
           {(t) => (
             <ToastBar toast={t}>
               {({ icon, message }) => (
-                <div style={{cursor: "pointer"}} onClick={() => toast.dismiss(t.id)}>
-                  {icon} {message}
+                <div 
+                  onClick={() => toast.dismiss(t.id)}
+                  style={{ 
+                    display: "flex",       // Puts icon and message in a row
+                    alignItems: "center",  // Vertically centers them
+                    gap: "10px",           // Adds space between icon and text
+                    cursor: "pointer",
+                    padding: "4px 0"       // Optional: adds a little breathing room
+                  }}
+                >
+                  {icon}
+                  <span style={{ display: "inline-block" }}>{message}</span>
                 </div>
               )}
             </ToastBar>
