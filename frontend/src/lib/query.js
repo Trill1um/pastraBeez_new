@@ -76,13 +76,13 @@ export function useCreateProduct() {
         queryKey: productQueryKeys.all,
       });
       toast.success(`Q Time: ${Date.now()-curr}ms`, { duration: 10000 })
-      toast.success(`Q Time: ${(Date.now()-curr)/60}s`, { duration: 15000 })
+      toast.success(`Q Time: ${(Date.now()-curr)/1000}s`, { duration: 15000 })
     },
     onError: (error) => {
       console.error("Error creating product:", error);
       toast.error(error.response?.data?.message || "Failed to create product");
       toast.error(`Q Time: ${Date.now()-curr}ms`, { duration: 10000 })
-      toast.error(`Q Time: ${(Date.now()-curr)/60}s`, { duration: 15000 })
+      toast.error(`Q Time: ${(Date.now()-curr)/1000}s`, { duration: 15000 })
     },
   });
 }
