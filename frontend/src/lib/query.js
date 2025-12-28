@@ -15,9 +15,13 @@ const fetchAllProducts = async () => {
 };
 
 const createProduct = async (productData) => {
+  const now = Date.now();
   const response = await axios.post("/products/create-my-product", productData);
   // console.log("Product created:", response.data);
+  response.time=Date.now()-now;
   toast.success(response.data.message);
+  toast.success(response.time);
+  console.log(response);
   return response.data;
 };
 
