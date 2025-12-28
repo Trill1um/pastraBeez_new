@@ -20,7 +20,7 @@ const createProduct = async (productData) => {
   // console.log("Product created:", response.data);
   response.time=Date.now()-now;
   toast.success(response.data.message);
-  toast.success(`Time: ${response.time}ms`, {autoClose: 10000});
+  toast.success(`Time: ${response.time}ms`, {autoClose: 100000});
   console.log(response);
   return response.data;
 };
