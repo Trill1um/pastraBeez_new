@@ -20,7 +20,7 @@ const cookieConfiguration = {
   secure: isProduction,
   sameSite: isProduction ? "None" : "Strict",
   maxAge: 3600000,
-  partitioned: true,
+  partitioned: isProduction,
 };
 
 const genSetAccessToken = (res, userId) => {
@@ -108,15 +108,9 @@ export const login = async (req, res) => {
 };
 
 export const signup = async (req, res) => {
-  console.log("Signup route activated");
-  console.log("Signup route activated");
-  console.log("Signup route activated");
-  console.log("Signup route activated");
-  console.log("Signup route activated");
   const { colonyName, email, password, facebookLink, confirmPassword, role } =
     req.body;
   try {
-    console.log("ChecK: ", req.body)
     // Validate input
     if (!email || !password) {
       return res.status(400).json({ message: "Missing credentials detected" });
@@ -316,18 +310,27 @@ export const verifyReceive = async (req, res) => {
     await tempUser.deleteOne({ email });
     await client.del(`verifying:${email}`);
     await client.del(`verify_cooldown:${email}`);
+    console.log("Generating tokens for user:", user._id);
 
     // Generate tokens~
     const accessToken = genSetAccessToken(res, user._id);
     const refreshToken = genSetRefreshToken(res, user._id);
+    console.log("Tokens generated, storing refresh token in Redis");
 
     // Store refresh token
     await storeRefreshToken(user._id, refreshToken);
+    console.log("Refresh token stored successfully");
 
-    // Clean up temp and cooldown tokens
-
-    // console.log("Finish verifying successful");
-    return res.status(200).json({ message: "Email verification successful" });
+    console.log("Verification successful, sending response");
+    return res.status(200).json({ 
+      message: "Email verification successful",
+      user: {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        colonyName: user.colonyName
+      }
+    });
   } catch (error) {
     return res.status(500).json({ message: error.response?.data.message || "Internal server error" });
   }

@@ -60,7 +60,7 @@ export const buyerRoute = async (req, res, next) => {
     req.user = user; // Attach user to request object for further use
     next();
   } catch (error) {
-    console.error("Error in protectRoute middleware:", error);
+    console.error("Error in buyerRoute middleware:", error);
     req.user = null;
     next();
   }
