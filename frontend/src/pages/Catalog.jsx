@@ -62,7 +62,40 @@ const FILTER_CONFIG = {
 };
 
 // ============ CHILD COMPONENTS ============
-
+const SkeletonCard = () => (
+  <div className="w-full min-h-[430px] bg-white rounded-[1.5rem] overflow-hidden relative">
+    {/* Image skeleton */}
+    <div className="w-full h-64 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite]"></div>
+    
+    {/* Content skeleton */}
+    <div className="p-4 space-y-3">
+      {/* Title */}
+      <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded-lg w-3/4"></div>
+      
+      {/* Seller */}
+      <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded w-1/2"></div>
+      
+      {/* Price */}
+      <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded-lg w-1/3"></div>
+      
+      {/* Tags */}
+      <div className="flex gap-2">
+        <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded-full w-16"></div>
+        <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded-full w-20"></div>
+      </div>
+      
+      {/* Button */}
+      <div className="h-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] rounded-xl w-full"></div>
+    </div>
+    
+    <style>{`
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+    `}</style>
+  </div>
+);
 
 const PageHeader = () => (
   <section className="w-full px-4 sm:px-6 lg:px-8 pt-8 pb-4">
@@ -417,8 +450,7 @@ const ProductGrid = ({ products }) => {
               className="will-change-transform group bg-amber-400 rounded-[1.5rem]"
             >
               {isLoading ? (
-                <div className="w-full min-h-[430px] flex items-end justify-center h-full bg-gray-500 rounded-[1.5rem]">
-                </div>
+                <SkeletonCard />
               ) : (
                 <ProductCard product={product} />
               )}

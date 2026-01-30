@@ -1,13 +1,388 @@
 import { useState } from "react";
 import { useUserStore } from "../stores/useUserStore.js";
-import { toast } from "react-hot-toast";
 import Honeycell from "../assets/cell-auth.svg?react";
 import beeIcon from "../assets/bee.png";
 import honeyIcon from "../assets/honey.png";
 import cartIcon from "../assets/cart.png";
-import Hide from "../assets/hide.svg?react"
-import Show from "../assets/show.svg?react"
-import BeeOverlay from "../components/Notice"
+import Hide from "../assets/hide.svg?react";
+import Show from "../assets/show.svg?react";
+import BeeOverlay from "../components/Notice";
+import Arrow from "../assets/arrow.svg?react";
+
+// Login Form Component
+const LoginForm = ({
+  formData,
+  errors,
+  handleInputChange,
+  handleSubmit,
+  loading,
+  showPassword,
+  setShowPassword,
+}) => {
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Email Field */}
+      <div>
+        <label className="block bee-title-h6-desktop mb-2">
+          Email Address *
+        </label>
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          placeholder="your@email.com"
+          className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
+            errors.email ? "border-accent" : ""
+          }`}
+        />
+        {errors.email && (
+          <p className="text-accent bee-body-text-desktop text-sm mt-1">
+            {errors.email}
+          </p>
+        )}
+      </div>
+
+      {/* Password Field */}
+      <div>
+        <label className="block bee-title-h6-desktop mb-2">Password *</label>
+        <div className="relative">
+          <input
+            type={showPassword[0] ? "text" : "password"}
+            value={formData.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            placeholder="Enter your password"
+            className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
+              errors.password ? "border-accent" : ""
+            }`}
+          />
+          <button
+            type="button"
+            tabIndex="-1"
+            onClick={() =>
+              setShowPassword((prev) => [prev[0] ? 0 : 1, prev[1]])
+            }
+            className=" absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+          >
+            {showPassword[0] ? (
+              <Hide className="btn-anim w-5 h-5" />
+            ) : (
+              <Show className="btn-anim w-5 h-5" />
+            )}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-accent bee-body-text-desktop text-sm mt-1">
+            {errors.password}
+          </p>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn-anim focus-visible:ring-amber-600 focus-visible:ring-2 btn-primary w-full px-8 py-4 rounded-[15px] bee-button-desktop border-2 border-dark disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span>Signing In...</span>
+          </div>
+        ) : (
+          <span>Sign In to Hive 🍯</span>
+        )}
+      </button>
+    </form>
+  );
+};
+
+// SignUp Form Component
+const SignUpForm = ({
+  formData,
+  errors,
+  handleInputChange,
+  handleSubmit,
+  loading,
+  showPassword,
+  setShowPassword,
+  setIsDataModalVisible,
+  isChoosingRole,
+  changeIsChoosingRole,
+}) => {
+  const selectRole = (role) => {
+    handleInputChange("role", role);
+    changeIsChoosingRole(false);
+  };
+
+  return (
+    <>
+      {isChoosingRole ? (
+        <div className="space-y-8">
+          {/* Role Selection Boxes */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Buyer Box */}
+            <button
+              type="button"
+              onClick={() => selectRole("buyer")}
+              className="group btn-anim relative bg-white border-4 border-[var(--yellow)] rounded-[25px] p-8 transition-all hover:shadow-xl"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-full flex items-center justify-center group-hover:from-amber-200 group-hover:to-yellow-200 transition-all">
+                  <img src={cartIcon} alt="Buyer" className="w-16 h-16" />
+                </div>
+                <div className="text-center">
+                  <h3 className=" mb-2 group-hover:text-accent transition-colors">
+                    I'm a Buyer
+                  </h3>
+                  <p className="bee-body-text-desktop text-secondary">
+                    Browse and purchase sweet honey products
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* Seller Box */}
+            <button
+              type="button"
+              onClick={() => selectRole("seller")}
+              className="group btn-anim relative bg-white border-4 border-[var(--yellow)] rounded-[25px] p-8 transition-all hover:shadow-xl"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-full flex items-center justify-center group-hover:from-amber-200 group-hover:to-yellow-200 transition-all">
+                  <img src={honeyIcon} alt="Seller" className="w-16 h-16" />
+                </div>
+                <div className="text-center">
+                  <h3 className="bee-title-h5-desktop mb-2 text-dark group-hover:text-accent transition-colors">
+                    I'm a Seller
+                  </h3>
+                  <p className="bee-body-text-desktop text-secondary">
+                    Register your colony and sell honey products
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* Back to Role Selection Button */}
+            <button
+              type="button"
+              onClick={() => changeIsChoosingRole(true)}
+              className="btn-anim flex bg-brand py-2 pl-4 px-2 items-center justify-self-end gap-2 text-white transition-colors rounded-[25px] font-medium bee-button-desktop"
+            >
+              I changed my mind
+              <Arrow 
+              className="-rotate-90 w-7 h-7 text-[var(--yellow)] aspect-auto
+              bg-white p-1 rounded-full
+              "
+              />
+            </button>
+
+          {/* Colony Name Field - Only for Seller */}
+          {formData.role === "seller" && (
+            <div>
+              <label className="block bee-title-h6-desktop mb-2">
+                Company Name (Colony Name)*
+              </label>
+              <input
+                type="text"
+                value={formData.colonyName}
+                onChange={(e) =>
+                  handleInputChange("colonyName", e.target.value)
+                }
+                placeholder="This will be your Colony's public name"
+                className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
+                  errors.colonyName ? "border-accent" : ""
+                }`}
+              />
+              {errors.colonyName && (
+                <p className="text-accent bee-body-text-desktop text-sm mt-1">
+                  {errors.colonyName}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Email Field */}
+          <div>
+            <label className="block bee-title-h6-desktop mb-2">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              placeholder="your@email.com"
+              className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
+                errors.email ? "border-accent" : ""
+              }`}
+            />
+            {errors.email && (
+              <p className="text-accent bee-body-text-desktop text-sm mt-1">
+                {errors.email}
+              </p>
+            )}
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label className="block bee-title-h6-desktop mb-2">
+              Password *
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword[0] ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                placeholder="Enter your password"
+                className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
+                  errors.password ? "border-accent" : ""
+                }`}
+              />
+              <button
+                type="button"
+                tabIndex="-1"
+                onClick={() =>
+                  setShowPassword((prev) => [prev[0] ? 0 : 1, prev[1]])
+                }
+                className=" absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+              >
+                {showPassword[0] ? (
+                  <Hide className="btn-anim w-5 h-5" />
+                ) : (
+                  <Show className="btn-anim w-5 h-5" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-accent bee-body-text-desktop text-sm mt-1">
+                {errors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password Field */}
+          <div>
+            <label className="block bee-title-h6-desktop mb-2">
+              Confirm Password *
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword[1] ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  handleInputChange("confirmPassword", e.target.value)
+                }
+                placeholder="Confirm your password"
+                className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
+                  errors.confirmPassword ? "border-accent" : ""
+                }`}
+              />
+              <button
+                type="button"
+                tabIndex="-1"
+                onClick={() =>
+                  setShowPassword((prev) => [prev[0], prev[1] ? 0 : 1])
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
+              >
+                {showPassword[1] ? (
+                  <Hide className="btn-anim w-5 h-5" />
+                ) : (
+                  <Show className="btn-anim w-5 h-5" />
+                )}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-accent bee-body-text-desktop text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
+
+          {/* Facebook Link Field - Only for Seller */}
+          {formData.role === "seller" && (
+            <div>
+              <label className="block bee-title-h6-desktop mb-2">
+                Facebook Profile Link *
+              </label>
+              <input
+                type="url"
+                value={formData.facebookLink}
+                onChange={(e) =>
+                  handleInputChange("facebookLink", e.target.value)
+                }
+                placeholder="https://www.facebook.com/your.username"
+                className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
+                  errors.facebookLink ? "border-accent" : ""
+                }`}
+              />
+              <p className="text-secondary bee-body-text-desktop text-sm mt-1">
+                Note: Go to your Facebook (Web) Profile Page and copy the URL
+              </p>
+              {errors.facebookLink && (
+                <p className="text-accent bee-body-text-desktop text-sm mt-1">
+                  {errors.facebookLink}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Terms and Conditions */}
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              checked={formData.acceptTerms}
+              onChange={(e) =>
+                handleInputChange("acceptTerms", e.target.checked)
+              }
+              className="mt-1 w-4 h-4 focus-visible:ring-blue-800 focus-visible:ring-1 btn-anim text-brand border-2 border-secondary"
+            />
+            <label
+              htmlFor="acceptTerms"
+              className="bee-body-text-desktop flex-1"
+            >
+              I understand this is a research tool and consent to data
+              collection for research purposes.
+            </label>
+            <a
+              className="text-amber-500 mt-1"
+              style={{ cursor: "pointer" }}
+              onClick={() => setIsDataModalVisible(true)}
+            >
+              Learn more
+            </a>
+          </div>
+
+          {errors.acceptTerms && (
+            <p className="text-accent bee-body-text-desktop text-sm">
+              {errors.acceptTerms}
+            </p>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-anim focus-visible:ring-amber-600 focus-visible:ring-2 btn-primary w-full px-8 py-4 rounded-[15px] bee-button-desktop border-2 border-dark disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Creating Colony...</span>
+              </div>
+            ) : (
+              <span>Join the Hive 🐝</span>
+            )}
+          </button>
+        </form>
+      )}
+    </>
+  );
+};
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,9 +392,8 @@ const AuthPage = () => {
     password: "",
     confirmPassword: "",
     facebookLink: "",
-    role: "buyer",
+    role: "",
     acceptTerms: false,
-
   });
   const [confirm, setConfirm] = useState(false);
   const [errors, setErrors] = useState({});
@@ -27,19 +401,10 @@ const AuthPage = () => {
   const signUp = useUserStore((s) => s.signUp);
   const login = useUserStore((s) => s.login);
   const loading = useUserStore((s) => s.loading);
+  const [isChoosingRole, setIsChoosingRole] = useState(true);
 
-  const changeRole = () => {
-    const currentRole = formData.role || "buyer"; // fallback to buyer if empty
-    setFormData((prev) => ({
-      ...prev,
-      role: currentRole === "buyer" ? "seller" : "buyer",
-      colonyName: "",
-      facebookLink: "",
-    }));
-  };
   // Toggle between login and signup
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
+  const resetForm = () => {
     setFormData({
       colonyName: "",
       email: "",
@@ -48,13 +413,23 @@ const AuthPage = () => {
       facebookLink: "",
       acceptTerms: false,
     });
+  }
+
+  const changeIsChoosingRole = (value) => {
+    setIsChoosingRole(value);
+    resetForm();
+  }
+
+  const toggleMode = () => {
+    setIsLogin((prev) => !prev);
+    resetForm();
     setErrors({});
-    if (isLogin) {
-      toast.success(
-        "Click the honeycomb to switch between seller and buyer!",
-        { duration: 3000 }
-      );
-    }
+    changeIsChoosingRole(true);
+    // if (isLogin) {
+    //   toast.success("Click the honeycomb to switch between seller and buyer!", {
+    //     duration: 3000,
+    //   });
+    // }
   };
 
   // Handle input changes
@@ -119,20 +494,20 @@ const AuthPage = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    console.log("Submit button pressed")
+    console.log("Submit button pressed");
     e.preventDefault();
 
     if (!validateForm()) return;
 
     // Show confirmation dialog before proceeding
-    if (!isLogin)setConfirm(true);
+    if (!isLogin) setConfirm(true);
     else handleConfirmedSubmit();
   };
 
   // Handle confirmed submission
   const handleConfirmedSubmit = async () => {
     setConfirm(false);
-    
+
     if (isLogin) {
       // Handle login
       await login(formData.email, formData.password);
@@ -156,12 +531,15 @@ const AuthPage = () => {
         <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-orange-200/25 rounded-full blur-lg animate-pulse delay-2000"></div>
         <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-amber-300/15 rounded-full blur-xl animate-pulse delay-3000"></div>
       </div>
-      {confirm && !isLogin && <BeeOverlay 
-        style="font-bold"
-        message={`You are creating a ${formData.role==="seller"?"SELLER":"BUYER"} account. Is the information you've put in correct?` } 
-        accept={{fn: handleConfirmedSubmit, msg: "Yes, I'm sure"}}
-        decline={{fn: ()=>setConfirm(false), msg: "No, go back"}}
-      />}
+      {confirm && !isLogin && (
+        <BeeOverlay
+          style="font-bold"
+          message={`You are creating a ${formData.role === "seller" ? "SELLER" : "BUYER"} account. Is the information you've put in correct?`}
+          accept={{ fn: handleConfirmedSubmit, msg: "Yes, I'm sure" }}
+          decline={{ fn: () => setConfirm(false), msg: "No, go back" }}
+        />
+      )}
+
       <div
         className={`${
           isDataModalVisible ? "flex" : "hidden"
@@ -170,7 +548,7 @@ const AuthPage = () => {
         <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative">
           <button
             onClick={() => setIsDataModalVisible(false)}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+            className="absolute top-4 right-4 btn-anim text-gray-500 hover:text-gray-700 text-xl font-bold"
           >
             &times;
           </button>
@@ -203,285 +581,85 @@ const AuthPage = () => {
                   className="bg-center bg-cover bg-no-repeat h-35 w-40 mx-auto"
                   style={{ backgroundImage: `url('${beeIcon}')` }}
                 />
-              ) : (
-                <button
-                  className={`group btn-anim hover:scale-120 flex items-center gap-2 justify-center w-fit h-fit relative transition-all duration-300 ${
-                    formData.role === "seller" ? "rotate-360" : ""
-                  }`}
-                  onClick={changeRole}
+              ) : !isChoosingRole && (
+                <div
+                  className={`flex items-center gap-2 justify-center w-fit h-fit relative transition-all`}
                 >
-                  <Honeycell className="drop-shadow-sm group-hover:text-yellow-200 text-yellow-300 h-35 w-35" />
-                  <img className="absolute w-4/7 aspect-auto" src={formData.role==="seller"?honeyIcon: cartIcon} alt="honey" />
-                </button>
+                  <Honeycell className="text-yellow-200 h-35 w-35" />
+                  <img
+                    className="absolute w-4/7 aspect-auto"
+                    src={formData.role === "seller" ? honeyIcon : cartIcon}
+                    alt="honey"
+                  />
+                </div>
               )}
               <div>
                 <h1 className="bee-title-h4-desktop mb-2">
                   {isLogin
                     ? "Welcome Back to the Hive! 🍯"
-                    : "Join the Hive! 🐝"}
+                    : isChoosingRole
+                      ? "Choose Your Role"
+                      : "Join the Hive! 🐝"}
                 </h1>
+
                 <p className="text-accent font-bold">
                   {isLogin
                     ? "Sign in to access your sweet account"
-                    : (formData.role === "seller"
-                    ? "Register your colony and start selling honey products"
-                    : "Create a buyer account to start shopping.")
+                    : isChoosingRole
+                      ? "Select how you want to join the hive"
+                      : formData.role === "seller"
+                        ? "Register your colony and start selling honey products"
+                        : "Create a buyer account to start shopping."}
+                </p>
+              </div>
+
+
+
+            </div>
+
+            {isLogin ? (
+              <LoginForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                loading={loading}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
+            ) : (
+              <SignUpForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                loading={loading}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+                isDataModalVisible={isDataModalVisible}
+                setIsDataModalVisible={setIsDataModalVisible}
+                isChoosingRole={isChoosingRole}
+                changeIsChoosingRole={changeIsChoosingRole}
+              />
+            )}
+
+            {/* Bottom Text */}
+            <div className="text-center pt-8">
+              <p className="bee-body-text-desktop text-secondary">
+                {isLogin
+                  ? "Don't have a colony account? "
+                  : "Already registered your colony? "
                   }
-                </p>
-                {!isLogin && 
-                <p className="text-accent font-bold">
-                  Click the honeycomb to switch between seller and buyer!
-                </p>
-                }
-              </div>
+                <button
+                  type="button"
+                  onClick={toggleMode}
+                  className="btn-anim text-brand hover:text-accent font-medium transition-colors"
+                >
+                  {isLogin ? "Register Colony" :
+                  "Sign In"}
+                </button>
+              </p>
             </div>
-            {/* Mode Toggle */}
-            <div className="flex items-center justify-center mb-8">
-              <button onClick={() => {toggleMode()}} className="bg-gray-100 h-12 py-1 px-1 items-center justify-items-center cursor-pointer transition-all duration-300 ease-in rounded-[25px] flex">
-                <div className={`flex relative h-full`}>
-                  <div className={`${!isLogin? "translate-x-1/1":""} bg-brand duration-400 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] shadow-md absolute transition-all  z-0 px-6 h-full w-1/2 rounded-[20px]`} />
-                  <div className={`flex transition-all duration-400 justify-center items-center px-6 z-1 h-full bg-transparent bee-body-text-desktop ${
-                      isLogin
-                        ? "text-primary"
-                        : "text-secondary hover:text-primary"
-                    }`}
-                  >
-                    Sign In
-                  </div>
-                  <div className={`flex transition-all duration-400 justify-center items-center px-6 z-1 h-full bg-transparentbee-body-text-desktop font-medium ${
-                      !isLogin
-                        ? "text-primary"
-                        : "text-secondary hover:text-primary"
-                    }`}
-                  >
-                    Sign Up
-                  </div>
-                </div>
-              </button>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Colony Name Field - Only for Signup */}
-              {!isLogin && formData.role === "seller" && (
-                <div>
-                  <label className="block bee-title-h6-desktop mb-2">
-                    Colony Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.colonyName}
-                    onChange={(e) =>
-                      handleInputChange("colonyName", e.target.value)
-                    }
-                    placeholder="Business/Company Name"
-                    className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.colonyName ? "border-accent" : ""
-                    }`}
-                  />
-                  {errors.colonyName && (
-                    <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                      {errors.colonyName}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Email Field */}
-              <div>
-                <label className="block bee-title-h6-desktop mb-2">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="your@email.com"
-                  className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                    errors.email ? "border-accent" : ""
-                  }`}
-                />
-                {errors.email && (
-                  <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-
-              {/* Password Field */}
-              <div>
-                <label className="block bee-title-h6-desktop mb-2">
-                  Password *
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword[0] ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
-                    placeholder="Enter your password"
-                    className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
-                      errors.password ? "border-accent" : ""
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    tabIndex="-1"
-                    onClick={() => setShowPassword(prev => [prev[0]?0:1, prev[1]])}
-                    className=" absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
-                  >
-                    {showPassword[0] ? (
-                      <Hide className="btn-anim w-5 h-5"/>
-                    ) : (
-                      <Show className="btn-anim w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                    {errors.password}
-                  </p>
-                )}
-              </div>
-
-              {/* Confirm Password Field - Only for Signup */}
-              {!isLogin && (
-                <div>
-                  <label className="block bee-title-h6-desktop mb-2">
-                    Confirm Password *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword[1] ? "text" : "password"}
-                      value={formData.confirmPassword}
-                      onChange={(e) =>
-                        handleInputChange("confirmPassword", e.target.value)
-                      }
-                      placeholder="Confirm your password"
-                      className={`input w-full px-4 py-3 pr-12 rounded-[15px] bee-body-text-desktop ${
-                        errors.confirmPassword ? "border-accent" : ""
-                      }`}
-                    />
-                    <button
-                      type="button"
-                      tabIndex="-1"
-                      onClick={() => setShowPassword(prev => [prev[0], prev[1]?0:1])}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition-colors"
-                    >
-                      {showPassword[1] ? (
-                        <Hide className="btn-anim w-5 h-5"/>
-                      ) : (
-                        <Show className="btn-anim w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                      {errors.confirmPassword}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Messenger Link Field - Only for Signup */}
-              {!isLogin && formData.role === "seller" && (
-                <div>
-                  <label className="block bee-title-h6-desktop mb-2">
-                    Facebook Profile Link *
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.facebookLink}
-                    onChange={(e) =>
-                      handleInputChange("facebookLink", e.target.value)
-                    }
-                    placeholder="https://www.facebook.com/your.username"
-                    className={`input w-full px-4 py-3 rounded-[15px] bee-body-text-desktop ${
-                      errors.facebookLink ? "border-accent" : ""
-                    }`}
-                  />
-                  <p className="text-secondary bee-body-text-desktop text-sm mt-1">
-                    Note: Go to your Facebook (Web) Profile Page and copy the URL
-                  </p>
-                  {errors.facebookLink && (
-                    <p className="text-accent bee-body-text-desktop text-sm mt-1">
-                      {errors.facebookLink}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Terms and Conditions - Only for Signup */}
-              {!isLogin && (
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="acceptTerms"
-                    checked={formData.acceptTerms}
-                    onChange={(e) =>
-                      handleInputChange("acceptTerms", e.target.checked)
-                    }
-                    className="mt-1 w-4 h-4 focus-visible:ring-blue-800 focus-visible:ring-1 btn-anim text-brand border-2 border-secondary"
-                  />
-                  <label
-                    htmlFor="acceptTerms"
-                    className="bee-body-text-desktop flex-1"
-                  >
-                    I understand this is a research tool and consent to data
-                    collection for research purposes.
-                  </label>
-                  <a
-                    className="text-amber-500 mt-1"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsDataModalVisible(true)}
-                  >
-                    Learn more
-                  </a>
-                </div>
-              )}
-
-              {errors.acceptTerms && (
-                <p className="text-accent bee-body-text-desktop text-sm">
-                  {errors.acceptTerms}
-                </p>
-              )}
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-anim focus-visible:ring-amber-600 focus-visible:ring-2 btn-primary w-full px-8 py-4 rounded-[15px] bee-button-desktop border-2 border-dark disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>
-                      {isLogin ? "Signing In..." : "Creating Colony..."}
-                    </span>
-                  </div>
-                ) : (
-                  <span>
-                    {isLogin ? "Sign In to Hive 🍯" : "Join the Hive 🐝"}
-                  </span>
-                )}
-              </button>
-
-              {/* Bottom Text */}
-              <div className="text-center pt-4">
-                <p className="bee-body-text-desktop text-secondary">
-                  {isLogin
-                    ? "Don't have a colony account? "
-                    : "Already registered your colony? "}
-                  <button
-                    type="button"
-                    onClick={toggleMode}
-                    className="btn-anim text-brand hover:text-accent font-medium transition-colors"
-                  >
-                    {isLogin ? "Register Colony" : "Sign In"}
-                  </button>
-                </p>
-              </div>
-            </form>
           </div>
         </div>
       </div>

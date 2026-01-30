@@ -65,7 +65,6 @@ export function useAllProducts() {
 
 // ============ MUTATION HOOKS ============
 export function useCreateProduct() {
-  let curr=Date.now();
   const queryClient = useQueryClient();
 
   return useMutation({
