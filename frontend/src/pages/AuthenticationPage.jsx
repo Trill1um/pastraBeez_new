@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUserStore } from "../stores/useUserStore.js";
 import Honeycell from "../assets/cell-auth.svg?react";
 import beeIcon from "../assets/bee.png";
@@ -405,32 +405,32 @@ const AuthPage = () => {
 
   // Toggle between login and signup
   const resetForm = () => {
-    setFormData({
+    setFormData((prev) => ({
+      ...prev,
       colonyName: "",
       email: "",
       password: "",
       confirmPassword: "",
       facebookLink: "",
       acceptTerms: false,
-    });
+    }));
+    setErrors({});
   }
 
   const changeIsChoosingRole = (value) => {
     setIsChoosingRole(value);
     resetForm();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   const toggleMode = () => {
     setIsLogin((prev) => !prev);
-    resetForm();
-    setErrors({});
     changeIsChoosingRole(true);
-    // if (isLogin) {
-    //   toast.success("Click the honeycomb to switch between seller and buyer!", {
-    //     duration: 3000,
-    //   });
-    // }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+  }, [isLogin, formData.role]);
 
   // Handle input changes
   const handleInputChange = (field, value) => {
@@ -494,7 +494,6 @@ const AuthPage = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    console.log("Submit button pressed");
     e.preventDefault();
 
     if (!validateForm()) return;
