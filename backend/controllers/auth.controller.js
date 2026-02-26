@@ -170,9 +170,9 @@ export const signup = async (req, res) => {
     }
 
     // Check if user already exists, if so delete it
-    const existingUser = await User.findOne({ email });
+    const existingUser = await tempUser.findOne({ email });
     if (existingUser) {
-      await User.deleteOne({ email });
+      await tempUser.deleteOne({ email });
     }
 
     // // Check if there's a pending verification
