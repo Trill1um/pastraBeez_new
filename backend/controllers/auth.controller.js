@@ -169,17 +169,17 @@ export const signup = async (req, res) => {
       console.log("Final Facebook link after redirects: ", location);
     }
 
-    // Check if user already exists
+    // Check if user already exists, if so delete it
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "Email already registered" });
+      await User.deleteOne({ email });
     }
 
-    // Check if there's a pending verification
-    const pendingVerification = await tempUser.findOne({ email });
-    if (pendingVerification) {
-      return res.status(409).json({ message: "Pending verification already exists for this email" });
-    }
+    // // Check if there's a pending verification
+    // const pendingVerification = await tempUser.findOne({ email });
+    // if (pendingVerification) {
+    //   return res.status(409).json({ message: "Pending verification already exists for this email" });
+    // }
 
     let user;
 
