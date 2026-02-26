@@ -154,6 +154,7 @@ export const updateMyProduct = async (req, res) => {
       additionalInfo,
       imageChanged,
     } = req.body;
+
     const product = await Product.findById(req.params.id).populate(
       "sellerId",
       "colonyName"
@@ -217,6 +218,13 @@ export const updateMyProduct = async (req, res) => {
         console.error("Error handling Cloudinary images:", error);
         return res.status(500).json({ message: "Image processing failed" });
       }
+    }
+
+    // Clean up additionalInfo _id fields (remove client-generated IDs)
+    if (additionalInfo && Array.isArray(additionalInfo)) {
+      additionalInfo.forEach(element => {
+        delete element._id;
+      });
     }
 
     // Update product fields

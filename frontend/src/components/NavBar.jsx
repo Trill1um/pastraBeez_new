@@ -319,7 +319,7 @@ const NavBar = ({ user }) => {
           <BeeOverlay
             style={`${isLoading ? "pointer-events-none opacity-70" : ""}`}
             message={
-              "Email verification required, sending verification email...Check you're spam..."
+              "Email verification required, sending verification email...Check your Inbox..."
             }
             accept={{
               fn: async() => {
